@@ -1,0 +1,142 @@
+= Sanitize
+
+Sanitize is a whitelist-based HTML sanitizer. Given a list of acceptable
+elements and attributes, Sanitize will remove all unacceptable HTML from a
+string.
+
+Using a simple configuration syntax, you can tell Sanitize to allow certain
+elements, certain attributes within those elements, and even certain URL
+protocols within attributes that contain URLs. Any HTML elements or attributes
+that you don't explicitly allow will be removed.
+
+Because it's based on Hpricot, a full-fledged HTML parser, rather than a bunch
+of fragile regular expressions, Sanitize has no trouble dealing with malformed
+or maliciously-formed HTML. When in doubt, Sanitize always errs on the side of
+caution.
+
+*Author*::    Ryan Grove (mailto:ryan@wonko.com)
+*Version*::   1.0.0 (2008-12-25)
+*Copyright*:: Copyright (c) 2008 Ryan Grove. All rights reserved.
+*License*::   MIT License (http://opensource.org/licenses/mit-license.php)
+*Website*::   http://github.com/rgrove/sanitize
+
+== Requires
+
+* RubyGems
+* Hpricot 0.6+
+
+== Usage
+
+If you don't specify any configuration options, Sanitize will use its strictest
+settings by default, which means it will strip all HTML.
+
+  require 'rubygems'
+  require 'sanitize'
+
+  html = '<b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg" />'
+
+  Sanitize.clean(html) # => 'foo'
+
+== Configuration
+
+In addition to the ultra-safe default settings, Sanitize comes with three other
+built-in modes.
+
+=== Sanitize::Config::RESTRICTED
+
+Allows only very simple inline formatting markup. No links, images, or block
+elements.
+
+  Sanitize.clean(html, Sanitize::Config::RESTRICTED) # => '<b>foo</b>'
+
+=== Sanitize::Config::BASIC
+
+Allows a variety of markup including formatting tags, links, and lists. Images
+and tables are not allowed, links are limited to FTP, HTTP, HTTPS, and mailto
+protocols, and a <code>rel="nofollow"</code> attribute is added to all links to
+mitigate SEO spam.
+
+  Sanitize.clean(html, Sanitize::Config::BASIC)
+  # => '<b><a href="http://foo.com/" rel="nofollow">foo</a></b>'
+
+=== Sanitize::Config::RELAXED
+
+Allows an even wider variety of markup than BASIC, including images and tables.
+Links are still limited to FTP, HTTP, HTTPS, and mailto protocols, while images
+are limited to HTTP and HTTPS. In this mode, <code>rel="nofollow"</code> is not
+added to links.
+
+  Sanitize.clean(html, Sanitize::Config::RELAXED)
+  # => '<b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg" />'
+
+=== Custom Configuration
+
+If the built-in modes don't meet your needs, you can easily specify a custom
+configuration:
+
+  Sanitize.clean(html, :elements => ['a', 'span'],
+      :attributes => {'a' => ['href', 'title'], 'span' => ['class']},
+      :protocols => {'a' => {'href' => ['http', 'https', 'mailto']}})
+
+==== :elements
+
+Array of element names to allow. Specify all names in lowercase.
+
+  :elements => [
+    'a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em',
+    'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub',
+    'sup', 'u', 'ul'
+  ]
+
+==== :attributes
+
+Attributes to allow for specific elements. Specify all element names and
+attributes in lowercase.
+
+  :attributes => {
+    'a'          => ['href', 'title'],
+    'blockquote' => ['cite'],
+    'img'        => ['alt', 'src', 'title']
+  }
+
+==== :add_attributes
+
+Attributes to add to specific elements. If the attribute already exists, it will
+be replaced with the value specified here. Specify all element names and
+attributes in lowercase.
+
+  :add_attributes => {
+    'a' => {'rel' => 'nofollow'}
+  }
+
+==== :protocols
+
+URL protocols to allow in specific attributes. If an attribute is listed here
+and contains a protocol other than those specified (or if it contains no
+protocol at all), it will be removed.
+
+  :protocols => {
+    'a'   => {'href' => ['ftp', 'http', 'https', 'mailto']},
+    'img' => {'src'  => ['http', 'https']}
+  }
+
+== License
+
+Copyright (c) 2008 Ryan Grove <ryan@wonko.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the 'Software'), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
