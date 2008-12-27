@@ -41,7 +41,7 @@ gemspec = Gem::Specification.new do |s|
   s.files = [
     'HISTORY',
     'LICENSE',
-    'README',
+    'README.rdoc',
     'lib/sanitize.rb',
     'lib/sanitize/config.rb',
     'lib/sanitize/config/basic.rb',
@@ -56,11 +56,11 @@ Rake::GemPackageTask.new(gemspec) do |p|
 end
 
 Rake::RDocTask.new do |rd|
-  rd.main     = 'README'
+  rd.main     = 'README.rdoc'
   rd.title    = 'Sanitize Documentation'
   rd.rdoc_dir = 'doc'
 
-  rd.rdoc_files.include('README', 'lib/**/*.rb')
+  rd.rdoc_files.include('README.rdoc', 'lib/**/*.rb')
 
   rd.options << '--line-numbers' << '--inline-source'
 end
