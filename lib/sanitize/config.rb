@@ -41,7 +41,8 @@ class Sanitize
       :add_attributes => {},
 
       # URL handling protocols to allow in specific attributes. By default, no
-      # protocols are allowed.
+      # protocols are allowed. Use :relative in place of a protocol if you want
+      # to allow relative URLs sans protocol.
       :protocols => {}
     }
   end

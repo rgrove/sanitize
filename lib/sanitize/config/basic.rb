@@ -39,9 +39,10 @@ class Sanitize
       },
 
       :protocols => {
-        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto']},
-        'blockquote' => {'cite' => ['http', 'https']},
-        'q'          => {'cite' => ['http', 'https']}
+        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto',
+                                    :relative]},
+        'blockquote' => {'cite' => ['http', 'https', :relative]},
+        'q'          => {'cite' => ['http', 'https', :relative]}
       }
     }
   end

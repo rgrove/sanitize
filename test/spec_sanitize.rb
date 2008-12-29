@@ -30,8 +30,8 @@ strings = {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>',
     :default    => 'Lorem ipsum dolor sitamet alert("hello world");',
     :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet alert("hello world");',
-    :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert("hello world");',
-    :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert("hello world");'
+    :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert("hello world");',
+    :relaxed    => '<b>Lorem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert("hello world");'
   },
 
   :malformed => {
@@ -51,34 +51,98 @@ strings = {
   }
 }
 
+tricky = {
+  'protocol "javascript&#58;"' => {
+    :html       => '<a href="javascript&#58;">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol "javascript&#0058;"' => {
+    :html       => '<a href="javascript&#0058;">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol "javascript&#x3A;"' => {
+    :html       => '<a href="javascript&#x3A;">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol "javascript&#x003A;"' => {
+    :html       => '<a href="javascript&#x003A;">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  }
+}
+
 describe 'Config::DEFAULT' do
   strings.each do |name, data|
     should "clean #{name} HTML" do
       Sanitize.clean(data[:html]).should.equal(data[:default])
     end
   end
+
+  tricky.each do |name, data|
+    should "not allow #{name}" do
+      Sanitize.clean(data[:html]).should.equal(data[:default])
+    end
+  end
 end
 
 describe 'Config::RESTRICTED' do
+  before { @s = Sanitize.new(Sanitize::Config::RESTRICTED) }
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
-      Sanitize.clean(data[:html], Sanitize::Config::RESTRICTED).should.equal(data[:restricted])
+      @s.clean(data[:html]).should.equal(data[:restricted])
+    end
+  end
+
+  tricky.each do |name, data|
+    should "not allow #{name}" do
+      @s.clean(data[:html]).should.equal(data[:restricted])
     end
   end
 end
 
 describe 'Config::BASIC' do
+  before { @s = Sanitize.new(Sanitize::Config::BASIC) }
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
-      Sanitize.clean(data[:html], Sanitize::Config::BASIC).should.equal(data[:basic])
+      @s.clean(data[:html]).should.equal(data[:basic])
+    end
+  end
+
+  tricky.each do |name, data|
+    should "not allow #{name}" do
+      @s.clean(data[:html]).should.equal(data[:basic])
     end
   end
 end
 
 describe 'Config::RELAXED' do
+  before { @s = Sanitize.new(Sanitize::Config::RELAXED) }
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
-      Sanitize.clean(data[:html], Sanitize::Config::RELAXED).should.equal(data[:relaxed])
+      @s.clean(data[:html]).should.equal(data[:relaxed])
+    end
+  end
+
+  tricky.each do |name, data|
+    should "not allow #{name}" do
+      @s.clean(data[:html]).should.equal(data[:relaxed])
     end
   end
 end
