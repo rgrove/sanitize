@@ -5,6 +5,9 @@ Version 1.0.1 (?)
   * You can now specify :relative in a protocol config array to allow attributes
     containing relative URLs with no protocol. The Basic and Relaxed configs
     have been updated to allow relative URLs.
+  * Added a workaround for an Hpricot bug that causes HTML entities for
+    non-ASCII characters to be replaced by question marks, and all other
+    entities to be destructively decoded.
 
 Version 1.0.0 (2008-12-25)
   * First release.

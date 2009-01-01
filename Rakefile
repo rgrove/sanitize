@@ -36,7 +36,8 @@ gemspec = Gem::Specification.new do |s|
   s.require_path          = 'lib'
   s.required_ruby_version = '>= 1.8.6'
 
-  s.add_dependency('hpricot', '~> 0.6')
+  s.add_dependency('hpricot',      '~> 0.6')
+  s.add_dependency('htmlentities', '~> 4.0.0')
 
   s.files = [
     'HISTORY',
@@ -46,7 +47,8 @@ gemspec = Gem::Specification.new do |s|
     'lib/sanitize/config.rb',
     'lib/sanitize/config/basic.rb',
     'lib/sanitize/config/relaxed.rb',
-    'lib/sanitize/config/restricted.rb'
+    'lib/sanitize/config/restricted.rb',
+    'lib/sanitize/monkeypatch/hpricot.rb'
   ]
 end
 

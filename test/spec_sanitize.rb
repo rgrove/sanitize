@@ -28,26 +28,26 @@ require File.join(File.dirname(__FILE__), '../lib/sanitize')
 strings = {
   :basic => {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>',
-    :default    => 'Lorem ipsum dolor sitamet alert("hello world");',
-    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet alert("hello world");',
-    :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert("hello world");',
-    :relaxed    => '<b>Lorem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert("hello world");'
+    :default    => 'Lorem ipsum dolor sitamet alert(&quot;hello world&quot;);',
+    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet alert(&quot;hello world&quot;);',
+    :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert(&quot;hello world&quot;);',
+    :relaxed    => '<b>Lorem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert(&quot;hello world&quot;);'
   },
 
   :malformed => {
     :html       => 'Lo<!-- comment -->rem</b> <a href=pants title="foo>ipsum <a href="http://foo.com/"><strong>dolor</a></strong> sit<br/>amet <script>alert("hello world");',
-    :default    => 'Lorem &lt;a href=pants title="foo&gt;ipsum dolor sitamet alert("hello world");',
-    :restricted => 'Lorem &lt;a href=pants title="foo&gt;ipsum <strong>dolor</strong> sitamet alert("hello world");',
-    :basic      => 'Lorem &lt;a href=pants title="foo&gt;ipsum <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert("hello world");',
-    :relaxed    => 'Lorem &lt;a href=pants title="foo&gt;ipsum <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert("hello world");'
+    :default    => 'Lorem &lt;a href=pants title=&quot;foo&gt;ipsum dolor sitamet alert(&quot;hello world&quot;);',
+    :restricted => 'Lorem &lt;a href=pants title=&quot;foo&gt;ipsum <strong>dolor</strong> sitamet alert(&quot;hello world&quot;);',
+    :basic      => 'Lorem &lt;a href=pants title=&quot;foo&gt;ipsum <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert(&quot;hello world&quot;);',
+    :relaxed    => 'Lorem &lt;a href=pants title=&quot;foo&gt;ipsum <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert(&quot;hello world&quot;);'
   },
 
   :malicious => {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="javascript:pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <<foo>script>alert("hello world");</script>',
-    :default    => 'Lorem ipsum dolor sitamet &lt;script&gt;alert("hello world");',
-    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet &lt;script&gt;alert("hello world");',
-    :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet &lt;script&gt;alert("hello world");',
-    :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet &lt;script&gt;alert("hello world");'
+    :default    => 'Lorem ipsum dolor sitamet &lt;script&gt;alert(&quot;hello world&quot;);',
+    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet &lt;script&gt;alert(&quot;hello world&quot;);',
+    :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet &lt;script&gt;alert(&quot;hello world&quot;);',
+    :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet &lt;script&gt;alert(&quot;hello world&quot;);'
   }
 }
 
@@ -86,6 +86,10 @@ tricky = {
 }
 
 describe 'Config::DEFAULT' do
+  should 'preserve valid HTML entities' do
+    Sanitize.clean("Don&apos;t tas&eacute; me &amp; bro!").should.equal("Don&apos;t tas&eacute; me &amp; bro!")
+  end
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
       Sanitize.clean(data[:html]).should.equal(data[:default])

@@ -25,13 +25,17 @@ $:.unshift(File.dirname(File.expand_path(__FILE__)))
 $:.uniq!
 
 require 'rubygems'
-gem 'hpricot', '~> 0.6'
+
+gem 'hpricot',      '~> 0.6'
+gem 'htmlentities', '~> 4.0.0'
 
 require 'hpricot'
+require 'htmlentities'
 require 'sanitize/config'
 require 'sanitize/config/restricted'
 require 'sanitize/config/basic'
 require 'sanitize/config/relaxed'
+require 'sanitize/monkeypatch/hpricot'
 
 class Sanitize
   #--
@@ -122,12 +126,15 @@ class Sanitize
       end
     end
 
-    # Make one last pass through the fragment and replace angle brackets with
-    # entities in all text nodes. This helps eliminate certain types of
-    # maliciously-malformed nested tags.
+    # Make one last pass through the fragment and replace encode all special
+    # HTML chars and non-ASCII chars as entities. This eliminates certain types
+    # of maliciously-malformed nested tags and also compensates for Hpricot's
+    # burning desire to decode all entities.
+    coder = HTMLEntities.new
+
     fragment.traverse_element do |node|
       if node.text?
-        node.swap(node.inner_text.gsub('<', '&lt;').gsub('>', '&gt;'))
+        node.swap(coder.encode(node.inner_text, :named))
       end
     end
 
