@@ -126,9 +126,9 @@ class Sanitize
       end
     end
 
-    # Make one last pass through the fragment and replace encode all special
-    # HTML chars and non-ASCII chars as entities. This eliminates certain types
-    # of maliciously-malformed nested tags and also compensates for Hpricot's
+    # Make one last pass through the fragment and encode all special HTML chars
+    # and non-ASCII chars as entities. This eliminates certain types of
+    # maliciously-malformed nested tags and also compensates for Hpricot's
     # burning desire to decode all entities.
     coder = HTMLEntities.new
 
