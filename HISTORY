@@ -1,7 +1,7 @@
 Sanitize History
 ================================================================================
 
-Version 1.0.1 (?)
+Version 1.0.1 (2009-01-01)
   * You can now specify :relative in a protocol config array to allow attributes
     containing relative URLs with no protocol. The Basic and Relaxed configs
     have been updated to allow relative URLs.
