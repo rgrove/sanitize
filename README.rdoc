@@ -24,6 +24,7 @@ caution.
 
 * RubyGems
 * Hpricot 0.6+
+* HTMLEntities 4.0.0+
 
 == Usage
 
