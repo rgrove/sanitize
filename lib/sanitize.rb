@@ -85,7 +85,7 @@ class Sanitize
       if node.comment?
         node.swap('') unless @config[:allow_comments]
       elsif node.elem?
-        name = node.name.downcase
+        name = node.name.to_s.downcase
 
         # Delete any element that isn't in the whitelist.
         unless @config[:elements].include?(name)
@@ -96,7 +96,7 @@ class Sanitize
         if @config[:attributes].has_key?(name)
           # Delete any attribute that isn't in the whitelist for this element.
           node.raw_attributes.delete_if do |key, value|
-            !@config[:attributes][name].include?(key.downcase)
+            !@config[:attributes][name].include?(key.to_s.downcase)
           end
 
           # Delete remaining attributes that use unacceptable protocols.
@@ -105,8 +105,9 @@ class Sanitize
 
             node.raw_attributes.delete_if do |key, value|
               next false unless protocol.has_key?(key)
+              next true if value.nil?
 
-              if value.downcase =~ /^([^:]+)(?:\:|&#0*58;|&#x0*3a;)/
+              if value.to_s.downcase =~ /^([^:]+)(?:\:|&#0*58;|&#x0*3a;)/
                 !protocol[key].include?($1.downcase)
               else
                 !protocol[key].include?(:relative)

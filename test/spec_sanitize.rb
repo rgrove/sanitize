@@ -122,6 +122,10 @@ end
 describe 'Config::BASIC' do
   before { @s = Sanitize.new(Sanitize::Config::BASIC) }
 
+  should 'not choke on valueless attributes' do
+    @s.clean('foo <a href>foo</a> bar').should.equal('foo <a rel="nofollow">foo</a> bar')
+  end
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
       @s.clean(data[:html]).should.equal(data[:basic])

@@ -1,6 +1,10 @@
 Sanitize History
 ================================================================================
 
+Version 1.0.2 (?)
+  * Fixed a bug that caused an exception to be thrown when parsing a valueless
+    attribute that's expected to contain a URL.
+
 Version 1.0.1 (2009-01-01)
   * You can now specify :relative in a protocol config array to allow attributes
     containing relative URLs with no protocol. The Basic and Relaxed configs
