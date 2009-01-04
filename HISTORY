@@ -1,7 +1,7 @@
 Sanitize History
 ================================================================================
 
-Version 1.0.2 (?)
+Version 1.0.2 (2009-01-04)
   * Fixed a bug that caused an exception to be thrown when parsing a valueless
     attribute that's expected to contain a URL.
 
