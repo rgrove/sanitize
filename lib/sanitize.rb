@@ -38,6 +38,14 @@ require 'sanitize/config/relaxed'
 require 'sanitize/monkeypatch/hpricot'
 
 class Sanitize
+
+  # Matches an attribute value that could be treated by a browser as a URL
+  # with a protocol prefix, such as "http:" or "javascript:". Any string of one
+  # or more characters followed by a colon is considered a match, even if the
+  # colon is encoded as an entity and even if it's an incomplete entity (which
+  # IE6 and Opera will still parse).
+  REGEX_PROTOCOL = /^([^:]+)(?:\:|&#0*58|&#x0*3a)(?:[^0-9a-f]|$)/i
+
   #--
   # Class Methods
   #++
@@ -107,7 +115,7 @@ class Sanitize
               next false unless protocol.has_key?(key)
               next true if value.nil?
 
-              if value.to_s.downcase =~ /^([^:]+)(?:\:|&#0*58;|&#x0*3a;)/
+              if value.to_s.downcase =~ REGEX_PROTOCOL
                 !protocol[key].include?($1.downcase)
               else
                 !protocol[key].include?(:relative)

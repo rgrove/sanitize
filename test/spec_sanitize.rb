@@ -1,16 +1,16 @@
 #--
 # Copyright (c) 2009 Ryan Grove <ryan@wonko.com>
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -52,7 +52,7 @@ strings = {
 }
 
 tricky = {
-  'protocol "javascript&#58;"' => {
+  'protocol-based JS injection: UTF-8 encoding' => {
     :html       => '<a href="javascript&#58;">foo</a>',
     :default    => 'foo',
     :restricted => 'foo',
@@ -60,7 +60,7 @@ tricky = {
     :relaxed    => '<a>foo</a>'
   },
 
-  'protocol "javascript&#0058;"' => {
+  'protocol-based JS injection: long UTF-8 encoding' => {
     :html       => '<a href="javascript&#0058;">foo</a>',
     :default    => 'foo',
     :restricted => 'foo',
@@ -68,7 +68,15 @@ tricky = {
     :relaxed    => '<a>foo</a>'
   },
 
-  'protocol "javascript&#x3A;"' => {
+  'protocol-based JS injection: long UTF-8 encoding without semicolons' => {
+    :html       => '<a href=&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041>foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: hex encoding' => {
     :html       => '<a href="javascript&#x3A;">foo</a>',
     :default    => 'foo',
     :restricted => 'foo',
@@ -76,8 +84,16 @@ tricky = {
     :relaxed    => '<a>foo</a>'
   },
 
-  'protocol "javascript&#x003A;"' => {
+  'protocol-based JS injection: long hex encoding' => {
     :html       => '<a href="javascript&#x003A;">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: hex encoding without semicolons' => {
+    :html       => '<a href=&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A&#x61&#x6C&#x65&#x72&#x74&#x28&#x27&#x58&#x53&#x53&#x27&#x29>foo</a>',
     :default    => 'foo',
     :restricted => 'foo',
     :basic      => '<a rel="nofollow">foo</a>',

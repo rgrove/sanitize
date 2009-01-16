@@ -1,6 +1,13 @@
 Sanitize History
 ================================================================================
 
+Version 1.0.3 (2009-01-15)
+  * Fixed a bug whereby incomplete Unicode or hex entities could be used to
+    prevent non-whitelisted protocols from being cleaned. Since IE6 and Opera
+    still decode the incomplete entities, users of those browsers may be
+    vulnerable to malicious script injection on websites using versions of
+    Sanitize prior to 1.0.3.
+
 Version 1.0.2 (2009-01-04)
   * Fixed a bug that caused an exception to be thrown when parsing a valueless
     attribute that's expected to contain a URL.
