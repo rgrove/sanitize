@@ -27,7 +27,7 @@ require 'rake/rdoctask'
 gemspec = Gem::Specification.new do |s|
   s.name     = 'sanitize'
   s.summary  = 'Whitelist-based HTML sanitizer.'
-  s.version  = '1.0.2'
+  s.version  = '1.0.3'
   s.author   = 'Ryan Grove'
   s.email    = 'ryan@wonko.com'
   s.homepage = 'http://github.com/rgrove/sanitize/'
