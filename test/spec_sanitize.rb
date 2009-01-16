@@ -106,6 +106,10 @@ describe 'Config::DEFAULT' do
     Sanitize.clean("Don&apos;t tas&eacute; me &amp; bro!").should.equal("Don&apos;t tas&eacute; me &amp; bro!")
   end
 
+  should 'not choke on several instances of the same element in a row' do
+    Sanitize.clean('<img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif">').should.equal('')
+  end
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
       Sanitize.clean(data[:html]).should.equal(data[:default])

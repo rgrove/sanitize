@@ -1,6 +1,11 @@
 Sanitize History
 ================================================================================
 
+Version 1.0.4 (2009-01-16)
+  * Fixed a bug that made it possible to sneak a non-whitelisted element through
+    by repeating it several times in a row. All versions of Sanitize prior to
+    1.0.4 are vulnerable. [Reported by Cristobal]
+
 Version 1.0.3 (2009-01-15)
   * Fixed a bug whereby incomplete Unicode or hex entities could be used to
     prevent non-whitelisted protocols from being cleaned. Since IE6 and Opera

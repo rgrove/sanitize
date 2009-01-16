@@ -84,7 +84,7 @@ class Sanitize
   def clean!(html)
     fragment = Hpricot(html)
 
-    fragment.traverse_element do |node|
+    fragment.search('*') do |node|
       if node.bogusetag? || node.doctype? || node.procins? || node.xmldecl?
         node.swap('')
         next
