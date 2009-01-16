@@ -58,7 +58,7 @@ class Sanitize
   end
 
   # Performs Sanitize#clean in place, returning _html_, or +nil+ if no changes
-  # were necessary.
+  # were made.
   def self.clean!(html, config = {})
     sanitize = Sanitize.new(config)
     sanitize.clean!(html)
@@ -80,7 +80,7 @@ class Sanitize
   end
 
   # Performs clean in place, returning _html_, or +nil+ if no changes were
-  # necessary.
+  # made.
   def clean!(html)
     fragment = Hpricot(html)
 
