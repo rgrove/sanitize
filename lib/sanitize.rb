@@ -26,8 +26,8 @@ $:.uniq!
 
 require 'rubygems'
 
-gem 'hpricot',      '~> 0.6'
-gem 'htmlentities', '~> 4.0.0'
+gem 'adamh-hpricot', '~> 0.6'
+gem 'htmlentities',  '~> 4.0.0'
 
 require 'hpricot'
 require 'htmlentities'
@@ -35,7 +35,6 @@ require 'sanitize/config'
 require 'sanitize/config/restricted'
 require 'sanitize/config/basic'
 require 'sanitize/config/relaxed'
-require 'sanitize/monkeypatch/hpricot'
 
 class Sanitize
 
@@ -86,18 +85,22 @@ class Sanitize
 
     fragment.search('*') do |node|
       if node.bogusetag? || node.doctype? || node.procins? || node.xmldecl?
-        node.swap('')
+        node.parent.altered!
+        node.parent.children[node.parent.children.index(node), 1] = []
         next
       end
 
       if node.comment?
-        node.swap('') unless @config[:allow_comments]
+        unless @config[:allow_comments]
+          node.parent.altered!
+          node.parent.children[node.parent.children.index(node), 1] = []
+        end
       elsif node.elem?
         name = node.name.to_s.downcase
 
         # Delete any element that isn't in the whitelist.
         unless @config[:elements].include?(name)
-          node.parent.replace_child(node, node.children)
+          node.parent.replace_child(node, node.children || [])
           next
         end
 

@@ -48,6 +48,14 @@ strings = {
     :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet &lt;script&gt;alert(&quot;hello world&quot;);',
     :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet &lt;script&gt;alert(&quot;hello world&quot;);',
     :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet &lt;script&gt;alert(&quot;hello world&quot;);'
+  },
+
+  :raw_comment => {
+    :html       => '<!-- comment -->Hello',
+    :default    => 'Hello',
+    :restricted => 'Hello',
+    :basic      => 'Hello',
+    :relaxed    => 'Hello'
   }
 }
 
