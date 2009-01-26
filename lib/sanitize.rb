@@ -101,6 +101,8 @@ class Sanitize
           next
         end
 
+        node.raw_attributes ||= {}
+
         if @config[:attributes].has_key?(name)
           # Delete any attribute that isn't in the whitelist for this element.
           node.raw_attributes.delete_if do |key, value|
