@@ -42,6 +42,14 @@ strings = {
     :relaxed    => 'Lorem &lt;a href=pants title=&quot;foo&gt;ipsum <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert(&quot;hello world&quot;);'
   },
 
+  :unclosed => {
+    :html       => '<p>a</p><blockquote>b',
+    :default    => 'ab',
+    :restricted => 'ab',
+    :basic      => '<p>a</p><blockquote>b</blockquote>',
+    :relaxed    => '<p>a</p><blockquote>b</blockquote>',
+  },
+
   :malicious => {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="javascript:pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <<foo>script>alert("hello world");</script>',
     :default    => 'Lorem ipsum dolor sitamet &lt;script&gt;alert(&quot;hello world&quot;);',
