@@ -86,18 +86,18 @@ class Sanitize
 
     fragment.search('*') do |node|
       if node.bogusetag? || node.doctype? || node.procins? || node.xmldecl?
-        node.swap('')
+        node.parent.replace_child(node, '')
         next
       end
 
       if node.comment?
-        node.swap('') unless @config[:allow_comments]
+        node.parent.replace_child(node, '') unless @config[:allow_comments]
       elsif node.elem?
         name = node.name.to_s.downcase
 
         # Delete any element that isn't in the whitelist.
         unless @config[:elements].include?(name)
-          node.parent.replace_child(node, node.children)
+          node.parent.replace_child(node, node.children || '')
           next
         end
 
