@@ -15,7 +15,7 @@ or maliciously-formed HTML. When in doubt, Sanitize always errs on the side of
 caution.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
-*Version*::   1.0.4 (2009-01-16)
+*Version*::   1.0.5 (2009-02-05)
 *Copyright*:: Copyright (c) 2009 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
