@@ -52,6 +52,46 @@ strings = {
 }
 
 tricky = {
+  'protocol-based JS injection: simple, no spaces' => {
+    :html       => '<a href="javascript:alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: simple, spaces before' => {
+    :html       => '<a href="javascript    :alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: simple, spaces after' => {
+    :html       => '<a href="javascript:    alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: simple, spaces before and after' => {
+    :html       => '<a href="javascript    :   alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: preceding colon' => {
+    :html       => '<a href=":javascript:alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
   'protocol-based JS injection: UTF-8 encoding' => {
     :html       => '<a href="javascript&#58;">foo</a>',
     :default    => 'foo',
@@ -182,7 +222,7 @@ describe 'Sanitize.clean' do
     input.should.equal('<b>foo</b>')
   end
 
-  should 'return the modified string' do
+  should 'return a new string' do
     input = '<b>foo</b>'
     Sanitize.clean(input).should.equal('foo')
   end
@@ -195,7 +235,7 @@ describe 'Sanitize.clean!' do
     input.should.equal('foo')
   end
 
-  should 'return the new string if it was modified' do
+  should 'return the string if it was modified' do
     input = '<b>foo</b>'
     Sanitize.clean!(input).should.equal('foo')
   end

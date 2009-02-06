@@ -1,6 +1,13 @@
 Sanitize History
 ================================================================================
 
+Version 1.0.5 (2009-02-05)
+  * Fixed a bug introduced in version 1.0.3 that prevented non-whitelisted
+    protocols from being cleaned when relative URLs were allowed. [Reported by
+    Dev Purkayastha]
+  * Fixed "undefined method `parent='" exceptions caused by parser changes in
+    edge Hpricot.
+
 Version 1.0.4 (2009-01-16)
   * Fixed a bug that made it possible to sneak a non-whitelisted element through
     by repeating it several times in a row. All versions of Sanitize prior to

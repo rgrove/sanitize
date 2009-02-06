@@ -40,11 +40,11 @@ require 'sanitize/monkeypatch/hpricot'
 class Sanitize
 
   # Matches an attribute value that could be treated by a browser as a URL
-  # with a protocol prefix, such as "http:" or "javascript:". Any string of one
+  # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
   # or more characters followed by a colon is considered a match, even if the
   # colon is encoded as an entity and even if it's an incomplete entity (which
   # IE6 and Opera will still parse).
-  REGEX_PROTOCOL = /^([^:]+)(?:\:|&#0*58|&#x0*3a)(?:[^0-9a-f]|$)/i
+  REGEX_PROTOCOL = /^([^:]*)(?:\:|&#0*58|&#x0*3a)/i
 
   #--
   # Class Methods
