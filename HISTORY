@@ -1,6 +1,13 @@
 Sanitize History
 ================================================================================
 
+Version ? (?)
+  * Removed htmlentities gem dependency.
+  * Existing well-formed character entity references in the input string are now
+    preserved rather than being decoded and re-encoded.
+  * The ' character is now encoded as &#39; instead of &apos; to prevent
+    problems in IE6.
+
 Version 1.0.5 (2009-02-05)
   * Fixed a bug introduced in version 1.0.3 that prevented non-whitelisted
     protocols from being cleaned when relative URLs were allowed. [Reported by

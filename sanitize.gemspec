@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name     = 'sanitize'
   s.summary  = 'Whitelist-based HTML sanitizer.'
-  s.version  = '1.0.5.1'
+  s.version  = '1.0.5.2'
   s.author   = 'Ryan Grove'
   s.email    = 'ryan@wonko.com'
   s.homepage = 'http://github.com/rgrove/sanitize/'
@@ -10,8 +10,7 @@ Gem::Specification.new do |s|
   s.require_path          = 'lib'
   s.required_ruby_version = '>= 1.8.6'
 
-  s.add_dependency('hpricot',      '~> 0.6')
-  s.add_dependency('htmlentities', '~> 4.0.0')
+  s.add_dependency('hpricot', '~> 0.6')
 
   s.files = [
     'HISTORY',
@@ -21,7 +20,6 @@ Gem::Specification.new do |s|
     'lib/sanitize/config.rb',
     'lib/sanitize/config/basic.rb',
     'lib/sanitize/config/relaxed.rb',
-    'lib/sanitize/config/restricted.rb',
-    'lib/sanitize/monkeypatch/hpricot.rb'
+    'lib/sanitize/config/restricted.rb'
   ]
 end

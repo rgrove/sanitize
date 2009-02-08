@@ -26,18 +26,27 @@ $:.uniq!
 
 require 'rubygems'
 
-gem 'hpricot',      '~> 0.6'
-gem 'htmlentities', '~> 4.0.0'
+gem 'hpricot', '~> 0.6'
 
 require 'hpricot'
-require 'htmlentities'
 require 'sanitize/config'
 require 'sanitize/config/restricted'
 require 'sanitize/config/basic'
 require 'sanitize/config/relaxed'
-require 'sanitize/monkeypatch/hpricot'
 
 class Sanitize
+
+  # Characters that should be replaced with entities in text nodes.
+  ENTITY_MAP = {
+    '<' => '&lt;',
+    '>' => '&gt;',
+    '"' => '&quot;',
+    "'" => '&#39;'
+  }
+
+  # Matches an unencoded ampersand that is not part of a valid character entity
+  # reference.
+  REGEX_AMPERSAND = /&(?!(?:[a-z]+|#[0-9]+|#x[0-9a-f]+);)/i
 
   # Matches an attribute value that could be treated by a browser as a URL
   # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
@@ -45,24 +54,6 @@ class Sanitize
   # colon is encoded as an entity and even if it's an incomplete entity (which
   # IE6 and Opera will still parse).
   REGEX_PROTOCOL = /^([^:]*)(?:\:|&#0*58|&#x0*3a)/i
-
-  #--
-  # Class Methods
-  #++
-
-  # Returns a sanitized copy of _html_, using the settings in _config_ if
-  # specified.
-  def self.clean(html, config = {})
-    sanitize = Sanitize.new(config)
-    sanitize.clean(html)
-  end
-
-  # Performs Sanitize#clean in place, returning _html_, or +nil+ if no changes
-  # were made.
-  def self.clean!(html, config = {})
-    sanitize = Sanitize.new(config)
-    sanitize.clean!(html)
-  end
 
   #--
   # Instance Methods
@@ -134,22 +125,55 @@ class Sanitize
         if @config[:add_attributes].has_key?(name)
           node.raw_attributes.merge!(@config[:add_attributes][name])
         end
+
+        # Escape special chars in attribute values.
+        node.raw_attributes.each do |key, value|
+          node.raw_attributes[key] = Sanitize.encode_html(value)
+        end
       end
     end
 
     # Make one last pass through the fragment and encode all special HTML chars
-    # and non-ASCII chars as entities. This eliminates certain types of
-    # maliciously-malformed nested tags and also compensates for Hpricot's
-    # burning desire to decode all entities.
-    coder = HTMLEntities.new
-
-    fragment.traverse_element do |node|
-      if node.text?
-        node.swap(coder.encode(node.inner_text, :named))
-      end
+    # as entities. This eliminates certain types of maliciously-malformed nested
+    # tags.
+    fragment.search('*') do |node|
+      node.swap(Sanitize.encode_html(node.to_original_html)) if node.text?
     end
 
     result = fragment.to_s
     return result == html ? nil : html[0, html.length] = result
   end
+
+  #--
+  # Class Methods
+  #++
+
+  class << self
+    # Returns a sanitized copy of _html_, using the settings in _config_ if
+    # specified.
+    def clean(html, config = {})
+      sanitize = Sanitize.new(config)
+      sanitize.clean(html)
+    end
+
+    # Performs Sanitize#clean in place, returning _html_, or +nil+ if no changes
+    # were made.
+    def clean!(html, config = {})
+      sanitize = Sanitize.new(config)
+      sanitize.clean!(html)
+    end
+
+    # Encodes special HTML characters (<, >, ", ', and &) in _html_ as entity
+    # references and returns the encoded string.
+    def encode_html(html)
+      str = html.dup
+
+      # Encode special chars.
+      ENTITY_MAP.each {|char, entity| str.gsub!(char, entity) }
+
+      # Convert unencoded ampersands to entity references.
+      str.gsub(REGEX_AMPERSAND, '&amp;')
+    end
+  end
+
 end

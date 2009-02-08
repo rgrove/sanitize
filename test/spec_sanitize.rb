@@ -154,6 +154,14 @@ describe 'Config::DEFAULT' do
     Sanitize.clean("Don&apos;t tas&eacute; me &amp; bro!").should.equal("Don&apos;t tas&eacute; me &amp; bro!")
   end
 
+  should 'preserve valid HTML entities while encoding unencoded ampersands' do
+    Sanitize.clean("cookies & cr&eacute;me").should.equal("cookies &amp; cr&eacute;me")
+  end
+
+  should 'encode apostrophes as &#39;' do
+    Sanitize.clean("IE6 isn't a real browser").should.equal('IE6 isn&#39;t a real browser')
+  end
+
   should 'not choke on several instances of the same element in a row' do
     Sanitize.clean('<img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif">').should.equal('')
   end
@@ -209,6 +217,10 @@ end
 
 describe 'Config::RELAXED' do
   before { @s = Sanitize.new(Sanitize::Config::RELAXED) }
+
+  should 'encode special chars in attribute values' do
+    @s.clean('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>').should.equal('<a href="http://example.com" title="&lt;b&gt;&eacute;xamples&lt;/b&gt; &amp; things">foo</a>')
+  end
 
   strings.each do |name, data|
     should "clean #{name} HTML" do
