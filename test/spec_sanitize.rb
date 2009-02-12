@@ -246,6 +246,12 @@ describe 'Sanitize.clean' do
     input = '<b>foo</b>'
     Sanitize.clean(input).should.equal('foo')
   end
+
+  should 'not modify attributes allowed for the * element in any element' do
+    input = '<div id="bar">foo</div>'
+    Sanitize.clean(input).should.not.equal(input)
+    Sanitize.clean(input, {:elements => ['div'], :attributes => {'div' => ['class'], '*' => ['id']}}).should.equal(input)
+  end
 end
 
 describe 'Sanitize.clean!' do
