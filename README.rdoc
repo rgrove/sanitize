@@ -135,6 +135,16 @@ include the symbol <code>:relative</code> in the protocol array:
     'a' => {'href' => ['http', 'https', :relative]}
   }
 
+
+== Contributors
+
+The following lovely people have contributed to Sanitize in the form of patches
+or ideas that later became code:
+
+* Ryan Grove <ryan@wonko.com>
+* Mutwin Kraus <mutle@blogage.de>
+* Dev Purkayastha <dev.purkayastha@gmail.com>
+
 == License
 
 Copyright (c) 2009 Ryan Grove <ryan@wonko.com>
