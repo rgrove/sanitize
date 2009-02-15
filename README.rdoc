@@ -104,7 +104,7 @@ If you'd like to allow certain attributes on all elements, use the symbol
 
   :attributes => {
     :all => ['class'],
-    'a'  => ['href', 'title'],
+    'a'  => ['href', 'title']
   }
 
 ==== :add_attributes
