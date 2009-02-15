@@ -142,6 +142,7 @@ The following lovely people have contributed to Sanitize in the form of patches
 or ideas that later became code:
 
 * Ryan Grove <ryan@wonko.com>
+* Adam Hooper <adam@adamhooper.com>
 * Mutwin Kraus <mutle@blogage.de>
 * Dev Purkayastha <dev.purkayastha@gmail.com>
 
