@@ -235,6 +235,17 @@ describe 'Config::RELAXED' do
   end
 end
 
+describe 'Custom configs' do
+  should 'allow attributes on all elements if whitelisted under :all' do
+    input = '<p class="foo">bar</p>'
+
+    Sanitize.clean(input).should.equal('bar')
+    Sanitize.clean(input, {:elements => ['p'], :attributes => {:all => ['class']}}).should.equal(input)
+    Sanitize.clean(input, {:elements => ['p'], :attributes => {'div' => ['class']}}).should.equal('<p>bar</p>')
+    Sanitize.clean(input, {:elements => ['p'], :attributes => {'p' => ['title'], :all => ['class']}}).should.equal(input)
+  end
+end
+
 describe 'Sanitize.clean' do
   should 'not modify the input string' do
     input = '<b>foo</b>'
@@ -245,12 +256,6 @@ describe 'Sanitize.clean' do
   should 'return a new string' do
     input = '<b>foo</b>'
     Sanitize.clean(input).should.equal('foo')
-  end
-
-  should 'not modify attributes allowed for the * element in any element' do
-    input = '<div id="bar">foo</div>'
-    Sanitize.clean(input).should.not.equal(input)
-    Sanitize.clean(input, {:elements => ['div'], :attributes => {'div' => ['class'], '*' => ['id']}}).should.equal(input)
   end
 end
 

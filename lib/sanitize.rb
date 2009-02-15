@@ -94,10 +94,17 @@ class Sanitize
 
         node.raw_attributes ||= {}
 
-        if @config[:attributes].has_key?(name) || @config[:attributes].has_key?('*')
+        attr_whitelist = ((@config[:attributes][name] || []) +
+            (@config[:attributes][:all] || [])).uniq
+
+        if attr_whitelist.empty?
+          # Delete all attributes from elements with no whitelisted
+          # attributes.
+          node.raw_attributes = {}
+        else
           # Delete any attribute that isn't in the whitelist for this element.
           node.raw_attributes.delete_if do |key, value|
-            !(@config[:attributes]['*'] ? @config[:attributes][name] + @config[:attributes]['*'] : @config[:attributes][name]).include?(key.to_s.downcase)
+            !attr_whitelist.include?(key.to_s.downcase)
           end
 
           # Delete remaining attributes that use unacceptable protocols.
@@ -115,10 +122,6 @@ class Sanitize
               end
             end
           end
-        else
-          # Delete all attributes from elements with no whitelisted
-          # attributes.
-          node.raw_attributes = {}
         end
 
         # Add required attributes.

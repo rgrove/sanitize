@@ -15,7 +15,7 @@ or maliciously-formed HTML. When in doubt, Sanitize always errs on the side of
 caution.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
-*Version*::   1.0.5 (2009-02-05)
+*Version*::   ? (?)
 *Copyright*:: Copyright (c) 2009 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
@@ -24,7 +24,6 @@ caution.
 
 * RubyGems
 * Hpricot 0.6+
-* HTMLEntities 4.0.0+
 
 == Usage
 
@@ -100,6 +99,14 @@ attributes in lowercase.
     'img'        => ['alt', 'src', 'title']
   }
 
+If you'd like to allow certain attributes on all elements, use the symbol
+<code>:all</code> instead of an element name.
+
+  :attributes => {
+    :all => ['class'],
+    'a'  => ['href', 'title'],
+  }
+
 ==== :add_attributes
 
 Attributes to add to specific elements. If the attribute already exists, it will
@@ -122,7 +129,7 @@ protocol at all), it will be removed.
   }
 
 If you'd like to allow the use of relative URLs which don't have a protocol,
-include the special value <code>:relative</code> in the protocol array:
+include the symbol <code>:relative</code> in the protocol array:
 
   :protocols => {
     'a' => {'href' => ['http', 'https', :relative]}

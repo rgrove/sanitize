@@ -7,6 +7,9 @@ Version ? (?)
     preserved rather than being decoded and re-encoded.
   * The ' character is now encoded as &#39; instead of &apos; to prevent
     problems in IE6.
+  * You can now specify the symbol :all in place of an element name in the
+    attributes config hash to allow certain attributes on all elements. [Thanks
+    to Mutwin Kraus]
 
 Version 1.0.5 (2009-02-05)
   * Fixed a bug introduced in version 1.0.3 that prevented non-whitelisted
