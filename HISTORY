@@ -1,7 +1,7 @@
 Sanitize History
 ================================================================================
 
-Version ? (?)
+Version 1.0.6 (2009-02-23)
   * Removed htmlentities gem dependency.
   * Existing well-formed character entity references in the input string are now
     preserved rather than being decoded and re-encoded.
