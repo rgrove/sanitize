@@ -1,6 +1,11 @@
 Sanitize History
 ================================================================================
 
+Version 1.0.7 (?)
+  * Fixed a bug that caused named character entities containing digits (like
+    &sup2;) to be escaped when they shouldn't have been. [Reported by Sebastian
+    Steinmetz]
+
 Version 1.0.6 (2009-02-23)
   * Removed htmlentities gem dependency.
   * Existing well-formed character entity references in the input string are now

@@ -155,7 +155,7 @@ describe 'Config::DEFAULT' do
   end
 
   should 'preserve valid HTML entities while encoding unencoded ampersands' do
-    Sanitize.clean("cookies & cr&eacute;me").should.equal("cookies &amp; cr&eacute;me")
+    Sanitize.clean("cookies&sup2; & &frac14; cr&eacute;me").should.equal("cookies&sup2; &amp; &frac14; cr&eacute;me")
   end
 
   should 'encode apostrophes as &#39;' do

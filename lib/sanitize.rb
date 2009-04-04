@@ -46,7 +46,7 @@ class Sanitize
 
   # Matches an unencoded ampersand that is not part of a valid character entity
   # reference.
-  REGEX_AMPERSAND = /&(?!(?:[a-z]+|#[0-9]+|#x[0-9a-f]+);)/i
+  REGEX_AMPERSAND = /&(?!(?:[a-z]+[0-9]{0,2}|#[0-9]+|#x[0-9a-f]+);)/i
 
   # Matches an attribute value that could be treated by a browser as a URL
   # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
