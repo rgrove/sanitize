@@ -2,6 +2,7 @@ Sanitize History
 ================================================================================
 
 Version 1.0.7 (?)
+  * Requires Hpricot 0.8.1+, which is finally compatible with Ruby 1.9.1.
   * Fixed a bug that caused named character entities containing digits (like
     &sup2;) to be escaped when they shouldn't have been. [Reported by Sebastian
     Steinmetz]
