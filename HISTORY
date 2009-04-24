@@ -1,6 +1,12 @@
 Sanitize History
 ================================================================================
 
+Version 1.0.8 (2009-04-23)
+  * Added a workaround for an Hpricot bug that prevents attribute names from
+    being downcased in recent versions of Hpricot. This was exploitable to
+    prevent non-whitelisted protocols from being cleaned. [Reported by Ben
+    Wanicur]
+
 Version 1.0.7 (2009-04-11)
   * Requires Hpricot 0.8.1+, which is finally compatible with Ruby 1.9.1.
   * Fixed a bug that caused named character entities containing digits (like

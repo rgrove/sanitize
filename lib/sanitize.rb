@@ -112,6 +112,7 @@ class Sanitize
             protocol = @config[:protocols][name]
 
             node.raw_attributes.delete_if do |key, value|
+              key = key.to_s.downcase
               next false unless protocol.has_key?(key)
               next true if value.nil?
 

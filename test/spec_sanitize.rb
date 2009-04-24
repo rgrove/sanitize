@@ -202,6 +202,10 @@ describe 'Config::BASIC' do
     @s.clean('foo <a href>foo</a> bar').should.equal('foo <a rel="nofollow">foo</a> bar')
   end
 
+  should 'downcase attribute names' do
+    @s.clean('<a HREF="javascript:alert(\'foo\')">bar</a>').should.equal('<a rel="nofollow">bar</a>')
+  end
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
       @s.clean(data[:html]).should.equal(data[:basic])

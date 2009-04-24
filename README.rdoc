@@ -145,6 +145,7 @@ or ideas that later became code:
 * Adam Hooper <adam@adamhooper.com>
 * Mutwin Kraus <mutle@blogage.de>
 * Dev Purkayastha <dev.purkayastha@gmail.com>
+* Ben Wanicur <bwanicur@verticalresponse.com>
 
 == License
 
