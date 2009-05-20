@@ -1,6 +1,10 @@
 Sanitize History
 ================================================================================
 
+Version 1.0.8.1 (git)
+  * Changed protocol regex to ensure Sanitize doesn't kill URLs with colons in 
+    path segments. [Peter Cooper]
+
 Version 1.0.8 (2009-04-23)
   * Added a workaround for an Hpricot bug that prevents attribute names from
     being downcased in recent versions of Hpricot. This was exploitable to
