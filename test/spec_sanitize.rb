@@ -248,6 +248,11 @@ describe 'Custom configs' do
     Sanitize.clean(input, {:elements => ['p'], :attributes => {'div' => ['class']}}).should.equal('<p>bar</p>')
     Sanitize.clean(input, {:elements => ['p'], :attributes => {'p' => ['title'], :all => ['class']}}).should.equal(input)
   end
+  
+  should 'allow relative URLs containing colons where the colon is not in the first path segment' do
+    input = '<a href="/wiki/Special:Random">Random Page</a>'
+    Sanitize.clean(input, { :elements => ['a'], :attributes => {'a' => ['href']}, :protocols => { 'a' => { 'href' => [:relative] }} }).should.equal(input)
+  end
 end
 
 describe 'Sanitize.clean' do
