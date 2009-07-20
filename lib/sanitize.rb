@@ -26,7 +26,7 @@ $:.uniq!
 
 require 'rubygems'
 
-gem 'adamh-hpricot', '~> 0.6'
+gem 'why-hpricot', '~> 0.7'
 gem 'htmlentities',  '~> 4.0.0'
 
 require 'hpricot'
