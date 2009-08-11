@@ -23,7 +23,7 @@ caution.
 == Requires
 
 * RubyGems
-* Hpricot 0.6+
+* Hpricot
 
 == Usage
 
