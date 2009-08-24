@@ -47,7 +47,7 @@ strings = {
     :default    => 'ab',
     :restricted => 'ab',
     :basic      => '<p>a</p><blockquote>b</blockquote>',
-    :relaxed    => '<p>a</p><blockquote>b</blockquote>',
+    :relaxed    => '<p>a</p><blockquote>b</blockquote>'
   },
 
   :malicious => {
@@ -68,6 +68,46 @@ strings = {
 }
 
 tricky = {
+  'protocol-based JS injection: simple, no spaces' => {
+    :html       => '<a href="javascript:alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: simple, spaces before' => {
+    :html       => '<a href="javascript    :alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: simple, spaces after' => {
+    :html       => '<a href="javascript:    alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: simple, spaces before and after' => {
+    :html       => '<a href="javascript    :   alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: preceding colon' => {
+    :html       => '<a href=":javascript:alert(\'XSS\');">foo</a>',
+    :default    => 'foo',
+    :restricted => 'foo',
+    :basic      => '<a rel="nofollow">foo</a>',
+    :relaxed    => '<a>foo</a>'
+  },
+
   'protocol-based JS injection: UTF-8 encoding' => {
     :html       => '<a href="javascript&#58;">foo</a>',
     :default    => 'foo',
@@ -122,6 +162,14 @@ describe 'Config::DEFAULT' do
     Sanitize.clean("Don&apos;t tas&eacute; me &amp; bro!").should.equal("Don&apos;t tas&eacute; me &amp; bro!")
   end
 
+  should 'preserve valid HTML entities while encoding unencoded ampersands' do
+    Sanitize.clean("cookies&sup2; & &frac14; cr&eacute;me").should.equal("cookies&sup2; &amp; &frac14; cr&eacute;me")
+  end
+
+  should 'encode apostrophes as &#39;' do
+    Sanitize.clean("IE6 isn't a real browser").should.equal('IE6 isn&#39;t a real browser')
+  end
+
   should 'not choke on several instances of the same element in a row' do
     Sanitize.clean('<img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif">').should.equal('')
   end
@@ -162,6 +210,10 @@ describe 'Config::BASIC' do
     @s.clean('foo <a href>foo</a> bar').should.equal('foo <a rel="nofollow">foo</a> bar')
   end
 
+  should 'downcase attribute names' do
+    @s.clean('<a HREF="javascript:alert(\'foo\')">bar</a>').should.equal('<a rel="nofollow">bar</a>')
+  end
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
       @s.clean(data[:html]).should.equal(data[:basic])
@@ -178,6 +230,10 @@ end
 describe 'Config::RELAXED' do
   before { @s = Sanitize.new(Sanitize::Config::RELAXED) }
 
+  should 'encode special chars in attribute values' do
+    @s.clean('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>').should.equal('<a href="http://example.com" title="&lt;b&gt;&eacute;xamples&lt;/b&gt; &amp; things">foo</a>')
+  end
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
       @s.clean(data[:html]).should.equal(data[:relaxed])
@@ -191,6 +247,22 @@ describe 'Config::RELAXED' do
   end
 end
 
+describe 'Custom configs' do
+  should 'allow attributes on all elements if whitelisted under :all' do
+    input = '<p class="foo">bar</p>'
+
+    Sanitize.clean(input).should.equal('bar')
+    Sanitize.clean(input, {:elements => ['p'], :attributes => {:all => ['class']}}).should.equal(input)
+    Sanitize.clean(input, {:elements => ['p'], :attributes => {'div' => ['class']}}).should.equal('<p>bar</p>')
+    Sanitize.clean(input, {:elements => ['p'], :attributes => {'p' => ['title'], :all => ['class']}}).should.equal(input)
+  end
+  
+  should 'allow relative URLs containing colons where the colon is not in the first path segment' do
+    input = '<a href="/wiki/Special:Random">Random Page</a>'
+    Sanitize.clean(input, { :elements => ['a'], :attributes => {'a' => ['href']}, :protocols => { 'a' => { 'href' => [:relative] }} }).should.equal(input)
+  end
+end
+
 describe 'Sanitize.clean' do
   should 'not modify the input string' do
     input = '<b>foo</b>'
@@ -198,7 +270,7 @@ describe 'Sanitize.clean' do
     input.should.equal('<b>foo</b>')
   end
 
-  should 'return the modified string' do
+  should 'return a new string' do
     input = '<b>foo</b>'
     Sanitize.clean(input).should.equal('foo')
   end
@@ -211,7 +283,7 @@ describe 'Sanitize.clean!' do
     input.should.equal('foo')
   end
 
-  should 'return the new string if it was modified' do
+  should 'return the string if it was modified' do
     input = '<b>foo</b>'
     Sanitize.clean!(input).should.equal('foo')
   end

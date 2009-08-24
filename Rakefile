@@ -25,6 +25,7 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 
 gemspec = nil
+
 File.open(File.join(File.dirname(__FILE__), 'sanitize.gemspec')) do |f|
   eval("gemspec = #{f.read}")
 end
