@@ -26,9 +26,9 @@ $:.uniq!
 
 require 'rubygems'
 
-gem 'hpricot', '~> 0.8.1'
+gem 'nokogiri', '~> 1.3.3'
 
-require 'hpricot'
+require 'nokogiri'
 require 'sanitize/config'
 require 'sanitize/config/restricted'
 require 'sanitize/config/basic'
@@ -73,26 +73,20 @@ class Sanitize
   # Performs clean in place, returning _html_, or +nil+ if no changes were
   # made.
   def clean!(html)
-    fragment = Hpricot(html)
+    fragment = Nokogiri::HTML::DocumentFragment.parse(html)
 
-    fragment.search('*') do |node|
-      if node.bogusetag? || node.doctype? || node.procins? || node.xmldecl?
-        node.parent.replace_child(node, '')
-        next
-      end
-
+    fragment.traverse do |node|
       if node.comment?
-        node.parent.replace_child(node, '') unless @config[:allow_comments]
-      elsif node.elem?
+        node.unlink unless @config[:allow_comments]
+      elsif node.element?
         name = node.name.to_s.downcase
 
         # Delete any element that isn't in the whitelist.
         unless @config[:elements].include?(name)
-          node.parent.replace_child(node, node.children || '')
+          node.children.each { |n| node.add_previous_sibling(n) }
+          node.unlink
           next
         end
-
-        node.raw_attributes ||= {}
 
         attr_whitelist = ((@config[:attributes][name] || []) +
             (@config[:attributes][:all] || [])).uniq
@@ -100,51 +94,44 @@ class Sanitize
         if attr_whitelist.empty?
           # Delete all attributes from elements with no whitelisted
           # attributes.
-          node.raw_attributes = {}
+          node.attribute_nodes.each { |attr| attr.remove }
         else
           # Delete any attribute that isn't in the whitelist for this element.
-          node.raw_attributes.delete_if do |key, value|
-            !attr_whitelist.include?(key.to_s.downcase)
+          node.attribute_nodes.each do |attr|
+            attr.unlink unless attr_whitelist.include?(attr.name.downcase)
           end
 
           # Delete remaining attributes that use unacceptable protocols.
           if @config[:protocols].has_key?(name)
             protocol = @config[:protocols][name]
 
-            node.raw_attributes.delete_if do |key, value|
-              key = key.to_s.downcase
-              next false unless protocol.has_key?(key)
-              next true if value.nil?
+            node.attribute_nodes.each do |attr|
+              attr_name = attr.name.downcase
+              next false unless protocol.has_key?(attr_name)
 
-              if value.to_s.downcase =~ REGEX_PROTOCOL
-                !protocol[key].include?($1.downcase)
+              del = if attr.value.to_s.downcase =~ REGEX_PROTOCOL
+                !protocol[attr_name].include?($1.downcase)
               else
-                !protocol[key].include?(:relative)
+                !protocol[attr_name].include?(:relative)
               end
+
+              attr.unlink if del
             end
           end
         end
 
         # Add required attributes.
         if @config[:add_attributes].has_key?(name)
-          node.raw_attributes.merge!(@config[:add_attributes][name])
+          @config[:add_attributes][name].each do |key, val|
+            node[key] = val
+          end
         end
-
-        # Escape special chars in attribute values.
-        node.raw_attributes.each do |key, value|
-          node.raw_attributes[key] = Sanitize.encode_html(value)
-        end
+      elsif node.cdata?
+        node.replace(Nokogiri::XML::Text.new(node.text, node.document))
       end
     end
 
-    # Make one last pass through the fragment and encode all special HTML chars
-    # as entities. This eliminates certain types of maliciously-malformed nested
-    # tags.
-    fragment.search('*') do |node|
-      node.swap(Sanitize.encode_html(node.to_original_html)) if node.text?
-    end
-
-    result = fragment.to_s
+    result = fragment.to_xhtml(:encoding => 'UTF-8', :indent => 0).gsub(/>\n/, '>')
     return result == html ? nil : html[0, html.length] = result
   end
 

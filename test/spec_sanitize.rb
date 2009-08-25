@@ -28,18 +28,18 @@ require File.join(File.dirname(__FILE__), '../lib/sanitize')
 strings = {
   :basic => {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>',
-    :default    => 'Lorem ipsum dolor sitamet alert(&quot;hello world&quot;);',
-    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet alert(&quot;hello world&quot;);',
-    :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert(&quot;hello world&quot;);',
-    :relaxed    => '<b>Lorem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert(&quot;hello world&quot;);'
+    :default    => 'Lorem ipsum dolor sitamet alert("hello world");',
+    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet alert("hello world");',
+    :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert("hello world");',
+    :relaxed    => '<b>Lorem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert("hello world");'
   },
 
   :malformed => {
     :html       => 'Lo<!-- comment -->rem</b> <a href=pants title="foo>ipsum <a href="http://foo.com/"><strong>dolor</a></strong> sit<br/>amet <script>alert("hello world");',
-    :default    => 'Lorem &lt;a href=pants title=&quot;foo&gt;ipsum dolor sitamet alert(&quot;hello world&quot;);',
-    :restricted => 'Lorem &lt;a href=pants title=&quot;foo&gt;ipsum <strong>dolor</strong> sitamet alert(&quot;hello world&quot;);',
-    :basic      => 'Lorem &lt;a href=pants title=&quot;foo&gt;ipsum <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert(&quot;hello world&quot;);',
-    :relaxed    => 'Lorem &lt;a href=pants title=&quot;foo&gt;ipsum <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert(&quot;hello world&quot;);'
+    :default    => 'Lorem dolor sitamet alert("hello world");',
+    :restricted => 'Lorem <strong>dolor</strong> sitamet alert("hello world");',
+    :basic      => 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert("hello world");',
+    :relaxed    => 'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br />amet alert("hello world");'
   },
 
   :unclosed => {
@@ -52,10 +52,10 @@ strings = {
 
   :malicious => {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="javascript:pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <<foo>script>alert("hello world");</script>',
-    :default    => 'Lorem ipsum dolor sitamet &lt;script&gt;alert(&quot;hello world&quot;);',
-    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet &lt;script&gt;alert(&quot;hello world&quot;);',
-    :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet &lt;script&gt;alert(&quot;hello world&quot;);',
-    :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet &lt;script&gt;alert(&quot;hello world&quot;);'
+    :default    => 'Lorem ipsum dolor sitamet script&gt;alert("hello world");',
+    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet script&gt;alert("hello world");',
+    :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet script&gt;alert("hello world");',
+    :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet script&gt;alert("hello world");'
   },
 
   :raw_comment => {
@@ -158,16 +158,16 @@ tricky = {
 }
 
 describe 'Config::DEFAULT' do
-  should 'preserve valid HTML entities' do
-    Sanitize.clean("Don&apos;t tas&eacute; me &amp; bro!").should.equal("Don&apos;t tas&eacute; me &amp; bro!")
+  should 'translate valid HTML entities' do
+    Sanitize.clean("Don&apos;t tas&eacute; me &amp; bro!").should.equal("Don't tasé me &amp; bro!")
   end
 
-  should 'preserve valid HTML entities while encoding unencoded ampersands' do
-    Sanitize.clean("cookies&sup2; & &frac14; cr&eacute;me").should.equal("cookies&sup2; &amp; &frac14; cr&eacute;me")
+  should 'translate valid HTML entities while encoding unencoded ampersands' do
+    Sanitize.clean("cookies&sup2; & &frac14; cr&eacute;me").should.equal("cookies² &amp; ¼ créme")
   end
 
-  should 'encode apostrophes as &#39;' do
-    Sanitize.clean("IE6 isn't a real browser").should.equal('IE6 isn&#39;t a real browser')
+  should 'never output &apos;' do
+    Sanitize.clean("<a href='&apos;' class=\"' &#39;\">IE6 isn't a real browser</a>").should.not.match(/&apos;/)
   end
 
   should 'not choke on several instances of the same element in a row' do
@@ -207,7 +207,7 @@ describe 'Config::BASIC' do
   before { @s = Sanitize.new(Sanitize::Config::BASIC) }
 
   should 'not choke on valueless attributes' do
-    @s.clean('foo <a href>foo</a> bar').should.equal('foo <a rel="nofollow">foo</a> bar')
+    @s.clean('foo <a href>foo</a> bar').should.equal('foo <a href="" rel="nofollow">foo</a> bar')
   end
 
   should 'downcase attribute names' do
@@ -231,7 +231,7 @@ describe 'Config::RELAXED' do
   before { @s = Sanitize.new(Sanitize::Config::RELAXED) }
 
   should 'encode special chars in attribute values' do
-    @s.clean('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>').should.equal('<a href="http://example.com" title="&lt;b&gt;&eacute;xamples&lt;/b&gt; &amp; things">foo</a>')
+    @s.clean('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>').should.equal('<a href="http://example.com" title="&lt;b&gt;&#xE9;xamples&lt;/b&gt; &amp; things">foo</a>')
   end
 
   strings.each do |name, data|

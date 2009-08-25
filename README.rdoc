@@ -9,7 +9,7 @@ elements, certain attributes within those elements, and even certain URL
 protocols within attributes that contain URLs. Any HTML elements or attributes
 that you don't explicitly allow will be removed.
 
-Because it's based on Hpricot, a full-fledged HTML parser, rather than a bunch
+Because it's based on nokogiri, a full-fledged HTML parser, rather than a bunch
 of fragile regular expressions, Sanitize has no trouble dealing with malformed
 or maliciously-formed HTML. When in doubt, Sanitize always errs on the side of
 caution.
@@ -23,7 +23,7 @@ caution.
 == Requires
 
 * RubyGems
-* Hpricot
+* nokogiri
 
 == Usage
 
