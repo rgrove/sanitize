@@ -9,13 +9,13 @@ elements, certain attributes within those elements, and even certain URL
 protocols within attributes that contain URLs. Any HTML elements or attributes
 that you don't explicitly allow will be removed.
 
-Because it's based on nokogiri, a full-fledged HTML parser, rather than a bunch
+Because it's based on Nokogiri, a full-fledged HTML parser, rather than a bunch
 of fragile regular expressions, Sanitize has no trouble dealing with malformed
 or maliciously-formed HTML. When in doubt, Sanitize always errs on the side of
 caution.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
-*Version*::   1.0.8 (2009-04-23)
+*Version*::   1.0.8.2 (git)
 *Copyright*:: Copyright (c) 2009 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
@@ -23,7 +23,8 @@ caution.
 == Requires
 
 * RubyGems
-* nokogiri
+* Nokogiri
+* libxml2 >= 2.7.2
 
 == Usage
 

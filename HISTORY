@@ -1,10 +1,8 @@
 Sanitize History
 ================================================================================
 
-Version 1.1.0
+Version 1.0.8.2 (git)
   * Migrated from Hpricot to Nokogiri. Requires libxml2 >= 2.7.2 [Adam Hooper]
-
-Version 1.0.8.1 (git)
   * Changed protocol regex to ensure Sanitize doesn't kill URLs with colons in 
     path segments. [Peter Cooper]
 
