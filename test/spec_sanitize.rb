@@ -20,10 +20,8 @@
 # SOFTWARE.
 #++
 
-require 'rubygems'
 require 'bacon'
-
-require File.join(File.dirname(__FILE__), '../lib/sanitize')
+require 'sanitize'
 
 strings = {
   :basic => {

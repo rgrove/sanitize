@@ -20,14 +20,6 @@
 # SOFTWARE.
 #++
 
-# Append this file's directory to the include path if it's not there already.
-$:.unshift(File.dirname(File.expand_path(__FILE__)))
-$:.uniq!
-
-require 'rubygems'
-
-gem 'nokogiri', '~> 1.3.3'
-
 require 'nokogiri'
 require 'sanitize/config'
 require 'sanitize/config/restricted'
