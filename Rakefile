@@ -21,13 +21,37 @@
 #++
 
 require 'rubygems'
+require 'rake/clean'
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
 
-gemspec = nil
+require 'lib/sanitize/version'
 
-File.open(File.join(File.dirname(__FILE__), 'sanitize.gemspec')) do |f|
-  eval("gemspec = #{f.read}")
+gemspec = Gem::Specification.new do |s|
+  s.name     = 'sanitize'
+  s.summary  = 'Whitelist-based HTML sanitizer.'
+  s.version  = Sanitize::VERSION
+  s.author   = 'Ryan Grove'
+  s.email    = 'ryan@wonko.com'
+  s.homepage = 'http://github.com/rgrove/sanitize/'
+  s.platform = Gem::Platform::RUBY
+
+  s.require_path          = 'lib'
+  s.required_ruby_version = '>= 1.8.6'
+
+  # Runtime dependencies.
+  s.add_dependency('nokogiri', '~> 1.3.3')
+
+  # Development dependencies.
+  s.add_development_dependency('bacon', '~> 1.1.0')
+  s.add_development_dependency('rake',  '~> 0.8.0')
+
+  s.files = FileList[
+    'HISTORY',
+    'LICENSE',
+    'README.rdoc',
+    'lib/**/*.rb'
+  ]
 end
 
 Rake::GemPackageTask.new(gemspec) do |p|
@@ -46,6 +70,18 @@ Rake::RDocTask.new do |rd|
 end
 
 task :default => [:test]
+
+desc 'generate an updated gemspec'
+task :gemspec do
+  filename = File.join(File.dirname(__FILE__), "#{gemspec.name}.gemspec")
+  File.open(filename, 'w') {|f| f << gemspec.to_ruby }
+  puts "Created gemspec: #{filename}"
+end
+
+desc 'install Sanitize'
+task :install => :gem do
+  sh "gem install pkg/sanitize-#{Sanitize::VERSION}.gem"
+end
 
 task :test do
   sh 'bacon -a'

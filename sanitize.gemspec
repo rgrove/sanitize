@@ -1,25 +1,36 @@
+# -*- encoding: utf-8 -*-
+
 Gem::Specification.new do |s|
-  s.name     = 'sanitize'
-  s.summary  = 'Whitelist-based HTML sanitizer.'
-  s.version  = '1.0.8.3'
-  s.author   = 'Ryan Grove'
-  s.email    = 'ryan@wonko.com'
-  s.homepage = 'http://github.com/rgrove/sanitize/'
-  s.platform = Gem::Platform::RUBY
+  s.name = %q{sanitize}
+  s.version = "1.0.8.3"
 
-  s.require_path          = 'lib'
-  s.required_ruby_version = '>= 1.8.6'
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.authors = ["Ryan Grove"]
+  s.date = %q{2009-09-04}
+  s.email = %q{ryan@wonko.com}
+  s.files = ["HISTORY", "LICENSE", "README.rdoc", "lib/**/*.rb"]
+  s.homepage = %q{http://github.com/rgrove/sanitize/}
+  s.require_paths = ["lib"]
+  s.required_ruby_version = Gem::Requirement.new(">= 1.8.6")
+  s.rubygems_version = %q{1.3.2}
+  s.summary = %q{Whitelist-based HTML sanitizer.}
 
-  s.add_dependency('nokogiri', '~> 1.3.3')
+  if s.respond_to? :specification_version then
+    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
+    s.specification_version = 3
 
-  s.files = [
-    'HISTORY',
-    'LICENSE',
-    'README.rdoc',
-    'lib/sanitize.rb',
-    'lib/sanitize/config.rb',
-    'lib/sanitize/config/basic.rb',
-    'lib/sanitize/config/relaxed.rb',
-    'lib/sanitize/config/restricted.rb'
-  ]
+    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<nokogiri>, ["~> 1.3.3"])
+      s.add_development_dependency(%q<bacon>, ["~> 1.1.0"])
+      s.add_development_dependency(%q<rake>, ["~> 0.8.0"])
+    else
+      s.add_dependency(%q<nokogiri>, ["~> 1.3.3"])
+      s.add_dependency(%q<bacon>, ["~> 1.1.0"])
+      s.add_dependency(%q<rake>, ["~> 0.8.0"])
+    end
+  else
+    s.add_dependency(%q<nokogiri>, ["~> 1.3.3"])
+    s.add_dependency(%q<bacon>, ["~> 1.1.0"])
+    s.add_dependency(%q<rake>, ["~> 0.8.0"])
+  end
 end

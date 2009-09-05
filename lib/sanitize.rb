@@ -21,6 +21,7 @@
 #++
 
 require 'nokogiri'
+require 'sanitize/version'
 require 'sanitize/config'
 require 'sanitize/config/restricted'
 require 'sanitize/config/basic'
