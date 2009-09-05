@@ -51,7 +51,7 @@ gemspec = Gem::Specification.new do |s|
     'LICENSE',
     'README.rdoc',
     'lib/**/*.rb'
-  ]
+  ].to_a
 end
 
 Rake::GemPackageTask.new(gemspec) do |p|

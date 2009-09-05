@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = ["Ryan Grove"]
   s.date = %q{2009-09-04}
   s.email = %q{ryan@wonko.com}
-  s.files = ["HISTORY", "LICENSE", "README.rdoc", "lib/**/*.rb"]
+  s.files = ["HISTORY", "LICENSE", "README.rdoc", "lib/sanitize/config/basic.rb", "lib/sanitize/config/relaxed.rb", "lib/sanitize/config/restricted.rb", "lib/sanitize/config.rb", "lib/sanitize/version.rb", "lib/sanitize.rb"]
   s.homepage = %q{http://github.com/rgrove/sanitize/}
   s.require_paths = ["lib"]
   s.required_ruby_version = Gem::Requirement.new(">= 1.8.6")
