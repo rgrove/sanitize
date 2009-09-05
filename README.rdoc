@@ -15,16 +15,26 @@ or maliciously-formed HTML. When in doubt, Sanitize always errs on the side of
 caution.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
-*Version*::   1.0.8.3 (git)
+*Version*::   git
 *Copyright*:: Copyright (c) 2009 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
 
 == Requires
 
-* RubyGems
 * Nokogiri
 * libxml2 >= 2.7.2
+
+== Installation
+
+Latest stable release:
+
+  gem install sanitize
+
+Latest development version:
+
+  gem sources -a http://gems.github.com
+  gem install rgrove-sanitize
 
 == Usage
 
