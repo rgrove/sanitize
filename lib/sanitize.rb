@@ -1,3 +1,4 @@
+# encoding: utf-8
 #--
 # Copyright (c) 2009 Ryan Grove <ryan@wonko.com>
 #
@@ -124,7 +125,16 @@ class Sanitize
       end
     end
 
-    result = fragment.to_xhtml(:encoding => 'UTF-8', :indent => 0).gsub(/>\n/, '>')
+    if RUBY_VERSION >= '1.9'
+      # Nokogiri 1.3.3 (and possibly earlier versions) always returns a US-ASCII
+      # string no matter what we ask for. This will be fixed in 1.4.0, but for
+      # now we have to hack around it to prevent errors.
+      result = fragment.to_xhtml(:encoding => 'utf-8', :indent => 0).force_encoding('utf-8')
+      result.gsub!(">\n", '>')
+    else
+      result = fragment.to_xhtml(:encoding => 'utf-8', :indent => 0).gsub(">\n", '>')
+    end
+
     return result == html ? nil : html[0, html.length] = result
   end
 
