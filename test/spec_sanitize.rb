@@ -265,6 +265,11 @@ describe 'Custom configs' do
     input = '<a href="/wiki/Special:Random">Random Page</a>'
     Sanitize.clean(input, { :elements => ['a'], :attributes => {'a' => ['href']}, :protocols => { 'a' => { 'href' => [:relative] }} }).should.equal(input)
   end
+
+  should 'output HTML' do
+    input = 'foo<br/>bar<br>baz'
+    Sanitize.clean(input, :elements => ['br'], :output => :html).should.equal('foo<br>bar<br>baz')
+  end
 end
 
 describe 'Sanitize.clean' do

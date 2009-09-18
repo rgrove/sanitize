@@ -28,17 +28,21 @@ class Sanitize
       # comments.
       :allow_comments => false,
 
-      # HTML elements to allow. By default, no elements are allowed (which means
-      # that all HTML will be stripped).
-      :elements => [],
+      # HTML attributes to add to specific elements. By default, no attributes
+      # are added.
+      :add_attributes => {},
 
       # HTML attributes to allow in specific elements. By default, no attributes
       # are allowed.
       :attributes => {},
 
-      # HTML attributes to add to specific elements. By default, no attributes
-      # are added.
-      :add_attributes => {},
+      # HTML elements to allow. By default, no elements are allowed (which means
+      # that all HTML will be stripped).
+      :elements => [],
+
+      # Output format. Supported formats are :html and :xhtml (which is the
+      # default).
+      :output => :xhtml,
 
       # URL handling protocols to allow in specific attributes. By default, no
       # protocols are allowed. Use :relative in place of a protocol if you want

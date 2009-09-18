@@ -113,14 +113,22 @@ class Sanitize
       end
     end
 
+    if @config[:output] == :xhtml
+      output_method = fragment.method(:to_xhtml)
+    elsif @config[:output] == :html
+      output_method = fragment.method(:to_html)
+    else
+      raise Error, "unsupported output format: #{@config[:output]}"
+    end
+
     if RUBY_VERSION >= '1.9'
       # Nokogiri 1.3.3 (and possibly earlier versions) always returns a US-ASCII
       # string no matter what we ask for. This will be fixed in 1.4.0, but for
       # now we have to hack around it to prevent errors.
-      result = fragment.to_xhtml(:encoding => 'utf-8', :indent => 0).force_encoding('utf-8')
+      result = output_method.call(:encoding => 'utf-8', :indent => 0).force_encoding('utf-8')
       result.gsub!(">\n", '>')
     else
-      result = fragment.to_xhtml(:encoding => 'utf-8', :indent => 0).gsub(">\n", '>')
+      result = output_method.call(:encoding => 'utf-8', :indent => 0).gsub(">\n", '>')
     end
 
     return result == html ? nil : html[0, html.length] = result
