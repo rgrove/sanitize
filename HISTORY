@@ -1,7 +1,7 @@
 Sanitize History
 ================================================================================
 
-Version 1.0.8.2 (git)
+Version 1.0.8.4 (git)
   * Migrated from Hpricot to Nokogiri. Requires libxml2 >= 2.7.2 [Adam Hooper]
   * Added an :output config setting to allow the output format to be specified.
     Supported formats are :xhtml (the default) and :html (which outputs HTML4).
