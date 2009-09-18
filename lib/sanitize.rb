@@ -30,18 +30,6 @@ require 'sanitize/config/relaxed'
 
 class Sanitize
 
-  # Characters that should be replaced with entities in text nodes.
-  ENTITY_MAP = {
-    '<' => '&lt;',
-    '>' => '&gt;',
-    '"' => '&quot;',
-    "'" => '&#39;'
-  }
-
-  # Matches an unencoded ampersand that is not part of a valid character entity
-  # reference.
-  REGEX_AMPERSAND = /&(?!(?:[a-z]+[0-9]{0,2}|#[0-9]+|#x[0-9a-f]+);)/i
-
   # Matches an attribute value that could be treated by a browser as a URL
   # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
   # or more characters followed by a colon is considered a match, even if the
@@ -155,18 +143,6 @@ class Sanitize
     def clean!(html, config = {})
       sanitize = Sanitize.new(config)
       sanitize.clean!(html)
-    end
-
-    # Encodes special HTML characters (<, >, ", ', and &) in _html_ as entity
-    # references and returns the encoded string.
-    def encode_html(html)
-      str = html.dup
-
-      # Encode special chars.
-      ENTITY_MAP.each {|char, entity| str.gsub!(char, entity) }
-
-      # Convert unencoded ampersands to entity references.
-      str.gsub(REGEX_AMPERSAND, '&amp;')
     end
   end
 
