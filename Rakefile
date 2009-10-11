@@ -28,6 +28,8 @@ require 'rake/rdoctask'
 require 'lib/sanitize/version'
 
 gemspec = Gem::Specification.new do |s|
+  s.rubyforge_project = 'riposte'
+
   s.name     = 'sanitize'
   s.summary  = 'Whitelist-based HTML sanitizer.'
   s.version  = Sanitize::VERSION
