@@ -1,6 +1,9 @@
 Sanitize History
 ================================================================================
 
+Version 1.2.0.dev.20091013 (git)
+  * ?
+
 Version 1.1.0 (2009-10-11)
   * Migrated from Hpricot to Nokogiri. Requires libxml2 >= 2.7.2 [Adam Hooper]
   * Added an :output config setting to allow the output format to be specified.

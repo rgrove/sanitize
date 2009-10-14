@@ -302,3 +302,17 @@ describe 'Sanitize.clean!' do
     Sanitize.clean!(input).should.equal(nil)
   end
 end
+
+describe 'transformers' do
+  # Really really lame at the moment; just needed to test that the code actually
+  # runs. Will flesh this out later.
+  transformers = [
+    lambda { |env|
+      {:whitelist => true, :attr_whitelist => ['pants']} if env[:node_name] == 'object'
+    }
+  ]
+
+  should 'work' do
+    Sanitize.clean!('<div></div><object pants="foo">foo</object>', :transformers => transformers).should.equal('<object pants="foo">foo</object>')
+  end
+end

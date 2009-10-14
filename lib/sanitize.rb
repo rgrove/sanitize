@@ -61,17 +61,47 @@ class Sanitize
       if node.comment?
         node.unlink unless @config[:allow_comments]
       elsif node.element?
+        # Temporary node-specific whitelists provided by transformers.
+        transformer_whitelist      = false
+        transformer_attr_whitelist = []
+
+        # Call transformers first, if any.
+        transformer_result = @config[:transformers].inject(node) do |transformer_node, transformer|
+          result = transformer.call({
+            :config    => @config,
+            :fragment  => fragment,
+            :node      => transformer_node,
+            :node_name => transformer_node.name.to_s.downcase
+          })
+
+          if result.nil?
+            transformer_node
+          elsif result.is_a?(Hash)
+            transformer_whitelist = true if result[:whitelist]
+            transformer_attr_whitelist += result[:attr_whitelist] if result[:attr_whitelist].is_a?(Array)
+            result[:node].is_a?(Nokogiri::XML::Node) ? result[:node] : transformer_node
+          else
+            raise Error, "transformer return value must be a Hash or nil"
+          end
+        end
+
+        if transformer_result.is_a?(Nokogiri::XML::Node) &&
+            node != transformer_result
+          node.replace(transformer_result)
+        end
+        
         name = node.name.to_s.downcase
 
         # Delete any element that isn't in the whitelist.
-        unless @config[:elements].include?(name)
+        unless transformer_whitelist || @config[:elements].include?(name)
           node.children.each { |n| node.add_previous_sibling(n) }
           node.unlink
           next
         end
 
         attr_whitelist = ((@config[:attributes][name] || []) +
-            (@config[:attributes][:all] || [])).uniq
+            (@config[:attributes][:all] || []) +
+            transformer_attr_whitelist).uniq
 
         if attr_whitelist.empty?
           # Delete all attributes from elements with no whitelisted
