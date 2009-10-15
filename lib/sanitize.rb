@@ -29,6 +29,7 @@ require 'sanitize/config/basic'
 require 'sanitize/config/relaxed'
 
 class Sanitize
+  attr_reader :config
 
   # Matches an attribute value that could be treated by a browser as a URL
   # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
@@ -38,12 +39,36 @@ class Sanitize
   REGEX_PROTOCOL = /^([A-Za-z0-9\+\-\.\&\;\#\s]*?)(?:\:|&#0*58|&#x0*3a)/i
 
   #--
+  # Class Methods
+  #++
+
+  # Returns a sanitized copy of _html_, using the settings in _config_ if
+  # specified.
+  def self.clean(html, config = {})
+    sanitize = Sanitize.new(config)
+    sanitize.clean(html)
+  end
+
+  # Performs Sanitize#clean in place, returning _html_, or +nil+ if no changes
+  # were made.
+  def self.clean!(html, config = {})
+    sanitize = Sanitize.new(config)
+    sanitize.clean!(html)
+  end
+
+  #--
   # Instance Methods
   #++
 
   # Returns a new Sanitize object initialized with the settings in _config_.
   def initialize(config = {})
+    # Sanitize configuration.
     @config = Config::DEFAULT.merge(config)
+
+    # Specific nodes to whitelist (along with all their attributes). This array
+    # is generated at runtime by transformers, and is cleared before and after
+    # a fragment is cleaned (so it applies only to a specific fragment).
+    @whitelist_nodes = []
   end
 
   # Returns a sanitized copy of _html_.
@@ -55,101 +80,25 @@ class Sanitize
   # Performs clean in place, returning _html_, or +nil+ if no changes were
   # made.
   def clean!(html)
+    @whitelist_nodes = []
     fragment = Nokogiri::HTML::DocumentFragment.parse(html)
 
     fragment.traverse do |node|
-      if node.comment?
+      if node.element?
+        clean_element!(node)
+      elsif node.comment?
         node.unlink unless @config[:allow_comments]
-      elsif node.element?
-        # Temporary node-specific whitelists provided by transformers.
-        transformer_whitelist      = false
-        transformer_attr_whitelist = []
-
-        # Call transformers first, if any.
-        transformer_result = @config[:transformers].inject(node) do |transformer_node, transformer|
-          result = transformer.call({
-            :config    => @config,
-            :fragment  => fragment,
-            :node      => transformer_node,
-            :node_name => transformer_node.name.to_s.downcase
-          })
-
-          if result.nil?
-            transformer_node
-          elsif result.is_a?(Hash)
-            transformer_whitelist = true if result[:whitelist]
-            transformer_attr_whitelist += result[:attr_whitelist] if result[:attr_whitelist].is_a?(Array)
-            result[:node].is_a?(Nokogiri::XML::Node) ? result[:node] : transformer_node
-          else
-            raise Error, "transformer return value must be a Hash or nil"
-          end
-        end
-
-        if transformer_result.is_a?(Nokogiri::XML::Node) &&
-            node != transformer_result
-          node.replace(transformer_result)
-        end
-        
-        name = node.name.to_s.downcase
-
-        # Delete any element that isn't in the whitelist.
-        unless transformer_whitelist || @config[:elements].include?(name)
-          node.children.each { |n| node.add_previous_sibling(n) }
-          node.unlink
-          next
-        end
-
-        attr_whitelist = ((@config[:attributes][name] || []) +
-            (@config[:attributes][:all] || []) +
-            transformer_attr_whitelist).uniq
-
-        if attr_whitelist.empty?
-          # Delete all attributes from elements with no whitelisted
-          # attributes.
-          node.attribute_nodes.each { |attr| attr.remove }
-        else
-          # Delete any attribute that isn't in the whitelist for this element.
-          node.attribute_nodes.each do |attr|
-            attr.unlink unless attr_whitelist.include?(attr.name.downcase)
-          end
-
-          # Delete remaining attributes that use unacceptable protocols.
-          if @config[:protocols].has_key?(name)
-            protocol = @config[:protocols][name]
-
-            node.attribute_nodes.each do |attr|
-              attr_name = attr.name.downcase
-              next false unless protocol.has_key?(attr_name)
-
-              del = if attr.value.to_s.downcase =~ REGEX_PROTOCOL
-                !protocol[attr_name].include?($1.downcase)
-              else
-                !protocol[attr_name].include?(:relative)
-              end
-
-              attr.unlink if del
-            end
-          end
-        end
-
-        # Add required attributes.
-        if @config[:add_attributes].has_key?(name)
-          @config[:add_attributes][name].each do |key, val|
-            node[key] = val
-          end
-        end
       elsif node.cdata?
         node.replace(Nokogiri::XML::Text.new(node.text, node.document))
       end
     end
 
-    # Nokogiri 1.3.3 (and possibly earlier versions) always returns a US-ASCII
-    # string no matter what we ask for. This will be fixed in 1.4.0, but for
-    # now we have to hack around it to prevent errors.
+    @whitelist_nodes = []
     output_method_params = {:encoding => 'utf-8', :indent => 0}
+
     if @config[:output] == :xhtml
       output_method = fragment.method(:to_xhtml)
-      output_method_params.merge!(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XHTML)
+      output_method_params[:save_with] = Nokogiri::XML::Node::SaveOptions::AS_XHTML
     elsif @config[:output] == :html
       output_method = fragment.method(:to_html)
     else
@@ -157,29 +106,107 @@ class Sanitize
     end
 
     result = output_method.call(output_method_params)
+
+    # Nokogiri 1.3.3 (and possibly earlier versions) always returns a US-ASCII
+    # string no matter what we ask for. This will be fixed in 1.4.0, but for
+    # now we have to hack around it to prevent errors.
     result.force_encoding('utf-8') if RUBY_VERSION >= '1.9'
 
     return result == html ? nil : html[0, html.length] = result
   end
 
-  #--
-  # Class Methods
-  #++
+  private
 
-  class << self
-    # Returns a sanitized copy of _html_, using the settings in _config_ if
-    # specified.
-    def clean(html, config = {})
-      sanitize = Sanitize.new(config)
-      sanitize.clean(html)
+  def clean_element!(node)
+    # Run this node through all configured transformers.
+    transform = transform_element!(node)
+
+    # If this node is in the dynamic whitelist array (built at runtime by
+    # transformers), let it live with all of its attributes intact.
+    return if @whitelist_nodes.include?(node)
+
+    name = node.name.to_s.downcase
+
+    # Delete any element that isn't in the whitelist.
+    unless transform[:whitelist] || @config[:elements].include?(name)
+      node.children.each { |n| node.add_previous_sibling(n) }
+      node.unlink
+      return
     end
 
-    # Performs Sanitize#clean in place, returning _html_, or +nil+ if no changes
-    # were made.
-    def clean!(html, config = {})
-      sanitize = Sanitize.new(config)
-      sanitize.clean!(html)
+    attr_whitelist = (transform[:attr_whitelist] +
+        (@config[:attributes][name] || []) +
+        (@config[:attributes][:all] || [])).uniq
+
+    if attr_whitelist.empty?
+      # Delete all attributes from elements with no whitelisted attributes.
+      node.attribute_nodes.each {|attr| attr.remove }
+    else
+      # Delete any attribute that isn't in the whitelist for this element.
+      node.attribute_nodes.each do |attr|
+        attr.unlink unless attr_whitelist.include?(attr.name.downcase)
+      end
+
+      # Delete remaining attributes that use unacceptable protocols.
+      if @config[:protocols].has_key?(name)
+        protocol = @config[:protocols][name]
+
+        node.attribute_nodes.each do |attr|
+          attr_name = attr.name.downcase
+          next false unless protocol.has_key?(attr_name)
+
+          del = if attr.value.to_s.downcase =~ REGEX_PROTOCOL
+            !protocol[attr_name].include?($1.downcase)
+          else
+            !protocol[attr_name].include?(:relative)
+          end
+
+          attr.unlink if del
+        end
+      end
     end
+
+    # Add required attributes.
+    if @config[:add_attributes].has_key?(name)
+      @config[:add_attributes][name].each do |key, val|
+        node[key] = val
+      end
+    end
+
+    transform
   end
 
+  def transform_element!(node)
+    output = {
+      :attr_whitelist => [],
+      :node           => node,
+      :whitelist      => false
+    }
+
+    @config[:transformers].inject(node) do |transformer_node, transformer|
+      transform = transformer.call({
+        :config => @config,
+        :node   => transformer_node
+      })
+
+      if transform.nil?
+        transformer_node
+      elsif transform.is_a?(Hash)
+        if transform[:whitelist_nodes].is_a?(Array)
+          @whitelist_nodes += transform[:whitelist_nodes] 
+          @whitelist_nodes.uniq!
+        end
+
+        output[:attr_whitelist]  += transform[:attr_whitelist] if transform[:attr_whitelist].is_a?(Array)
+        output[:whitelist]      ||= true if transform[:whitelist]
+        output[:node]             = transform[:node].is_a?(Nokogiri::XML::Node) ? transform[:node] : output[:node]
+      else
+        raise Error, "transformer output must be a Hash or nil"
+      end
+    end
+
+    node.replace(output[:node]) if node != output[:node]
+
+    return output
+  end
 end

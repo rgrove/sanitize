@@ -304,15 +304,41 @@ describe 'Sanitize.clean!' do
 end
 
 describe 'transformers' do
-  # Really really lame at the moment; just needed to test that the code actually
-  # runs. Will flesh this out later.
-  transformers = [
-    lambda { |env|
-      {:whitelist => true, :attr_whitelist => ['pants']} if env[:node_name] == 'object'
-    }
-  ]
+  youtube = lambda do |env|
+    node = env[:node]
+    name = node.name.to_s.downcase
 
-  should 'work' do
-    Sanitize.clean!('<div></div><object pants="foo">foo</object>', :transformers => transformers).should.equal('<object pants="foo">foo</object>')
+    return nil unless name == 'param' || name == 'embed'
+    return nil unless node.parent.name.to_s.downcase == 'object'
+
+    if name == 'param'
+      return nil unless movie_node = node.parent.search('param[@name="movie"]')[0]
+      url = movie_node['value']
+    elsif name == 'embed'
+      url = node['src']
+    end
+
+    # These whitelists are still way too broad, but it's just a proof of concept
+    # for now.
+
+    if url && url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
+      return {
+        :whitelist_nodes => [node, node.parent] + node.parent.children.to_a
+      }
+    end
+  end
+
+  should 'allow youtube video embeds via the youtube transformer' do
+    input  = '<div><object height="344" width="425"><param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
+    output = Nokogiri::HTML::DocumentFragment.parse('<object height="344" width="425"><param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>').to_xhtml(:encoding => 'utf-8', :indent => 0, :save_with => Nokogiri::XML::Node::SaveOptions::AS_XHTML)
+
+    Sanitize.clean!(input, :transformers => [youtube]).should.equal(output)
+  end
+
+  should 'not allow non-youtube video embeds via the youtube transformer' do
+    input  = '<div><object height="344" width="425"><param name="movie" value="http://www.eviltube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.eviltube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
+    output = ''
+
+    Sanitize.clean!(input, :transformers => [youtube]).should.equal(output)
   end
 end
