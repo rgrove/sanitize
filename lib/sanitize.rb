@@ -56,6 +56,12 @@ class Sanitize
     sanitize.clean!(html)
   end
 
+  # Sanitizes the specified Nokogiri::XML::Node.
+  def self.clean_node!(node, config = {})
+    sanitize = Sanitize.new(config)
+    sanitize.clean_node!(node)
+  end
+
   #--
   # Instance Methods
   #++
@@ -82,18 +88,9 @@ class Sanitize
   def clean!(html)
     @whitelist_nodes = []
     fragment = Nokogiri::HTML::DocumentFragment.parse(html)
-
-    fragment.traverse do |node|
-      if node.element?
-        clean_element!(node)
-      elsif node.comment?
-        node.unlink unless @config[:allow_comments]
-      elsif node.cdata?
-        node.replace(Nokogiri::XML::Text.new(node.text, node.document))
-      end
-    end
-
+    fragment.traverse {|node| clean_node!(node) }
     @whitelist_nodes = []
+
     output_method_params = {:encoding => 'utf-8', :indent => 0}
 
     if @config[:output] == :xhtml
@@ -113,6 +110,21 @@ class Sanitize
     result.force_encoding('utf-8') if RUBY_VERSION >= '1.9'
 
     return result == html ? nil : html[0, html.length] = result
+  end
+
+  # Sanitizes the specified Nokogiri::XML::Node.
+  def clean_node!(node)
+    raise ArgumentError unless node.is_a?(Nokogiri::XML::Node)
+
+    if node.element?
+      clean_element!(node)
+    elsif node.comment?
+      node.unlink unless @config[:allow_comments]
+    elsif node.cdata?
+      node.replace(Nokogiri::XML::Text.new(node.text, node.document))
+    end
+
+    node
   end
 
   private
