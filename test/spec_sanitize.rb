@@ -304,6 +304,7 @@ describe 'Sanitize.clean!' do
 end
 
 describe 'transformers' do
+  # YouTube transformer
   youtube = lambda do |env|
     node = env[:node]
     name = node.name.to_s.downcase
@@ -318,12 +319,18 @@ describe 'transformers' do
       url = node['src']
     end
 
-    # These whitelists are still way too broad, but it's just a proof of concept
-    # for now.
+    Sanitize.clean_node!(node.parent, {
+      :elements   => ['embed', 'object', 'param'],
+      :attributes => {
+        'embed'  => ['allowfullscreen', 'allowscriptaccess', 'height', 'src', 'type', 'width'],
+        'object' => ['height', 'width'],
+        'param'  => ['name', 'value']
+      }
+    })
 
     if url && url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
       return {
-        :whitelist_nodes => [node, node.parent] + node.parent.children.to_a
+        :whitelist_nodes => [node, node.parent]
       }
     end
   end
