@@ -22,7 +22,7 @@ caution.
 
 == Requires
 
-* Nokogiri
+* Nokogiri >= 1.4.0
 * libxml2 >= 2.7.2
 
 == Installation
@@ -157,6 +157,7 @@ or ideas that later became code:
 * Adam Hooper <adam@adamhooper.com>
 * Mutwin Kraus <mutle@blogage.de>
 * Dev Purkayastha <dev.purkayastha@gmail.com>
+* David Reese <work@whatcould.com>
 * Ben Wanicur <bwanicur@verticalresponse.com>
 
 == License
