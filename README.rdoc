@@ -38,7 +38,8 @@ Latest development version:
 == Usage
 
 If you don't specify any configuration options, Sanitize will use its strictest
-settings by default, which means it will strip all HTML.
+settings by default, which means it will strip all HTML and leave only text
+behind.
 
   require 'rubygems'
   require 'sanitize'
@@ -145,6 +146,72 @@ include the symbol <code>:relative</code> in the protocol array:
     'a' => {'href' => ['http', 'https', :relative]}
   }
 
+=== Transformers
+
+Transformers allow you to filter and alter nodes using your own custom logic, on
+top of (or instead of) Sanitize's core filter. A transformer is any object that
+responds to <code>call()</code> (such as a lambda or proc) and returns either
+<code>nil</code> or a Hash containing certain optional response values.
+
+To use one or more transformers, pass them to the <code>:transformers</code>
+config setting:
+
+  Sanitize.clean(html, :transformers => [transformer_one, transformer_two])
+
+==== Input
+
+Each registered transformer's <code>call()</code> method will be called once for
+each element node in the HTML, and will receive as an argument an environment
+Hash that contains the following items:
+
+[<code>:config</code>]
+  The current Sanitize configuration Hash.
+
+[<code>:node</code>]
+  A Nokogiri::XML::Node object representing an HTML element.
+
+==== Processing
+
+Each transformer has full access to the Nokogiri::XML::Node that's passed into
+it and to the rest of the document via the node's <code>document()</code>
+method. Any changes will be reflected instantly in the document and passed on to
+subsequently-called transformers and to Sanitize itself. A transformer may even
+call Sanitize internally to perform custom sanitization if needed.
+
+Nodes are passed into transformers in the order in which they're traversed. It's
+important to note that Nokogiri traverses markup from the deepest node upward,
+not from the first node to the last node:
+
+  html        = '<div><span>foo</span></div>'
+  transformer = lambda{|env| puts env[:node].name }
+
+  # Prints "span", then "div".
+  Sanitize.clean(html, :transformers => transformer)
+
+Transformers have a tremendous amount of power, including the power to
+completely bypass Sanitize's built-in filtering. Be careful!
+
+==== Output
+
+A transformer may return either +nil+ or a Hash. A return value of +nil+
+indicates that the transformer does not wish to act on the current node in any
+way. A returned Hash may contain the following items, all of which are optional:
+
+[<code>:attr_whitelist</code>]
+  Array of attribute names to add to the whitelist for the current node, in
+  addition to any whitelisted attributes already defined in the current config.
+
+[<code>:node</code>]
+  A Nokogiri::XML::Node object that should replace the current node. All
+  subsequent transformers and Sanitize itself will receive this new node.
+
+[<code>:whitelist</code>]
+  If _true_, the current node (and only the current node) will be whitelisted,
+  regardless of the current Sanitize config.
+
+[<code>:whitelist_nodes</code>]
+  Array of specific Nokogiri::XML::Node objects to whitelist, anywhere in the
+  document, regardless of the current Sanitize config.
 
 == Contributors
 

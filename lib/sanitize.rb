@@ -56,7 +56,7 @@ class Sanitize
     sanitize.clean!(html)
   end
 
-  # Sanitizes the specified Nokogiri::XML::Node.
+  # Sanitizes the specified Nokogiri::XML::Node and all its children.
   def self.clean_node!(node, config = {})
     sanitize = Sanitize.new(config)
     sanitize.clean_node!(node)
@@ -70,6 +70,7 @@ class Sanitize
   def initialize(config = {})
     # Sanitize configuration.
     @config = Config::DEFAULT.merge(config)
+    @config[:transformers] = Array(@config[:transformers])
 
     # Specific nodes to whitelist (along with all their attributes). This array
     # is generated at runtime by transformers, and is cleared before and after
@@ -88,7 +89,7 @@ class Sanitize
   def clean!(html)
     @whitelist_nodes = []
     fragment = Nokogiri::HTML::DocumentFragment.parse(html)
-    fragment.traverse {|node| clean_node!(node) }
+    clean_node!(fragment)
     @whitelist_nodes = []
 
     output_method_params = {:encoding => 'utf-8', :indent => 0}
@@ -112,16 +113,19 @@ class Sanitize
     return result == html ? nil : html[0, html.length] = result
   end
 
-  # Sanitizes the specified Nokogiri::XML::Node.
+  # Sanitizes the specified Nokogiri::XML::Node and all its children.
   def clean_node!(node)
     raise ArgumentError unless node.is_a?(Nokogiri::XML::Node)
 
-    if node.element?
-      clean_element!(node)
-    elsif node.comment?
-      node.unlink unless @config[:allow_comments]
-    elsif node.cdata?
-      node.replace(Nokogiri::XML::Text.new(node.text, node.document))
+    node.traverse do |traversed_node|
+      if traversed_node.element?
+        clean_element!(traversed_node)
+      elsif traversed_node.comment?
+        traversed_node.unlink unless @config[:allow_comments]
+      elsif traversed_node.cdata?
+        traversed_node.replace(Nokogiri::XML::Text.new(traversed_node.text,
+            traversed_node.document))
+      end
     end
 
     node
