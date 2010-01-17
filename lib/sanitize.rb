@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-# Copyright (c) 2009 Ryan Grove <ryan@wonko.com>
+# Copyright (c) 2010 Ryan Grove <ryan@wonko.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
@@ -105,9 +105,8 @@ class Sanitize
 
     result = output_method.call(output_method_params)
 
-    # Nokogiri 1.3.3 (and possibly earlier versions) always returns a US-ASCII
-    # string no matter what we ask for. This will be fixed in 1.4.0, but for
-    # now we have to hack around it to prevent errors.
+    # Ensure that the result is always a UTF-8 string in Ruby 1.9, no matter
+    # what. Nokogiri seems to return empty strings as ASCII for some reason.
     result.force_encoding('utf-8') if RUBY_VERSION >= '1.9'
 
     return result == html ? nil : html[0, html.length] = result
@@ -209,7 +208,7 @@ class Sanitize
         transformer_node
       elsif transform.is_a?(Hash)
         if transform[:whitelist_nodes].is_a?(Array)
-          @whitelist_nodes += transform[:whitelist_nodes] 
+          @whitelist_nodes += transform[:whitelist_nodes]
           @whitelist_nodes.uniq!
         end
 
