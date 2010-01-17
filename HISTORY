@@ -2,10 +2,12 @@ Sanitize History
 ================================================================================
 
 Version 1.2.0.dev (git)
+  * Requires Nokogiri ~> 1.4.1.
   * Added support for transformers, which allow you to filter and alter nodes
     using your own custom logic, on top of (or instead of) Sanitize's core
     filter. See the README for details.
-  * Requires Nokogiri >= 1.4.0.
+  * Added Sanitize.clean_node!, which sanitizes a Nokogiri::XML::Node and all
+    its children.
   * Added elements h1 through h6 to the Relaxed whitelist. [Suggested by David
     Reese]
 
