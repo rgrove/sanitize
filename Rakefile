@@ -42,7 +42,7 @@ gemspec = Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.8.6'
 
   # Runtime dependencies.
-  s.add_dependency('nokogiri', '~> 1.4.0')
+  s.add_dependency('nokogiri', '~> 1.4.1')
 
   # Development dependencies.
   s.add_development_dependency('bacon', '~> 1.1.0')
