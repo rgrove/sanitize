@@ -49,6 +49,8 @@ class Sanitize
       # to allow relative URLs sans protocol.
       :protocols => {},
 
+      # Transformers allow you to filter or alter nodes using custom logic. See
+      # README.rdoc for details and examples.
       :transformers => []
     }
   end

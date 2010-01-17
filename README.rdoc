@@ -22,7 +22,7 @@ caution.
 
 == Requires
 
-* Nokogiri >= 1.4.0
+* Nokogiri ~> 1.4.1
 * libxml2 >= 2.7.2
 
 == Installation
@@ -213,6 +213,56 @@ way. A returned Hash may contain the following items, all of which are optional:
   Array of specific Nokogiri::XML::Node objects to whitelist, anywhere in the
   document, regardless of the current Sanitize config.
 
+==== Example: Transformer to whitelist YouTube video embeds
+
+The following example demonstrates how to create a Sanitize transformer that
+will safely whitelist valid YouTube video embeds without having to blindly allow
+other kinds of embedded content, which would be the case if you tried to do this
+by just whitelisting the <code><object></code>, <code><embed></code>, and
+<code><param></code> elements:
+
+  lambda do |env|
+    node      = env[:node]
+    node_name = node.name.to_s.downcase
+    parent    = node.parent
+
+    # Since the transformer receives the deepest nodes first, we look for a
+    # <param> element or an <embed> element whose parent is an <object>.
+    return nil unless node_name == 'param' || node_name == 'embed' &&
+        parent.name.to_s.downcase == 'object'
+
+    if node_name == 'param'
+      # Quick XPath search to find the <param> node that contains the video URL.
+      return nil unless movie_node = parent.search('param[@name="movie"]')[0]
+      url = movie_node['value']
+    else
+      # Since this is an <embed>, the video URL is in the "src" attribute. No
+      # extra work needed.
+      url = node['src']
+    end
+
+    # Verify that the video URL is actually a valid YouTube video URL.
+    return nil unless url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
+
+    # We're now certain that this is a YouTube embed, but we still need to run
+    # it through a special Sanitize step to ensure that no unwanted elements or
+    # attributes that don't belong in a YouTube embed can sneak in.
+    Sanitize.clean_node!(parent, {
+      :elements   => ['embed', 'object', 'param'],
+      :attributes => {
+        'embed'  => ['allowfullscreen', 'allowscriptaccess', 'height', 'src', 'type', 'width'],
+        'object' => ['height', 'width'],
+        'param'  => ['name', 'value']
+      }
+    })
+
+    # Now that we're sure that this is a valid YouTube embed and that there are
+    # no unwanted elements or attributes hidden inside it, we can tell Sanitize
+    # to whitelist the current node (<param> or <embed>) and its parent
+    # (<object>).
+    {:whitelist_nodes => [node, parent]}
+  end
+
 == Contributors
 
 The following lovely people have contributed to Sanitize in the form of patches
@@ -229,7 +279,7 @@ or ideas that later became code:
 
 == License
 
-Copyright (c) 2009 Ryan Grove <ryan@wonko.com>
+Copyright (c) 2010 Ryan Grove <ryan@wonko.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the 'Software'), to deal in

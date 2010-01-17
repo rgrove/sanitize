@@ -304,24 +304,33 @@ describe 'Sanitize.clean!' do
 end
 
 describe 'transformers' do
-  # YouTube transformer
+  # YouTube transformer.
   youtube = lambda do |env|
-    node   = env[:node]
-    parent = node.parent
-    name   = node.name.to_s.downcase
+    node      = env[:node]
+    node_name = node.name.to_s.downcase
+    parent    = node.parent
 
-    return nil unless name == 'param' || name == 'embed'
-    return nil unless parent.name.to_s.downcase == 'object'
+    # Since the transformer receives the deepest nodes first, we look for a
+    # <param> element or an <embed> element whose parent is an <object>.
+    return nil unless node_name == 'param' || node_name == 'embed' &&
+        parent.name.to_s.downcase == 'object'
 
-    if name == 'param'
+    if node_name == 'param'
+      # Quick XPath search to find the <param> node that contains the video URL.
       return nil unless movie_node = parent.search('param[@name="movie"]')[0]
       url = movie_node['value']
-    elsif name == 'embed'
+    else
+      # Since this is an <embed>, the video URL is in the "src" attribute. No
+      # extra work needed.
       url = node['src']
     end
 
-    return nil unless url && url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
+    # Verify that the video URL is actually a valid YouTube video URL.
+    return nil unless url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
 
+    # We're now certain that this is a YouTube embed, but we still need to run
+    # it through a special Sanitize step to ensure that no unwanted elements or
+    # attributes that don't belong in a YouTube embed can sneak in.
     Sanitize.clean_node!(parent, {
       :elements   => ['embed', 'object', 'param'],
       :attributes => {
@@ -331,6 +340,10 @@ describe 'transformers' do
       }
     })
 
+    # Now that we're sure that this is a valid YouTube embed and that there are
+    # no unwanted elements or attributes hidden inside it, we can tell Sanitize
+    # to whitelist the current node (<param> or <embed>) and its parent
+    # (<object>).
     {:whitelist_nodes => [node, parent]}
   end
 
