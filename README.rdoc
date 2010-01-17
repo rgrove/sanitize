@@ -15,7 +15,7 @@ or maliciously-formed HTML. When in doubt, Sanitize always errs on the side of
 caution.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
-*Version*::   1.2.0.dev (git)
+*Version*::   1.2.0 (2010-01-17)
 *Copyright*:: Copyright (c) 2010 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
@@ -33,7 +33,7 @@ Latest stable release:
 
 Latest development version:
 
-  gem install sanitize -s http://gemcutter.org --prerelease
+  gem install sanitize --prerelease
 
 == Usage
 
@@ -218,7 +218,7 @@ way. A returned Hash may contain the following items, all of which are optional:
 The following example demonstrates how to create a Sanitize transformer that
 will safely whitelist valid YouTube video embeds without having to blindly allow
 other kinds of embedded content, which would be the case if you tried to do this
-by just whitelisting the <code><object></code>, <code><embed></code>, and
+by just whitelisting all <code><object></code>, <code><embed></code>, and
 <code><param></code> elements:
 
   lambda do |env|
