@@ -312,7 +312,7 @@ describe 'transformers' do
 
     # Since the transformer receives the deepest nodes first, we look for a
     # <param> element or an <embed> element whose parent is an <object>.
-    return nil unless node_name == 'param' || node_name == 'embed' &&
+    return nil unless (node_name == 'param' || node_name == 'embed') &&
         parent.name.to_s.downcase == 'object'
 
     if node_name == 'param'
