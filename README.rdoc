@@ -170,6 +170,9 @@ Hash that contains the following items:
 [<code>:node</code>]
   A Nokogiri::XML::Node object representing an HTML element.
 
+[<code>:node_name</code>]
+  The name of the current HTML node, always lowercase (e.g. "div" or "span").
+
 ==== Processing
 
 Each transformer has full access to the Nokogiri::XML::Node that's passed into

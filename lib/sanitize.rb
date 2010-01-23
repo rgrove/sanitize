@@ -200,8 +200,9 @@ class Sanitize
 
     @config[:transformers].inject(node) do |transformer_node, transformer|
       transform = transformer.call({
-        :config => @config,
-        :node   => transformer_node
+        :config    => @config,
+        :node      => transformer_node,
+        :node_name => transformer_node.name.downcase
       })
 
       if transform.nil?

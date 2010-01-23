@@ -307,7 +307,7 @@ describe 'transformers' do
   # YouTube transformer.
   youtube = lambda do |env|
     node      = env[:node]
-    node_name = node.name.to_s.downcase
+    node_name = env[:node_name]
     parent    = node.parent
 
     # Since the transformer receives the deepest nodes first, we look for a
@@ -347,6 +347,26 @@ describe 'transformers' do
     {:whitelist_nodes => [node, parent]}
   end
 
+  should 'receive the Sanitize config, current node, and node name as input' do
+    Sanitize.clean!('<SPAN>foo</SPAN>', :foo => :bar, :transformers => lambda {|env|
+      env[:config][:foo].should.equal(:bar)
+      env[:node].should.satisfy {|node| node.is_a?(Nokogiri::XML::Node) }
+      env[:node_name].should.equal('span')
+      nil
+    })
+  end
+
+  should 'traverse from the deepest node outward' do
+    nodes = []
+
+    Sanitize.clean!('<div><span>foo</span></div><p>bar</p>', :transformers => lambda {|env|
+      nodes << env[:node_name]
+      nil
+    })
+
+    nodes.should.equal(['span', 'div', 'p'])
+  end
+
   should 'allow youtube video embeds via the youtube transformer' do
     input  = '<div><object foo="bar" height="344" width="425"><b>test</b><param foo="bar" name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
     output = Nokogiri::HTML::DocumentFragment.parse('<object height="344" width="425">test<param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>').to_xhtml(:encoding => 'utf-8', :indent => 0, :save_with => Nokogiri::XML::Node::SaveOptions::AS_XHTML)
@@ -363,7 +383,7 @@ describe 'transformers' do
 
   should 'raise Sanitize::Error when a transformer returns something silly' do
     should.raise(Sanitize::Error) do
-      Sanitize.clean!('<b>foo</b>', :transformers => lambda { 'hello' })
+      Sanitize.clean!('<b>foo</b>', :transformers => lambda {|env| 'hello' })
     end
   end
 end
