@@ -146,6 +146,16 @@ include the symbol <code>:relative</code> in the protocol array:
     'a' => {'href' => ['http', 'https', :relative]}
   }
 
+==== :remove_contents (boolean)
+
+If set to <code>true</code>, Sanitize will remove the contents of any filtered
+nodes in addition to the nodes themselves. By default, Sanitize leaves the safe
+parts of a node's contents behind when the node is removed.
+
+==== :transformers
+
+See below.
+
 === Transformers
 
 Transformers allow you to filter and alter nodes using your own custom logic, on

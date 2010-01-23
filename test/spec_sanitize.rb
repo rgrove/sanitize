@@ -256,7 +256,7 @@ describe 'Custom configs' do
     Sanitize.clean(input, {:elements => ['p'], :attributes => {'p' => ['title'], :all => ['class']}}).should.equal(input)
   end
 
-  should 'allow comments' do
+  should 'allow comments when :allow_comments == true' do
     input = 'foo <!-- bar --> baz'
     Sanitize.clean(input, :allow_comments => true).should.equal(input)
   end
@@ -266,9 +266,13 @@ describe 'Custom configs' do
     Sanitize.clean(input, { :elements => ['a'], :attributes => {'a' => ['href']}, :protocols => { 'a' => { 'href' => [:relative] }} }).should.equal(input)
   end
 
-  should 'output HTML' do
+  should 'output HTML when :output == :html' do
     input = 'foo<br/>bar<br>baz'
     Sanitize.clean(input, :elements => ['br'], :output => :html).should.equal('foo<br>bar<br>baz')
+  end
+
+  should 'remove the contents of filtered nodes when :remove_contents == true' do
+    Sanitize.clean('foo bar <div>baz<span>quux</span></div>', :remove_contents => true).should.equal('foo bar ')
   end
 end
 

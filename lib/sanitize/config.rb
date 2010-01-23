@@ -49,6 +49,11 @@ class Sanitize
       # to allow relative URLs sans protocol.
       :protocols => {},
 
+      # If this is true, Sanitize will remove the contents of any filtered nodes
+      # in addition to the nodes themselves. By default, Sanitize leaves the
+      # safe parts of a node's contents behind when the node is removed.
+      :remove_contents => false,
+
       # Transformers allow you to filter or alter nodes using custom logic. See
       # README.rdoc for details and examples.
       :transformers => []

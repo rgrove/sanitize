@@ -2,6 +2,8 @@ Sanitize History
 ================================================================================
 
 Version 1.2.1 (git)
+  * Added a :remove_contents config setting. If set to true, Sanitize will
+    remove the contents of filtered nodes in addition to the nodes themselves.
   * The environment hash passed into transformers now includes a :node_name item
     containing the lowercase name of the current HTML node (e.g. "div").
   * Returning anything other than a Hash or nil from a transformer will now

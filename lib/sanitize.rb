@@ -144,7 +144,10 @@ class Sanitize
 
     # Delete any element that isn't in the whitelist.
     unless transform[:whitelist] || @config[:elements].include?(name)
-      node.children.each { |n| node.add_previous_sibling(n) }
+      unless @config[:remove_contents]
+        node.children.each { |n| node.add_previous_sibling(n) }
+      end
+
       node.unlink
       return
     end
