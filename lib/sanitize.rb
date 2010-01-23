@@ -224,4 +224,6 @@ class Sanitize
 
     return output
   end
+
+  class Error < StandardError; end
 end

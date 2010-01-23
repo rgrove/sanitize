@@ -1,6 +1,11 @@
 Sanitize History
 ================================================================================
 
+Version 1.2.1 (git)
+  * Returning anything other than a Hash or nil from a transformer will now
+    raise a meaningful Sanitize::Error exception rather than an unintended
+    NameError.
+
 Version 1.2.0 (2010-01-17)
   * Requires Nokogiri ~> 1.4.1.
   * Added support for transformers, which allow you to filter and alter nodes

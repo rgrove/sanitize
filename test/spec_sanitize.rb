@@ -360,4 +360,10 @@ describe 'transformers' do
 
     Sanitize.clean!(input, :transformers => youtube).should.equal(output)
   end
+
+  should 'raise Sanitize::Error when a transformer returns something silly' do
+    should.raise(Sanitize::Error) do
+      Sanitize.clean!('<b>foo</b>', :transformers => lambda { 'hello' })
+    end
+  end
 end
