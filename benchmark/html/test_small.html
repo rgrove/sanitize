@@ -1,0 +1,11 @@
+<p>The <code>clean!</code> method has always worked correctly; however, as discussed above, the documentation for the method in the first release of Sanitize was misleading as to the method&rsquo;s purpose. The <a href="http://rgrove.github.com/sanitize/classes/Sanitize.html#M000002" rel="nofollow">documentation in later releases</a> is correct:</p>
+<blockquote><strong>clean!</strong>(<em>html</em>, <em>config</em> = <em>{}</em>)<br />
+Performs <code>Sanitize#clean</code> in place, returning <em>html</em>, or <code>nil</code> if no changes were made.</blockquote>
+<p>The purpose of <code>clean!</code> is to sanitize the given string in place rather than returning a sanitized copy of the given string. In other words, it&rsquo;s a destructive verson of <code>clean</code>.</p>
+<p>It sounds like what you want is a method that tells you whether the given string <em>needs</em> to be sanitized, but doesn&rsquo;t actually sanitize it. There currently isn&rsquo;t a method that does this, but something like the following (which I imagine is similar to what you&rsquo;ve hacked up) would work:</p>
+<pre class="prettyprint">
+def is_dirty?(html)
+  !Sanitize.clean!(html.dup).nil<wbr />?
+end
+</pre>
+<p>I&rsquo;m curious what your use case for this is, though. If you&rsquo;re trying to save processing time by not sanitizing already-clean strings, this won&rsquo;t do the trick, since the only way to determine whether a string is dirty is to actually clean it (or a copy of it, as in the example above).</p>
