@@ -49,14 +49,12 @@ class TestLoofah < Measure
       end
     end
 
-    measure('Sanitize.clean! (no pre-init)', times) do
-      Sanitize.clean!(html, Sanitize::Config::RELAXED)
+    measure('Sanitize.clean (keep contents)', times) do
+      Sanitize.clean(html, Sanitize::Config::RELAXED)
     end
 
-    s = Sanitize.new(Sanitize::Config::RELAXED)
-
-    measure('Sanitize.clean! (pre-init)', times) do
-      s.clean!(html)
+    measure('Sanitize.clean (remove contents)', times) do
+      Sanitize.clean(html, Sanitize::Config::RELAXED.merge(:remove_contents => true))
     end
   end
 end
