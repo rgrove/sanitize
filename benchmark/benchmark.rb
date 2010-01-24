@@ -26,10 +26,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-DIR          = File.expand_path(File.dirname(__FILE__))
-HTML_BIG     = File.read("#{DIR}/html/test_big.html")
-HTML_SMALL   = File.read("#{DIR}/html/test_small.html")
-HTML_SNIPPET = 'this is a tiny <em>snippet</em> of html'
+DIR           = File.expand_path(File.dirname(__FILE__))
+HTML_SLASHDOT = File.read("#{DIR}/html/test_slashdot.html")
+HTML_BIG      = File.read("#{DIR}/html/test_big.html")
+HTML_SMALL    = File.read("#{DIR}/html/test_small.html")
+HTML_SNIPPET  = 'this is a tiny <em>snippet</em> of html'
 
 require "#{DIR}/helpers"
 
@@ -43,17 +44,25 @@ class TestLoofah < Measure
       measure('Loofah :strip', times) do
         Loofah.scrub_fragment(html, :strip).to_s
       end
+
+      measure('Loofah :prune', times) do
+        Loofah.scrub_fragment(html, :prune).to_s
+      end
     else
       measure('Loofah :strip', times) do
         Loofah.scrub_document(html, :strip).to_s
       end
+
+      measure('Loofah :prune', times) do
+        Loofah.scrub_document(html, :prune).to_s
+      end
     end
 
-    measure('Sanitize.clean (keep contents)', times) do
+    measure('Sanitize.clean (strip)', times) do
       Sanitize.clean(html, Sanitize::Config::RELAXED)
     end
 
-    measure('Sanitize.clean (remove contents)', times) do
+    measure('Sanitize.clean (prune)', times) do
       Sanitize.clean(html, Sanitize::Config::RELAXED.merge(:remove_contents => true))
     end
   end

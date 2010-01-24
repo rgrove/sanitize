@@ -67,6 +67,11 @@ module TestSet
     scale = options[:scale] || 1
 
     n = 100 / scale
+    puts "  Slashdot HTML doc (#{HTML_SLASHDOT.length} bytes) x #{n}"
+    bench(HTML_SLASHDOT, n, false)
+    puts
+
+    n = 100 / scale
     puts "  Big HTML doc (#{HTML_BIG.length} bytes) x #{n}"
     bench(HTML_BIG, n, false)
     puts
