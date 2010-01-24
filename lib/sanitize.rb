@@ -72,6 +72,10 @@ class Sanitize
     @config = Config::DEFAULT.merge(config)
     @config[:transformers] = Array(@config[:transformers])
 
+    # Convert the list of allowed elements to a Hash for faster lookup.
+    @allowed_elements = {}
+    @config[:elements].each {|el| @allowed_elements[el] = true }
+
     # Specific nodes to whitelist (along with all their attributes). This array
     # is generated at runtime by transformers, and is cleared before and after
     # a fragment is cleaned (so it applies only to a specific fragment).
@@ -87,10 +91,8 @@ class Sanitize
   # Performs clean in place, returning _html_, or +nil+ if no changes were
   # made.
   def clean!(html)
-    @whitelist_nodes = []
     fragment = Nokogiri::HTML::DocumentFragment.parse(html)
     clean_node!(fragment)
-    @whitelist_nodes = []
 
     output_method_params = {:encoding => 'utf-8', :indent => 0}
 
@@ -116,16 +118,19 @@ class Sanitize
   def clean_node!(node)
     raise ArgumentError unless node.is_a?(Nokogiri::XML::Node)
 
-    node.traverse do |traversed_node|
-      if traversed_node.element?
-        clean_element!(traversed_node)
-      elsif traversed_node.comment?
-        traversed_node.unlink unless @config[:allow_comments]
-      elsif traversed_node.cdata?
-        traversed_node.replace(Nokogiri::XML::Text.new(traversed_node.text,
-            traversed_node.document))
+    @whitelist_nodes = []
+
+    node.traverse do |child|
+      if child.element?
+        clean_element!(child)
+      elsif child.comment?
+        child.unlink unless @config[:allow_comments]
+      elsif child.cdata?
+        child.replace(Nokogiri::XML::Text.new(child.text, child.document))
       end
     end
+
+    @whitelist_nodes = []
 
     node
   end
@@ -143,7 +148,7 @@ class Sanitize
     name = node.name.to_s.downcase
 
     # Delete any element that isn't in the whitelist.
-    unless transform[:whitelist] || @config[:elements].include?(name)
+    unless transform[:whitelist] || @allowed_elements[name]
       unless @config[:remove_contents]
         node.children.each { |n| node.add_previous_sibling(n) }
       end
