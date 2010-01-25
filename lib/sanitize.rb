@@ -72,6 +72,11 @@ class Sanitize
     @config = Config::DEFAULT.merge(config)
     @config[:transformers] = Array(@config[:transformers])
 
+    # :remove_contents takes precedence over :escape_only.
+    if @config[:remove_contents] && @config[:escape_only]
+      @config[:escape_only] = false
+    end
+
     # Convert the list of allowed elements to a Hash for faster lookup.
     @allowed_elements = {}
     @config[:elements].each {|el| @allowed_elements[el] = true }
@@ -149,11 +154,16 @@ class Sanitize
 
     # Delete any element that isn't in the whitelist.
     unless transform[:whitelist] || @allowed_elements[name]
-      unless @config[:remove_contents]
-        node.children.each { |n| node.add_previous_sibling(n) }
+      if @config[:escape_only]
+        node.replace(Nokogiri::XML::Text.new(node.to_s, node.document))
+      else
+        unless @config[:remove_contents]
+          node.children.each { |n| node.add_previous_sibling(n) }
+        end
+
+        node.unlink
       end
 
-      node.unlink
       return
     end
 

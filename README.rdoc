@@ -11,8 +11,7 @@ that you don't explicitly allow will be removed.
 
 Because it's based on Nokogiri, a full-fledged HTML parser, rather than a bunch
 of fragile regular expressions, Sanitize has no trouble dealing with malformed
-or maliciously-formed HTML. When in doubt, Sanitize always errs on the side of
-caution.
+or maliciously-formed HTML, and will always output valid HTML or XHTML.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
 *Version*::   1.2.1.dev (git)
@@ -134,6 +133,11 @@ Array of element names to allow. Specify all names in lowercase.
     'sup', 'u', 'ul'
   ]
 
+==== :escape_only (boolean)
+
+If set to +true+, Sanitize will escape non-whitelisted elements and their
+contents rather than removing them.
+
 ==== :output (Symbol)
 
 Output format. Supported formats are <code>:html</code> and <code>:xhtml</code>,
@@ -159,9 +163,12 @@ include the symbol <code>:relative</code> in the protocol array:
 
 ==== :remove_contents (boolean)
 
-If set to <code>true</code>, Sanitize will remove the contents of any filtered
-nodes in addition to the nodes themselves. By default, Sanitize leaves the safe
-parts of a node's contents behind when the node is removed.
+If set to +true+, Sanitize will remove the contents of any non-whitelisted
+elements in addition to the elements themselves. By default, Sanitize leaves the
+safe parts of an element's contents behind when the element is removed.
+
+If both <code>:escape_only</code> and <code>:remove_contents</code> are enabled,
+<code>:remove_contents</code> will take precedence.
 
 ==== :transformers
 

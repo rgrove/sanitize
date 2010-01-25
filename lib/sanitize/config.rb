@@ -40,6 +40,10 @@ class Sanitize
       # that all HTML will be stripped).
       :elements => [],
 
+      # If this is true, Sanitize will escape non-whitelisted elements and their
+      # contents rather than removing them.
+      :escape_only => false,
+
       # Output format. Supported formats are :html and :xhtml (which is the
       # default).
       :output => :xhtml,
@@ -49,9 +53,13 @@ class Sanitize
       # to allow relative URLs sans protocol.
       :protocols => {},
 
-      # If this is true, Sanitize will remove the contents of any filtered nodes
-      # in addition to the nodes themselves. By default, Sanitize leaves the
-      # safe parts of a node's contents behind when the node is removed.
+      # If this is true, Sanitize will remove the contents of any filtered
+      # elements in addition to the elements themselves. By default, Sanitize
+      # leaves the safe parts of an element's contents behind when the element
+      # is removed.
+      #
+      # If both :escape_only and :remove_contents are true, :remove_contents
+      # will take precedence.
       :remove_contents => false,
 
       # Transformers allow you to filter or alter nodes using custom logic. See
