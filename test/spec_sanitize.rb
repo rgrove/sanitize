@@ -273,6 +273,7 @@ describe 'Custom configs' do
 
   should 'escape filtered nodes and their contents when :escape_only == true' do
     Sanitize.clean('foo bar <div>baz<span>quux</span></div>', :escape_only => true).should.equal('foo bar &lt;div&gt;baz&amp;lt;span&amp;gt;quux&amp;lt;/span&amp;gt;&lt;/div&gt;')
+    Sanitize.clean('foo <!-- comment --> bar', :escape_only => true).should.equal('foo &lt;!-- comment --&gt; bar')
   end
 
   should 'remove the contents of filtered nodes when :remove_contents == true' do

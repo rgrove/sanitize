@@ -129,7 +129,13 @@ class Sanitize
       if child.element?
         clean_element!(child)
       elsif child.comment?
-        child.unlink unless @config[:allow_comments]
+        unless @config[:allow_comments]
+          if @config[:escape_only]
+            child.replace(Nokogiri::XML::Text.new(child.to_s, child.document))
+          else
+            child.unlink
+          end
+        end
       elsif child.cdata?
         child.replace(Nokogiri::XML::Text.new(child.text, child.document))
       end
