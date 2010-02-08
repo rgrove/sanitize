@@ -2,8 +2,6 @@ Sanitize History
 ================================================================================
 
 Version 1.2.1 (git)
-  * Added an :escape_only config setting. If set to true, Sanitize will escape
-    non-whitelisted elements and their contents instead of removing them.
   * Added a :remove_contents config setting. If set to true, Sanitize will
     remove the contents of non-whitelisted elements in addition to the elements
     themselves.

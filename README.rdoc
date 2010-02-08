@@ -133,11 +133,6 @@ Array of element names to allow. Specify all names in lowercase.
     'sup', 'u', 'ul'
   ]
 
-==== :escape_only (boolean)
-
-If set to +true+, Sanitize will escape non-whitelisted elements and their
-contents rather than removing them.
-
 ==== :output (Symbol)
 
 Output format. Supported formats are <code>:html</code> and <code>:xhtml</code>,
@@ -166,9 +161,6 @@ include the symbol <code>:relative</code> in the protocol array:
 If set to +true+, Sanitize will remove the contents of any non-whitelisted
 elements in addition to the elements themselves. By default, Sanitize leaves the
 safe parts of an element's contents behind when the element is removed.
-
-If both <code>:escape_only</code> and <code>:remove_contents</code> are enabled,
-<code>:remove_contents</code> will take precedence.
 
 ==== :transformers
 

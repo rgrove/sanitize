@@ -70,12 +70,7 @@ class Sanitize
   def initialize(config = {})
     # Sanitize configuration.
     @config = Config::DEFAULT.merge(config)
-    @config[:transformers] = Array(@config[:transformers])
-
-    # :remove_contents takes precedence over :escape_only.
-    if @config[:remove_contents] && @config[:escape_only]
-      @config[:escape_only] = false
-    end
+    @config[:transformers] = Array(@config[:transformers].dup)
 
     # Convert the list of allowed elements to a Hash for faster lookup.
     @allowed_elements = {}
@@ -129,13 +124,7 @@ class Sanitize
       if child.element?
         clean_element!(child)
       elsif child.comment?
-        unless @config[:allow_comments]
-          if @config[:escape_only]
-            child.replace(Nokogiri::XML::Text.new(child.to_s, child.document))
-          else
-            child.unlink
-          end
-        end
+        child.unlink unless @config[:allow_comments]
       elsif child.cdata?
         child.replace(Nokogiri::XML::Text.new(child.text, child.document))
       end
@@ -160,15 +149,11 @@ class Sanitize
 
     # Delete any element that isn't in the whitelist.
     unless transform[:whitelist] || @allowed_elements[name]
-      if @config[:escape_only]
-        node.replace(Nokogiri::XML::Text.new(node.to_s, node.document))
-      else
-        unless @config[:remove_contents]
-          node.children.each { |n| node.add_previous_sibling(n) }
-        end
-
-        node.unlink
+      unless @config[:remove_contents]
+        node.children.each { |n| node.add_previous_sibling(n) }
       end
+
+      node.unlink
 
       return
     end
