@@ -371,6 +371,18 @@ describe 'transformers' do
     nodes.should.equal(['span', 'div', 'p'])
   end
 
+  should 'whitelist the current node when :whitelist => true' do
+    Sanitize.clean!('<div class="foo">foo</div><span>bar</span>', :transformers => lambda {|env|
+      {:whitelist => true} if env[:node_name] == 'div'
+    }).should.equal('<div>foo</div>bar')
+  end
+
+  should 'whitelist attributes specified in :attr_whitelist' do
+    Sanitize.clean!('<div class="foo" id="bar" width="50">foo</div><span>bar</span>', :transformers => lambda {|env|
+      {:whitelist => true, :attr_whitelist => ['id', 'class']} if env[:node_name] == 'div'
+    }).should.equal('<div class="foo" id="bar">foo</div>bar')
+  end
+
   should 'allow youtube video embeds via the youtube transformer' do
     input  = '<div><object foo="bar" height="344" width="425"><b>test</b><param foo="bar" name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
     output = Nokogiri::HTML::DocumentFragment.parse('<object height="344" width="425">test<param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>').to_xhtml(:encoding => 'utf-8', :indent => 0, :save_with => Nokogiri::XML::Node::SaveOptions::AS_XHTML)
