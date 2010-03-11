@@ -274,6 +274,10 @@ describe 'Custom configs' do
   should 'remove the contents of filtered nodes when :remove_contents == true' do
     Sanitize.clean('foo bar <div>baz<span>quux</span></div>', :remove_contents => true).should.equal('foo bar ')
   end
+
+  should 'remove the contents of specified nodes when :remove_contents is an array of tag names' do
+    Sanitize.clean('foo bar <div>baz<span>quux</span><script>alert("hello!");</script></div>', :remove_contents => [:script]).should.equal('foo bar bazquux')
+  end
 end
 
 describe 'Sanitize.clean' do
