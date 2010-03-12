@@ -76,6 +76,16 @@ class Sanitize
     @allowed_elements = {}
     @config[:elements].each {|el| @allowed_elements[el] = true }
 
+    # Convert the list of :remove_contents elements to a Hash for faster lookup.
+    @remove_all_contents     = false
+    @remove_element_contents = {}
+
+    if @config[:remove_contents].is_a?(Array)
+      @config[:remove_contents].each {|el| @remove_element_contents[el] = true }
+    else
+      @remove_all_contents = !!@config[:remove_contents]
+    end
+
     # Specific nodes to whitelist (along with all their attributes). This array
     # is generated at runtime by transformers, and is cleared before and after
     # a fragment is cleaned (so it applies only to a specific fragment).
@@ -149,8 +159,7 @@ class Sanitize
 
     # Delete any element that isn't in the whitelist.
     unless transform[:whitelist] || @allowed_elements[name]
-      remove_contents = @config[:remove_contents]
-      if !remove_contents or (remove_contents.is_a?(Array) and !remove_contents.include?(node.name.to_sym))
+      unless @remove_all_contents || @remove_element_contents[name]
         node.children.each { |n| node.add_previous_sibling(n) }
       end
 
