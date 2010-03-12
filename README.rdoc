@@ -156,11 +156,17 @@ include the symbol <code>:relative</code> in the protocol array:
     'a' => {'href' => ['http', 'https', :relative]}
   }
 
-==== :remove_contents (boolean)
+==== :remove_contents (boolean or Array)
 
 If set to +true+, Sanitize will remove the contents of any non-whitelisted
 elements in addition to the elements themselves. By default, Sanitize leaves the
 safe parts of an element's contents behind when the element is removed.
+
+If set to an Array of element names, then only the contents of the specified
+elements (when filtered) will be removed, and the contents of all other filtered
+elements will be left behind.
+
+The default value is <code>false</code>.
 
 ==== :transformers
 
@@ -298,6 +304,7 @@ or ideas that later became code:
 * Mutwin Kraus <mutle@blogage.de>
 * Dev Purkayastha <dev.purkayastha@gmail.com>
 * David Reese <work@whatcould.com>
+* Rafael Souza <me@rafaelss.com>
 * Ben Wanicur <bwanicur@verticalresponse.com>
 
 == License
