@@ -8,6 +8,8 @@ Version 1.2.1 (git)
     remove the contents of only those elements (when filtered), and leave the
     contents of other filtered elements. [Thanks to Rafael Souza for the Array
     option]
+  * Added an :output_encoding config setting to allow the character encoding for
+    HTML output to be specified. The default is 'utf-8'.
   * The environment hash passed into transformers now includes a :node_name item
     containing the lowercase name of the current HTML node (e.g. "div").
   * Returning anything other than a Hash or nil from a transformer will now

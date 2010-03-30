@@ -44,6 +44,9 @@ class Sanitize
       # default).
       :output => :xhtml,
 
+      # Character encoding to use for HTML output. Default is 'utf-8'.
+      :output_encoding => 'utf-8',
+
       # URL handling protocols to allow in specific attributes. By default, no
       # protocols are allowed. Use :relative in place of a protocol if you want
       # to allow relative URLs sans protocol.

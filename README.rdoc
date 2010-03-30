@@ -138,6 +138,10 @@ Array of element names to allow. Specify all names in lowercase.
 Output format. Supported formats are <code>:html</code> and <code>:xhtml</code>,
 defaulting to <code>:xhtml</code>.
 
+==== :output_encoding (String)
+
+Character encoding to use for HTML output. Default is <code>'utf-8'</code>.
+
 ==== :protocols (Hash)
 
 URL protocols to allow in specific attributes. If an attribute is listed here

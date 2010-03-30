@@ -104,7 +104,7 @@ class Sanitize
     fragment = Nokogiri::HTML::DocumentFragment.parse(html)
     clean_node!(fragment)
 
-    output_method_params = {:encoding => 'utf-8', :indent => 0}
+    output_method_params = {:encoding => @config[:output_encoding], :indent => 0}
 
     if @config[:output] == :xhtml
       output_method = fragment.method(:to_xhtml)
@@ -116,10 +116,6 @@ class Sanitize
     end
 
     result = output_method.call(output_method_params)
-
-    # Ensure that the result is always a UTF-8 string in Ruby 1.9, no matter
-    # what. Nokogiri seems to return empty strings as ASCII for some reason.
-    result.force_encoding('utf-8') if RUBY_VERSION >= '1.9'
 
     return result == html ? nil : html[0, html.length] = result
   end

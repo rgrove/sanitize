@@ -278,6 +278,12 @@ describe 'Custom configs' do
   should 'remove the contents of specified nodes when :remove_contents is an Array of element names' do
     Sanitize.clean('foo bar <div>baz<span>quux</span><script>alert("hello!");</script></div>', :remove_contents => ['script', 'span']).should.equal('foo bar baz')
   end
+
+  should 'support encodings other than utf-8' do
+    html = 'foo&nbsp;bar'
+    Sanitize.clean(html).should.equal("foo\302\240bar")
+    Sanitize.clean(html, :output_encoding => 'ASCII').should.equal("foo&#160;bar")
+  end
 end
 
 describe 'Sanitize.clean' do
