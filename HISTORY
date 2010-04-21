@@ -1,7 +1,7 @@
 Sanitize History
 ================================================================================
 
-Version 1.2.1 (git)
+Version 1.2.1 (2010-04-20)
   * Added a :remove_contents config setting. If set to true, Sanitize will
     remove the contents of all non-whitelisted elements in addition to the
     elements themselves. If set to an Array of element names, Sanitize will

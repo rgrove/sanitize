@@ -14,7 +14,7 @@ of fragile regular expressions, Sanitize has no trouble dealing with malformed
 or maliciously-formed HTML, and will always output valid HTML or XHTML.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
-*Version*::   1.2.1.dev (git)
+*Version*::   1.2.1 (2010-04-20)
 *Copyright*:: Copyright (c) 2010 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
