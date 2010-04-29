@@ -94,7 +94,7 @@ class Sanitize
 
   # Returns a sanitized copy of _html_.
   def clean(html)
-    dupe = html.dup
+    dupe = html.to_s.dup
     clean!(dupe) || dupe
   end
 
