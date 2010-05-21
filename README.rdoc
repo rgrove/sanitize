@@ -301,6 +301,7 @@ by just whitelisting all <code><object></code>, <code><embed></code>, and
 The following lovely people have contributed to Sanitize in the form of patches
 or ideas that later became code:
 
+* Wilson Bilkovich <wilson@supremetyrant.com>
 * Peter Cooper <git@peterc.org>
 * Gabe da Silveira <gabe@websaviour.com>
 * Ryan Grove <ryan@wonko.com>
