@@ -217,9 +217,11 @@ class Sanitize
 
     @config[:transformers].inject(node) do |transformer_node, transformer|
       transform = transformer.call({
-        :config    => @config,
-        :node      => transformer_node,
-        :node_name => transformer_node.name.downcase
+        :allowed_elements => @allowed_elements,
+        :config           => @config,
+        :node             => transformer_node,
+        :node_name        => transformer_node.name.downcase,
+        :whitelist_nodes  => @whitelist_nodes
       })
 
       if transform.nil?

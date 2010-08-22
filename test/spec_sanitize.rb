@@ -370,6 +370,16 @@ describe 'transformers' do
     })
   end
 
+  should 'receive allowed_elements and whitelist_nodes as input' do
+    Sanitize.clean!('<span>foo</span>', :elements => ['span'], :transformers => lambda {|env|
+      env[:allowed_elements].should.satisfy {|a| a.is_a?(Hash) }
+      env[:allowed_elements]['span'].should.equal(true)
+      env[:whitelist_nodes].should.satisfy {|a| a.is_a?(Array) }
+      env[:whitelist_nodes].should.be.empty
+      nil
+    })
+  end
+
   should 'traverse from the deepest node outward' do
     nodes = []
 

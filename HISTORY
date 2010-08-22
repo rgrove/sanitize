@@ -1,6 +1,15 @@
 Sanitize History
 ================================================================================
 
+Version 1.2.? (git)
+  * The environment hash passed into transformers now includes an
+    :allowed_elements Hash to facilitate faster lookups when attempting to
+    determine whether an element is in the whitelist. [Suggested by Nicholas
+    Evans]
+  * The environment hash passed into transformers now includes a
+    :whitelist_nodes Array, so transformers now have insight into what nodes
+    have been whitelisted by other transformers. [Suggested by Nicholas Evans]
+
 Version 1.2.1 (2010-04-20)
   * Added a :remove_contents config setting. If set to true, Sanitize will
     remove the contents of all non-whitelisted elements in addition to the

@@ -194,6 +194,10 @@ Each registered transformer's <code>call()</code> method will be called once for
 each element node in the HTML, and will receive as an argument an environment
 Hash that contains the following items:
 
+[<code>:allowed_elements</code>]
+  Hash with whitelisted element names as keys, to facilitate fast lookups of
+  whitelisted elements.
+
 [<code>:config</code>]
   The current Sanitize configuration Hash.
 
@@ -202,6 +206,10 @@ Hash that contains the following items:
 
 [<code>:node_name</code>]
   The name of the current HTML node, always lowercase (e.g. "div" or "span").
+
+[<code>:whitelist_nodes</code>]
+  Array of Nokogiri::XML::Node instances that have already been whitelisted by
+  previous transformers, if any.
 
 ==== Processing
 
@@ -301,10 +309,11 @@ by just whitelisting all <code><object></code>, <code><embed></code>, and
 The following lovely people have contributed to Sanitize in the form of patches
 or ideas that later became code:
 
+* Ryan Grove <ryan@wonko.com>
 * Wilson Bilkovich <wilson@supremetyrant.com>
 * Peter Cooper <git@peterc.org>
 * Gabe da Silveira <gabe@websaviour.com>
-* Ryan Grove <ryan@wonko.com>
+* Nicholas Evans <owlmanatt@gmail.com>
 * Adam Hooper <adam@adamhooper.com>
 * Mutwin Kraus <mutle@blogage.de>
 * Dev Purkayastha <dev.purkayastha@gmail.com>
