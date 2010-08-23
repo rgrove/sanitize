@@ -25,7 +25,7 @@ require 'rake/clean'
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
 
-require 'lib/sanitize/version'
+require './lib/sanitize/version'
 
 gemspec = Gem::Specification.new do |s|
   s.rubyforge_project = 'riposte'
