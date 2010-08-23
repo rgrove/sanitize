@@ -230,7 +230,9 @@ describe 'Config::RELAXED' do
   before { @s = Sanitize.new(Sanitize::Config::RELAXED) }
 
   should 'encode special chars in attribute values' do
-    @s.clean('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>').should.equal('<a href="http://example.com" title="&lt;b&gt;&#xE9;xamples&lt;/b&gt; &amp; things">foo</a>')
+    input  = '<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>'
+    output = Nokogiri::HTML.fragment('<a href="http://example.com" title="&lt;b&gt;éxamples&lt;/b&gt; &amp; things">foo</a>').to_xhtml(:encoding => 'utf-8', :indent => 0, :save_with => Nokogiri::XML::Node::SaveOptions::AS_XHTML)
+    @s.clean(input).should.equal(output)
   end
 
   strings.each do |name, data|
