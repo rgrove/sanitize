@@ -27,6 +27,7 @@ require 'sanitize/config'
 require 'sanitize/config/restricted'
 require 'sanitize/config/basic'
 require 'sanitize/config/relaxed'
+require 'sanitize/transformers/fix_fragment_cdata'
 
 class Sanitize
   attr_reader :config
@@ -90,6 +91,14 @@ class Sanitize
     # is generated at runtime by transformers, and is cleared before and after
     # a fragment is cleaned (so it applies only to a specific fragment).
     @whitelist_nodes = []
+
+    # Workaround for a fragment parsing bug in Nokogiri >= 1.4.2. The naïve
+    # version check is fine here; there are no side effects for unaffected
+    # versions except slightly worse performance, and I plan to remove this hack
+    # as soon as Nokogiri fixes the bug on their end.
+    if Nokogiri::VERSION > '1.4.1'
+      @config[:transformers] << Transformers::FIX_FRAGMENT_CDATA
+    end
   end
 
   # Returns a sanitized copy of _html_.
