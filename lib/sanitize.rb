@@ -138,7 +138,7 @@ class Sanitize
     @whitelist_nodes = []
 
     node.traverse do |child|
-      if child.element?
+      if child.element? || child.text? && @config[:allow_text]
         clean_element!(child)
       elsif child.comment?
         child.unlink unless @config[:allow_comments]
