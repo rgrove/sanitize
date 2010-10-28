@@ -362,6 +362,21 @@ describe 'transformers' do
     # (<object>).
     {:whitelist_nodes => [node, parent]}
   end
+  
+  # Text transform.
+  # Example of transforming text nodes.
+  text_transform = lambda do |env|
+  	node = env[:node]
+  	node_name = env[:node_name]
+    parent    = node.parent
+
+  	return nil unless node_name == "text" && parent.name == "#document-fragment"
+
+    # we can modify the text nodes content or completely replace it
+    node.replace(Nokogiri::HTML.fragment("<p>#{node.text}</p>"))
+
+    {:whitelist_nodes => [node]}
+  end
 
   should 'receive the Sanitize config, current node, and node name as input' do
     Sanitize.clean!('<SPAN>foo</SPAN>', :foo => :bar, :transformers => lambda {|env|
@@ -423,6 +438,19 @@ describe 'transformers' do
     should.raise(Sanitize::Error) do
       Sanitize.clean!('<b>foo</b>', :transformers => lambda {|env| 'hello' })
     end
+  end
+  
+  should 'allow processing of text nodes' do
+    input = "foo"
+    output = "<p>foo</p>"
+    
+    Sanitize.clean(input, :allow_text => true, :transformers => text_transform).should.equal(output)
+  end
+  
+  should 'not allow processing of text nodes' do
+    input = "foo"
+    
+    Sanitize.clean(input, :allow_text => false, :transformers => text_transform).should.equal(input)
   end
 end
 
