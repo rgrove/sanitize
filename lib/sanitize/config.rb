@@ -23,6 +23,7 @@
 class Sanitize
   module Config
     DEFAULT = {
+      
       # Whether or not to allow HTML comments. Allowing comments is strongly
       # discouraged, since IE allows script execution within conditional
       # comments.
@@ -64,7 +65,11 @@ class Sanitize
 
       # Transformers allow you to filter or alter nodes using custom logic. See
       # README.rdoc for details and examples.
-      :transformers => []
+      :transformers => [],
+      
+      # Whether or not to allow processing of text nodes. Allow only if you need to
+      # apply transforms to text.
+      :allow_text => false
     }
   end
 end
