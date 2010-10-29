@@ -1,16 +1,16 @@
 #--
 # Copyright (c) 2010 Ryan Grove <ryan@wonko.com>
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,7 +23,7 @@
 class Sanitize
   module Config
     DEFAULT = {
-      
+
       # Whether or not to allow HTML comments. Allowing comments is strongly
       # discouraged, since IE allows script execution within conditional
       # comments.
@@ -48,6 +48,10 @@ class Sanitize
       # Character encoding to use for HTML output. Default is 'utf-8'.
       :output_encoding => 'utf-8',
 
+      # Whether or not to process text nodes. Enabling this will allow text
+      # nodes to be processed by transformers.
+      :process_text_nodes => false,
+
       # URL handling protocols to allow in specific attributes. By default, no
       # protocols are allowed. Use :relative in place of a protocol if you want
       # to allow relative URLs sans protocol.
@@ -65,11 +69,8 @@ class Sanitize
 
       # Transformers allow you to filter or alter nodes using custom logic. See
       # README.rdoc for details and examples.
-      :transformers => [],
-      
-      # Whether or not to allow processing of text nodes. Allow only if you need to
-      # apply transforms to text.
-      :allow_text => false
+      :transformers => []
+
     }
   end
 end

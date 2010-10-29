@@ -362,7 +362,7 @@ describe 'transformers' do
     # (<object>).
     {:whitelist_nodes => [node, parent]}
   end
-  
+
   # Text transform.
   # Example of transforming text nodes.
   text_transform = lambda do |env|
@@ -439,18 +439,18 @@ describe 'transformers' do
       Sanitize.clean!('<b>foo</b>', :transformers => lambda {|env| 'hello' })
     end
   end
-  
-  should 'allow processing of text nodes' do
+
+  should 'processing text nodes when :process_text_nodes is true' do
     input = "foo"
     output = "<p>foo</p>"
-    
-    Sanitize.clean(input, :allow_text => true, :transformers => text_transform).should.equal(output)
+
+    Sanitize.clean(input, :process_text_nodes => true, :transformers => text_transform).should.equal(output)
   end
-  
-  should 'not allow processing of text nodes' do
+
+  should 'not process text nodes by default' do
     input = "foo"
-    
-    Sanitize.clean(input, :allow_text => false, :transformers => text_transform).should.equal(input)
+
+    Sanitize.clean(input, :transformers => text_transform).should.equal(input)
   end
 end
 

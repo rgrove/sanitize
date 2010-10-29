@@ -14,7 +14,7 @@ of fragile regular expressions, Sanitize has no trouble dealing with malformed
 or maliciously-formed HTML, and will always output valid HTML or XHTML.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
-*Version*::   1.2.? (git)
+*Version*::   1.2.2 (git)
 *Copyright*:: Copyright (c) 2010 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
@@ -141,6 +141,11 @@ defaulting to <code>:xhtml</code>.
 ==== :output_encoding (String)
 
 Character encoding to use for HTML output. Default is <code>'utf-8'</code>.
+
+==== :process_text_nodes (Boolean)
+
+Whether or not to process text nodes. Enabling this will allow text nodes to be
+processed by transformers. The default is <code>false</code>.
 
 ==== :protocols (Hash)
 
@@ -318,6 +323,7 @@ or ideas that later became code:
 * Mutwin Kraus <mutle@blogage.de>
 * Dev Purkayastha <dev.purkayastha@gmail.com>
 * David Reese <work@whatcould.com>
+* Ardie Saeidi <ardalan.saeidi@gmail.com>
 * Rafael Souza <me@rafaelss.com>
 * Ben Wanicur <bwanicur@verticalresponse.com>
 

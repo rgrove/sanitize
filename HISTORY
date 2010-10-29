@@ -1,7 +1,7 @@
 Sanitize History
 ================================================================================
 
-Version 1.2.? (git)
+Version 1.2.2 (git)
   * The environment hash passed into transformers now includes an
     :allowed_elements Hash to facilitate faster lookups when attempting to
     determine whether an element is in the whitelist. [Suggested by Nicholas
@@ -9,6 +9,8 @@ Version 1.2.? (git)
   * The environment hash passed into transformers now includes a
     :whitelist_nodes Array, so transformers now have insight into what nodes
     have been whitelisted by other transformers. [Suggested by Nicholas Evans]
+  * Added a :process_text_nodes config setting. If set to true, Sanitize will
+    pass text nodes to transformers. The default is false. [Ardie Saeidi]
   * Added a workaround for a bug in Nokogiri 1.4.2 and higher (issue #315) that
     causes "</body></html>" to be appended to the CDATA inside unterminated
     script and style elements.
