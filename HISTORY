@@ -11,9 +11,9 @@ Version 1.2.2 (git)
     have been whitelisted by other transformers. [Suggested by Nicholas Evans]
   * Added a :process_text_nodes config setting. If set to true, Sanitize will
     pass text nodes to transformers. The default is false. [Ardie Saeidi]
-  * Added a workaround for a bug in Nokogiri 1.4.2 and higher (issue #315) that
-    causes "</body></html>" to be appended to the CDATA inside unterminated
-    script and style elements.
+  * Bumped minimum Nokogiri version to 1.4.4 to avoid a bug in 1.4.2+ (issue
+    #315) that caused "</body></html>" to be appended to the CDATA inside
+    unterminated script and style elements.
 
 Version 1.2.1 (2010-04-20)
   * Added a :remove_contents config setting. If set to true, Sanitize will

@@ -455,7 +455,7 @@ describe 'transformers' do
 end
 
 describe 'bugs' do
-  should 'work around Nokogiri 1.4.2+ unterminated script/style element bug' do
+  should 'not have Nokogiri 1.4.2+ unterminated script/style element bug' do
     Sanitize.clean!('foo <script>bar').should.equal('foo bar')
     Sanitize.clean!('foo <style>bar').should.equal('foo bar')
   end
