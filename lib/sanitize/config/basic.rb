@@ -23,15 +23,18 @@
 class Sanitize
   module Config
     BASIC = {
-      :elements => [
-        'a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em',
-        'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub',
-        'sup', 'u', 'ul'],
+      :elements => %w[
+        a abbr b blockquote br cite code dd dfn dl dt em i kbd li mark ol p pre
+        q s samp small strike strong sub sup time u ul var
+      ],
 
       :attributes => {
         'a'          => ['href'],
+        'abbr'       => ['title'],
         'blockquote' => ['cite'],
-        'q'          => ['cite']
+        'dfn'        => ['title'],
+        'q'          => ['cite'],
+        'time'       => ['datetime', 'pubdate']
       },
 
       :add_attributes => {
@@ -39,8 +42,7 @@ class Sanitize
       },
 
       :protocols => {
-        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto',
-                                    :relative]},
+        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative]},
         'blockquote' => {'cite' => ['http', 'https', :relative]},
         'q'          => {'cite' => ['http', 'https', :relative]}
       }
