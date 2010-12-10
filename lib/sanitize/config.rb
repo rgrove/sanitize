@@ -41,9 +41,8 @@ class Sanitize
       # that all HTML will be stripped).
       :elements => [],
 
-      # Output format. Supported formats are :html and :xhtml (which is the
-      # default).
-      :output => :xhtml,
+      # Output format. Supported formats are :html and :xhtml. Default is :html.
+      :output => :html,
 
       # Character encoding to use for HTML output. Default is 'utf-8'.
       :output_encoding => 'utf-8',

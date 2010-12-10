@@ -14,14 +14,14 @@ of fragile regular expressions, Sanitize has no trouble dealing with malformed
 or maliciously-formed HTML, and will always output valid HTML or XHTML.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
-*Version*::   1.2.2 (git)
+*Version*::   1.3.0 (git)
 *Copyright*:: Copyright (c) 2010 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
 
 == Requires
 
-* Nokogiri ~> 1.4.1
+* Nokogiri ~> 1.4.4
 * libxml2 >= 2.7.2
 
 == Installation
@@ -136,7 +136,7 @@ Array of element names to allow. Specify all names in lowercase.
 ==== :output (Symbol)
 
 Output format. Supported formats are <code>:html</code> and <code>:xhtml</code>,
-defaulting to <code>:xhtml</code>.
+defaulting to <code>:html</code>.
 
 ==== :output_encoding (String)
 

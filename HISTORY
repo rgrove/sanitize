@@ -1,7 +1,9 @@
 Sanitize History
 ================================================================================
 
-Version 1.2.2 (git)
+Version 1.3.0 (git)
+  * The default value for the :output config is now :html. Previously it was
+    :xhtml.
   * The environment hash passed into transformers now includes an
     :allowed_elements Hash to facilitate faster lookups when attempting to
     determine whether an element is in the whitelist. [Suggested by Nicholas

@@ -29,16 +29,16 @@ strings = {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>',
     :default    => 'Lorem ipsum dolor sitamet alert("hello world");',
     :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet alert("hello world");',
-    :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert("hello world");',
-    :relaxed    => '<b>Lorem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet alert("hello world");'
+    :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet alert("hello world");',
+    :relaxed    => '<b>Lorem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet alert("hello world");'
   },
 
   :malformed => {
     :html       => 'Lo<!-- comment -->rem</b> <a href=pants title="foo>ipsum <a href="http://foo.com/"><strong>dolor</a></strong> sit<br/>amet <script>alert("hello world");',
     :default    => 'Lorem dolor sitamet alert("hello world");',
     :restricted => 'Lorem <strong>dolor</strong> sitamet alert("hello world");',
-    :basic      => 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br />amet alert("hello world");',
-    :relaxed    => 'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br />amet alert("hello world");'
+    :basic      => 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br>amet alert("hello world");',
+    :relaxed    => 'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br>amet alert("hello world");'
   },
 
   :unclosed => {
@@ -53,8 +53,8 @@ strings = {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="javascript:pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <<foo>script>alert("hello world");</script>',
     :default    => 'Lorem ipsum dolor sitamet script&gt;alert("hello world");',
     :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet script&gt;alert("hello world");',
-    :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br />amet script&gt;alert("hello world");',
-    :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br />amet script&gt;alert("hello world");'
+    :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet script&gt;alert("hello world");',
+    :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet script&gt;alert("hello world");'
   },
 
   :raw_comment => {
@@ -206,7 +206,7 @@ describe 'Config::BASIC' do
   before { @s = Sanitize.new(Sanitize::Config::BASIC) }
 
   should 'not choke on valueless attributes' do
-    @s.clean('foo <a href>foo</a> bar').should.equal('foo <a href="" rel="nofollow">foo</a> bar')
+    @s.clean('foo <a href>foo</a> bar').should.equal('foo <a href rel="nofollow">foo</a> bar')
   end
 
   should 'downcase attribute names' do
@@ -422,7 +422,7 @@ describe 'transformers' do
 
   should 'allow youtube video embeds via the youtube transformer' do
     input  = '<div><object foo="bar" height="344" width="425"><b>test</b><param foo="bar" name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
-    output = Nokogiri::HTML::DocumentFragment.parse('<object height="344" width="425">test<param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>').to_xhtml(:encoding => 'utf-8', :indent => 0, :save_with => Nokogiri::XML::Node::SaveOptions::AS_XHTML)
+    output = Nokogiri::HTML::DocumentFragment.parse('<object height="344" width="425">test<param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>').to_html(:encoding => 'utf-8', :indent => 0)
 
     Sanitize.clean!(input, :transformers => youtube).should.equal(output)
   end
