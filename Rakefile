@@ -40,7 +40,7 @@ gemspec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
 
   s.require_path          = 'lib'
-  s.required_ruby_version = '>= 1.8.6'
+  s.required_ruby_version = '>= 1.8.7'
 
   # Runtime dependencies.
   s.add_dependency('nokogiri', '~> 1.4.4')
@@ -68,8 +68,6 @@ Rake::RDocTask.new do |rd|
   rd.rdoc_dir = 'doc'
 
   rd.rdoc_files.include('README.rdoc', 'lib/**/*.rb')
-
-  rd.options << '--line-numbers' << '--inline-source'
 end
 
 Rake::TestTask.new
