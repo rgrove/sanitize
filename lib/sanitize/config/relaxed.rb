@@ -31,12 +31,13 @@ class Sanitize
       ],
 
       :attributes => {
-        'a'          => ['href', 'title'],
+        :all         => ['dir', 'lang', 'title'],
+        'a'          => ['href'],
         'blockquote' => ['cite'],
         'col'        => ['span', 'width'],
         'colgroup'   => ['span', 'width'],
-        'img'        => ['align', 'alt', 'height', 'src', 'title', 'width'],
         'del'        => ['cite', 'datetime'],
+        'img'        => ['align', 'alt', 'height', 'src', 'width'],
         'ins'        => ['cite', 'datetime'],
         'ol'         => ['start', 'reversed', 'type'],
         'q'          => ['cite'],

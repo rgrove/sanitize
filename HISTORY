@@ -9,6 +9,8 @@ Version 1.3.0 (git)
     `Sanitize::Config::RELAXED`.
   * Added the `bdo`, `del`, `figcaption`, `figure`, `hgroup`, `ins`, `rp`, `rt`,
     `ruby`, and `wbr` elements to the whitelist for `Sanitize::Config::RELAXED`.
+  * The `dir`, `lang`, and `title` attributes are now whitelisted for all
+    elements in `Sanitize::Config::RELAXED`.
   * The environment hash passed into transformers now includes an
     :allowed_elements Hash to facilitate faster lookups when attempting to
     determine whether an element is in the whitelist. [Suggested by Nicholas
