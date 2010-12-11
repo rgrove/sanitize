@@ -68,8 +68,16 @@ class Sanitize
 
       # Transformers allow you to filter or alter nodes using custom logic. See
       # README.rdoc for details and examples.
-      :transformers => []
+      :transformers => [],
 
+      # Elements which, when removed, should have their contents surrounded by
+      # space characters to preserve readability. For example,
+      # `foo<div>bar</div>baz` will become 'foo bar baz' when the <div> is
+      # removed.
+      :whitespace_elements => %w[
+        address article aside blockquote br dd div dl dt footer h1 h2 h3 h4 h5
+        h6 header hgroup hr li nav ol p pre section ul
+      ]
     }
   end
 end

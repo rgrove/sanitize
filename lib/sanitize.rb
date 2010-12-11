@@ -72,9 +72,12 @@ class Sanitize
     @config = Config::DEFAULT.merge(config)
     @config[:transformers] = Array(@config[:transformers].dup)
 
-    # Convert the list of allowed elements to a Hash for faster lookup.
-    @allowed_elements = {}
+    # Convert arrays to hashes for faster lookups.
+    @allowed_elements    = {}
+    @whitespace_elements = {}
+
     @config[:elements].each {|el| @allowed_elements[el] = true }
+    @config[:whitespace_elements].each {|el| @whitespace_elements[el] = true }
 
     # Convert the list of :remove_contents elements to a Hash for faster lookup.
     @remove_all_contents     = false
@@ -157,6 +160,13 @@ class Sanitize
 
     # Delete any element that isn't in the whitelist.
     unless transform[:whitelist] || @allowed_elements[name]
+      # Elements like br, div, p, etc. need to be replaced with whitespace in
+      # order to preserve readability.
+      if @whitespace_elements[name]
+        node.add_previous_sibling(' ')
+        node.add_next_sibling(' ') unless node.children.empty?
+      end
+
       unless @remove_all_contents || @remove_element_contents[name]
         node.children.each { |n| node.add_previous_sibling(n) }
       end

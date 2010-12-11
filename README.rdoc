@@ -181,6 +181,19 @@ The default value is <code>false</code>.
 
 See below.
 
+==== :whitespace_elements (Array)
+
+Array of lowercase element names that should be replaced with whitespace when
+removed in order to preserve readability. For example,
+<code>foo<div>bar</div>baz</code> will become
+<code>foo bar baz</code> when the <code><div></code> is removed.
+
+By default, the following elements are included in the
+<code>:whitespace_elements</code> array:
+
+  address article aside blockquote br dd div dl dt footer h1 h2 h3 h4 h5
+  h6 header hgroup hr li nav ol p pre section ul
+
 === Transformers
 
 Transformers allow you to filter and alter nodes using your own custom logic, on

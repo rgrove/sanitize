@@ -27,32 +27,32 @@ require 'sanitize'
 strings = {
   :basic => {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>',
-    :default    => 'Lorem ipsum dolor sitamet alert("hello world");',
-    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet alert("hello world");',
+    :default    => 'Lorem ipsum dolor sit amet alert("hello world");',
+    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sit amet alert("hello world");',
     :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet alert("hello world");',
     :relaxed    => '<b>Lorem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet alert("hello world");'
   },
 
   :malformed => {
     :html       => 'Lo<!-- comment -->rem</b> <a href=pants title="foo>ipsum <a href="http://foo.com/"><strong>dolor</a></strong> sit<br/>amet <script>alert("hello world");',
-    :default    => 'Lorem dolor sitamet alert("hello world");',
-    :restricted => 'Lorem <strong>dolor</strong> sitamet alert("hello world");',
+    :default    => 'Lorem dolor sit amet alert("hello world");',
+    :restricted => 'Lorem <strong>dolor</strong> sit amet alert("hello world");',
     :basic      => 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br>amet alert("hello world");',
     :relaxed    => 'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br>amet alert("hello world");'
   },
 
   :unclosed => {
     :html       => '<p>a</p><blockquote>b',
-    :default    => 'ab',
-    :restricted => 'ab',
+    :default    => ' a  b ',
+    :restricted => ' a  b ',
     :basic      => '<p>a</p><blockquote>b</blockquote>',
     :relaxed    => '<p>a</p><blockquote>b</blockquote>'
   },
 
   :malicious => {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="javascript:pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <<foo>script>alert("hello world");</script>',
-    :default    => 'Lorem ipsum dolor sitamet script&gt;alert("hello world");',
-    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sitamet script&gt;alert("hello world");',
+    :default    => 'Lorem ipsum dolor sit amet script&gt;alert("hello world");',
+    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sit amet script&gt;alert("hello world");',
     :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet script&gt;alert("hello world");',
     :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet script&gt;alert("hello world");'
   },
@@ -173,6 +173,12 @@ describe 'Config::DEFAULT' do
     Sanitize.clean('<img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif">').should.equal('')
   end
 
+  should 'surround the contents of :whitespace_elements with space characters when removing the element' do
+    Sanitize.clean('foo<div>bar</div>baz').should.equal('foo bar baz')
+    Sanitize.clean('foo<br>bar<br>baz').should.equal('foo bar baz')
+    Sanitize.clean('foo<hr>bar<hr>baz').should.equal('foo bar baz')
+  end
+
   strings.each do |name, data|
     should "clean #{name} HTML" do
       Sanitize.clean(data[:html]).should.equal(data[:default])
@@ -252,7 +258,7 @@ describe 'Custom configs' do
   should 'allow attributes on all elements if whitelisted under :all' do
     input = '<p class="foo">bar</p>'
 
-    Sanitize.clean(input).should.equal('bar')
+    Sanitize.clean(input).should.equal(' bar ')
     Sanitize.clean(input, {:elements => ['p'], :attributes => {:all => ['class']}}).should.equal(input)
     Sanitize.clean(input, {:elements => ['p'], :attributes => {'div' => ['class']}}).should.equal('<p>bar</p>')
     Sanitize.clean(input, {:elements => ['p'], :attributes => {'p' => ['title'], :all => ['class']}}).should.equal(input)
@@ -260,6 +266,7 @@ describe 'Custom configs' do
 
   should 'allow comments when :allow_comments == true' do
     input = 'foo <!-- bar --> baz'
+    Sanitize.clean(input).should.equal('foo  baz')
     Sanitize.clean(input, :allow_comments => true).should.equal(input)
   end
 
@@ -274,11 +281,11 @@ describe 'Custom configs' do
   end
 
   should 'remove the contents of filtered nodes when :remove_contents == true' do
-    Sanitize.clean('foo bar <div>baz<span>quux</span></div>', :remove_contents => true).should.equal('foo bar ')
+    Sanitize.clean('foo bar <div>baz<span>quux</span></div>', :remove_contents => true).should.equal('foo bar   ')
   end
 
   should 'remove the contents of specified nodes when :remove_contents is an Array of element names' do
-    Sanitize.clean('foo bar <div>baz<span>quux</span><script>alert("hello!");</script></div>', :remove_contents => ['script', 'span']).should.equal('foo bar baz')
+    Sanitize.clean('foo bar <div>baz<span>quux</span><script>alert("hello!");</script></div>', :remove_contents => ['script', 'span']).should.equal('foo bar  baz ')
   end
 
   should 'support encodings other than utf-8' do
@@ -422,14 +429,14 @@ describe 'transformers' do
 
   should 'allow youtube video embeds via the youtube transformer' do
     input  = '<div><object foo="bar" height="344" width="425"><b>test</b><param foo="bar" name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
-    output = Nokogiri::HTML::DocumentFragment.parse('<object height="344" width="425">test<param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>').to_html(:encoding => 'utf-8', :indent => 0)
+    output = ' ' + Nokogiri::HTML::DocumentFragment.parse('<object height="344" width="425">test<param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>').to_html(:encoding => 'utf-8', :indent => 0) + ' '
 
     Sanitize.clean!(input, :transformers => youtube).should.equal(output)
   end
 
   should 'not allow non-youtube video embeds via the youtube transformer' do
     input  = '<div><object height="344" width="425"><param name="movie" value="http://www.eviltube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.eviltube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
-    output = ''
+    output = ' '
 
     Sanitize.clean!(input, :transformers => youtube).should.equal(output)
   end
