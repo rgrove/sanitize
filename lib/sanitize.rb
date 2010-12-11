@@ -21,12 +21,15 @@
 # SOFTWARE.
 #++
 
+require 'set'
+
 require 'nokogiri'
 require 'sanitize/version'
 require 'sanitize/config'
 require 'sanitize/config/restricted'
 require 'sanitize/config/basic'
 require 'sanitize/config/relaxed'
+require 'sanitize/transformers/clean_element'
 
 class Sanitize
   attr_reader :config
@@ -45,21 +48,18 @@ class Sanitize
   # Returns a sanitized copy of _html_, using the settings in _config_ if
   # specified.
   def self.clean(html, config = {})
-    sanitize = Sanitize.new(config)
-    sanitize.clean(html)
+    Sanitize.new(config).clean(html)
   end
 
   # Performs Sanitize#clean in place, returning _html_, or +nil+ if no changes
   # were made.
   def self.clean!(html, config = {})
-    sanitize = Sanitize.new(config)
-    sanitize.clean!(html)
+    Sanitize.new(config).clean!(html)
   end
 
   # Sanitizes the specified Nokogiri::XML::Node and all its children.
   def self.clean_node!(node, config = {})
-    sanitize = Sanitize.new(config)
-    sanitize.clean_node!(node)
+    Sanitize.new(config).clean_node!(node)
   end
 
   #--
@@ -70,24 +70,10 @@ class Sanitize
   def initialize(config = {})
     # Sanitize configuration.
     @config = Config::DEFAULT.merge(config)
-    @config[:transformers] = Array(@config[:transformers].dup)
+    @transformers = Array(@config[:transformers].dup)
 
-    # Convert arrays to hashes for faster lookups.
-    @allowed_elements    = {}
-    @whitespace_elements = {}
-
-    @config[:elements].each {|el| @allowed_elements[el] = true }
-    @config[:whitespace_elements].each {|el| @whitespace_elements[el] = true }
-
-    # Convert the list of :remove_contents elements to a Hash for faster lookup.
-    @remove_all_contents     = false
-    @remove_element_contents = {}
-
-    if @config[:remove_contents].is_a?(Array)
-      @config[:remove_contents].each {|el| @remove_element_contents[el] = true }
-    else
-      @remove_all_contents = !!@config[:remove_contents]
-    end
+    # Default transformers.
+    @transformers << Transformers::CleanElement.new(@config)
 
     # Specific nodes to whitelist (along with all their attributes). This array
     # is generated at runtime by transformers, and is cleared before and after
@@ -129,9 +115,8 @@ class Sanitize
   def clean_node!(node)
     raise ArgumentError unless node.is_a?(Nokogiri::XML::Node)
 
-    @whitelist_nodes = []
-
     node.traverse do |child|
+    # traverse(node) do |child|
       if child.element? || (child.text? && @config[:process_text_nodes])
         clean_element!(child)
       elsif child.comment?
@@ -141,118 +126,62 @@ class Sanitize
       end
     end
 
-    @whitelist_nodes = []
-
     node
   end
 
   private
 
+  # def traverse(node, &block)
+  #   block.call(node)
+  #   node.children.each {|child| traverse(child, &block)} if node
+  # end
+
   def clean_element!(node)
     # Run this node through all configured transformers.
     transform = transform_element!(node)
 
-    # If this node is in the dynamic whitelist array (built at runtime by
-    # transformers), let it live with all of its attributes intact.
-    return if @whitelist_nodes.include?(node)
-
-    name = node.name.to_s.downcase
-
-    # Delete any element that isn't in the whitelist.
-    unless transform[:whitelist] || @allowed_elements[name]
-      # Elements like br, div, p, etc. need to be replaced with whitespace in
-      # order to preserve readability.
-      if @whitespace_elements[name]
-        node.add_previous_sibling(' ')
-        node.add_next_sibling(' ') unless node.children.empty?
-      end
-
-      unless @remove_all_contents || @remove_element_contents[name]
-        node.children.each { |n| node.add_previous_sibling(n) }
-      end
-
-      node.unlink
-
-      return
-    end
-
-    attr_whitelist = (transform[:attr_whitelist] +
-        (@config[:attributes][name] || []) +
-        (@config[:attributes][:all] || [])).uniq
-
-    if attr_whitelist.empty?
-      # Delete all attributes from elements with no whitelisted attributes.
-      node.attribute_nodes.each {|attr| attr.remove }
-    else
-      # Delete any attribute that isn't in the whitelist for this element.
-      node.attribute_nodes.each do |attr|
-        attr.unlink unless attr_whitelist.include?(attr.name.downcase)
-      end
-
-      # Delete remaining attributes that use unacceptable protocols.
-      if @config[:protocols].has_key?(name)
-        protocol = @config[:protocols][name]
-
-        node.attribute_nodes.each do |attr|
-          attr_name = attr.name.downcase
-          next false unless protocol.has_key?(attr_name)
-
-          del = if attr.value.to_s.downcase =~ REGEX_PROTOCOL
-            !protocol[attr_name].include?($1.downcase)
-          else
-            !protocol[attr_name].include?(:relative)
-          end
-
-          attr.unlink if del
-        end
-      end
-    end
-
-    # Add required attributes.
-    if @config[:add_attributes].has_key?(name)
-      @config[:add_attributes][name].each do |key, val|
-        node[key] = val
-      end
-    end
+    # # If this node is in the dynamic whitelist array (built at runtime by
+    # # transformers), let it live with all of its attributes intact.
+    # return if @whitelist_nodes.include?(node)
 
     transform
   end
 
   def transform_element!(node)
-    output = {
-      :attr_whitelist => [],
-      :node           => node,
-      :whitelist      => false
-    }
+    document = node.document
 
-    @config[:transformers].inject(node) do |transformer_node, transformer|
-      transform = transformer.call({
-        :allowed_elements => @allowed_elements,
-        :config           => @config,
-        :node             => transformer_node,
-        :node_name        => transformer_node.name.downcase,
-        :whitelist_nodes  => @whitelist_nodes
+    attr_whitelist = Set.new
+    node_whitelist = Set.new
+
+    # TODO: node_whitelist needs to be a global whitelist, persistent during the
+    # current clean operation (not just the current node transform).
+    #
+    # But we also need a way of adding the current node to the local whitelist,
+    # as if it were in :allowed_elements.
+    #
+    # Or maybe we should only ever allow local whitelisting and never global
+    # persistent whitelisting. Hmm.
+
+    @transformers.each do |transformer|
+      result = transformer.call({
+        :attr_whitelist => attr_whitelist,
+        :config         => @config,
+        :node           => node,
+        :node_name      => node.name.downcase,
+        :node_whitelist => node_whitelist
       })
 
-      if transform.nil?
-        transformer_node
-      elsif transform.is_a?(Hash)
-        if transform[:whitelist_nodes].is_a?(Array)
-          @whitelist_nodes += transform[:whitelist_nodes]
-          @whitelist_nodes.uniq!
-        end
+      # If the node has been destroyed or removed from the document, there's no
+      # point running subsequent transformers.
+      break unless node && node.document == document
 
-        output[:attr_whitelist]  += transform[:attr_whitelist] if transform[:attr_whitelist].is_a?(Array)
-        output[:whitelist]      ||= true if transform[:whitelist]
-        output[:node]             = transform[:node].is_a?(Nokogiri::XML::Node) ? transform[:node] : output[:node]
-      else
-        raise Error, "transformer output must be a Hash or nil"
+      if result.is_a?(Hash)
+        attr_whitelist.merge(result[:attr_whitelist]) if result[:attr_whitelist].respond_to?(:each)
+        node_whitelist.merge(result[:node_whitelist]) if result[:node_whitelist].respond_to?(:each)
       end
     end
 
-    node.replace(output[:node]) if node != output[:node]
-
-    return output
+    node
   end
 
   class Error < StandardError; end
