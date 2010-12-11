@@ -29,6 +29,8 @@ require 'sanitize/config'
 require 'sanitize/config/restricted'
 require 'sanitize/config/basic'
 require 'sanitize/config/relaxed'
+require 'sanitize/transformers/clean_cdata'
+require 'sanitize/transformers/clean_comment'
 require 'sanitize/transformers/clean_element'
 
 class Sanitize
@@ -68,17 +70,15 @@ class Sanitize
 
   # Returns a new Sanitize object initialized with the settings in _config_.
   def initialize(config = {})
-    # Sanitize configuration.
-    @config = Config::DEFAULT.merge(config)
+    @config       = Config::DEFAULT.merge(config)
     @transformers = Array(@config[:transformers].dup)
 
-    # Default transformers.
-    @transformers << Transformers::CleanElement.new(@config)
-
-    # Specific nodes to whitelist (along with all their attributes). This array
-    # is generated at runtime by transformers, and is cleared before and after
-    # a fragment is cleaned (so it applies only to a specific fragment).
-    @whitelist_nodes = []
+    # Default transformers. These always run at the end of the transformer
+    # chain, after any custom transformers.
+    @transformers <<
+        Transformers::CleanComment <<
+        Transformers::CleanCDATA <<
+        Transformers::CleanElement.new(@config)
   end
 
   # Returns a sanitized copy of _html_.
@@ -115,69 +115,30 @@ class Sanitize
   def clean_node!(node)
     raise ArgumentError unless node.is_a?(Nokogiri::XML::Node)
 
-    node.traverse do |child|
-    # traverse(node) do |child|
-      if child.element? || (child.text? && @config[:process_text_nodes])
-        clean_element!(child)
-      elsif child.comment?
-        child.unlink unless @config[:allow_comments]
-      elsif child.cdata?
-        child.replace(Nokogiri::XML::Text.new(child.text, child.document))
-      end
-    end
+    node_whitelist = Set.new
+    node.traverse {|child| transform_node!(child, node_whitelist) }
 
     node
   end
 
   private
 
-  # def traverse(node, &block)
-  #   block.call(node)
-  #   node.children.each {|child| traverse(child, &block)} if node
-  # end
-
-  def clean_element!(node)
-    # Run this node through all configured transformers.
-    transform = transform_element!(node)
-
-    # # If this node is in the dynamic whitelist array (built at runtime by
-    # # transformers), let it live with all of its attributes intact.
-    # return if @whitelist_nodes.include?(node)
-
-    transform
-  end
-
-  def transform_element!(node)
-    document = node.document
-
-    attr_whitelist = Set.new
-    node_whitelist = Set.new
-
-    # TODO: node_whitelist needs to be a global whitelist, persistent during the
-    # current clean operation (not just the current node transform).
-    #
-    # But we also need a way of adding the current node to the local whitelist,
-    # as if it were in :allowed_elements.
-    #
-    # Or maybe we should only ever allow local whitelisting and never global
-    # persistent whitelisting. Hmm.
-
+  def transform_node!(node, node_whitelist)
     @transformers.each do |transformer|
       result = transformer.call({
-        :attr_whitelist => attr_whitelist,
         :config         => @config,
+        :is_whitelisted => node_whitelist.include?(node),
         :node           => node,
         :node_name      => node.name.downcase,
         :node_whitelist => node_whitelist
       })
 
-      # If the node has been destroyed or removed from the document, there's no
-      # point running subsequent transformers.
-      break unless node && node.document == document
+      # If the node has been unlinked, there's no point running subsequent
+      # transformers.
+      break if node.parent.nil? && !node.fragment?
 
-      if result.is_a?(Hash)
-        attr_whitelist.merge(result[:attr_whitelist]) if result[:attr_whitelist].respond_to?(:each)
-        node_whitelist.merge(result[:node_whitelist]) if result[:node_whitelist].respond_to?(:each)
+      if result.is_a?(Hash) && result[:node_whitelist].respond_to?(:each)
+        node_whitelist.merge(result[:node_whitelist])
       end
     end
 

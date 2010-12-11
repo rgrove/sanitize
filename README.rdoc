@@ -14,7 +14,7 @@ of fragile regular expressions, Sanitize has no trouble dealing with malformed
 or maliciously-formed HTML, and will always output valid HTML or XHTML.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
-*Version*::   1.3.0 (git)
+*Version*::   2.0.0 (git)
 *Copyright*:: Copyright (c) 2010 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
@@ -43,7 +43,7 @@ behind.
   require 'rubygems'
   require 'sanitize'
 
-  html = '<b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg" />'
+  html = '<b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg">'
 
   Sanitize.clean(html) # => 'foo'
 
@@ -77,7 +77,7 @@ are limited to HTTP and HTTPS. In this mode, <code>rel="nofollow"</code> is not
 added to links.
 
   Sanitize.clean(html, Sanitize::Config::RELAXED)
-  # => '<b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg" />'
+  # => '<b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg">'
 
 === Custom Configuration
 
@@ -127,10 +127,9 @@ default value is <code>false</code>.
 
 Array of element names to allow. Specify all names in lowercase.
 
-  :elements => [
-    'a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em',
-    'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub',
-    'sup', 'u', 'ul'
+  :elements => %w[
+    a abbr b blockquote br cite code dd dfn dl dt em i kbd li mark ol p pre
+    q s samp small strike strong sub sup time u ul var
   ]
 
 ==== :output (Symbol)
@@ -140,12 +139,7 @@ defaulting to <code>:html</code>.
 
 ==== :output_encoding (String)
 
-Character encoding to use for HTML output. Default is <code>'utf-8'</code>.
-
-==== :process_text_nodes (Boolean)
-
-Whether or not to process text nodes. Enabling this will allow text nodes to be
-processed by transformers. The default is <code>false</code>.
+Character encoding to use for HTML output. Default is <code>utf-8</code>.
 
 ==== :protocols (Hash)
 
@@ -171,7 +165,7 @@ If set to +true+, Sanitize will remove the contents of any non-whitelisted
 elements in addition to the elements themselves. By default, Sanitize leaves the
 safe parts of an element's contents behind when the element is removed.
 
-If set to an Array of element names, then only the contents of the specified
+If set to an array of element names, then only the contents of the specified
 elements (when filtered) will be removed, and the contents of all other filtered
 elements will be left behind.
 
@@ -179,7 +173,8 @@ The default value is <code>false</code>.
 
 ==== :transformers
 
-See below.
+Custom transformer or array of custom transformers. See the Transformers section
+below for details.
 
 ==== :whitespace_elements (Array)
 
@@ -196,81 +191,80 @@ By default, the following elements are included in the
 
 === Transformers
 
-Transformers allow you to filter and alter nodes using your own custom logic, on
-top of (or instead of) Sanitize's core filter. A transformer is any object that
-responds to <code>call()</code> (such as a lambda or proc) and returns either
-<code>nil</code> or a Hash containing certain optional response values.
+Transformers allow you to filter and modify nodes using your own custom logic,
+on top of (or instead of) Sanitize's core filter. A transformer is any object
+that responds to <code>call()</code> (such as a lambda or proc).
 
 To use one or more transformers, pass them to the <code>:transformers</code>
-config setting:
+config setting. You may pass a single transformer or an array of transformers.
 
   Sanitize.clean(html, :transformers => [transformer_one, transformer_two])
 
 ==== Input
 
 Each registered transformer's <code>call()</code> method will be called once for
-each element node in the HTML, and will receive as an argument an environment
-Hash that contains the following items:
-
-[<code>:allowed_elements</code>]
-  Hash with whitelisted element names as keys, to facilitate fast lookups of
-  whitelisted elements.
+each node in the HTML (including elements, text nodes, comments, etc.), and will
+receive as an argument an environment Hash that contains the following items:
 
 [<code>:config</code>]
   The current Sanitize configuration Hash.
 
+[<code>:is_whitelisted</code>]
+  <code>true</code> if the current node has been whitelisted by a previous
+  transformer, <code>false</code> otherwise. It's generally bad form to remove a
+  node that a previous transformer has whitelisted.
+
 [<code>:node</code>]
-  A Nokogiri::XML::Node object representing an HTML element.
+  A Nokogiri::XML::Node object representing an HTML node. The node may be an
+  element, a text node, a comment, a CDATA node, or a document fragment. Use
+  Nokogiri's inspection methods (<code>element?</code>, <code>text?</code>,
+  etc.) to selectively ignore node types you aren't interested in.
 
 [<code>:node_name</code>]
   The name of the current HTML node, always lowercase (e.g. "div" or "span").
+  For non-element nodes, the name will be something like "text", "comment",
+  "#cdata-section", "#document-fragment", etc.
 
-[<code>:whitelist_nodes</code>]
-  Array of Nokogiri::XML::Node instances that have already been whitelisted by
-  previous transformers, if any.
+[<code>:node_whitelist</code>]
+  Set of Nokogiri::XML::Node objects in the current document that have been
+  whitelisted by previous transformers, if any. It's generally bad form to
+  remove a node that a previous transformer has whitelisted.
+
+==== Output
+
+A transformer doesn't have to return anything, but may optionally return a Hash,
+which may contain the following items:
+
+[<code>:node_whitelist</code>]
+  Array or Set of specific Nokogiri::XML::Node objects to add to the document's
+  whitelist, bypassing the current Sanitize config. These specific nodes and all
+  their attributes will be whitelisted, but their children will not be.
+
+If a transformer returns anything other than a Hash, the return value will be
+ignored.
 
 ==== Processing
 
 Each transformer has full access to the Nokogiri::XML::Node that's passed into
 it and to the rest of the document via the node's <code>document()</code>
-method. Any changes will be reflected instantly in the document and passed on to
-subsequently-called transformers and to Sanitize itself. A transformer may even
-call Sanitize internally to perform custom sanitization if needed.
+method. Any changes made to the current node or to the document will be
+reflected instantly in the document and passed on to subsequently-called
+transformers and to Sanitize itself. A transformer may even call Sanitize
+internally to perform custom sanitization if needed.
 
 Nodes are passed into transformers in the order in which they're traversed. It's
 important to note that Nokogiri traverses markup from the deepest node upward,
 not from the first node to the last node:
 
   html        = '<div><span>foo</span></div>'
-  transformer = lambda{|env| puts env[:node].name }
+  transformer = lambda{|env| puts env[:node_name] }
 
-  # Prints "span", then "div".
+  # Prints "text", "span", "div", "#document-fragment".
   Sanitize.clean(html, :transformers => transformer)
 
 Transformers have a tremendous amount of power, including the power to
-completely bypass Sanitize's built-in filtering. Be careful!
-
-==== Output
-
-A transformer may return either +nil+ or a Hash. A return value of +nil+
-indicates that the transformer does not wish to act on the current node in any
-way. A returned Hash may contain the following items, all of which are optional:
-
-[<code>:attr_whitelist</code>]
-  Array of attribute names to add to the whitelist for the current node, in
-  addition to any whitelisted attributes already defined in the current config.
-
-[<code>:node</code>]
-  A Nokogiri::XML::Node object that should replace the current node. All
-  subsequent transformers and Sanitize itself will receive this new node.
-
-[<code>:whitelist</code>]
-  If _true_, the current node (and only the current node) will be whitelisted,
-  regardless of the current Sanitize config.
-
-[<code>:whitelist_nodes</code>]
-  Array of specific Nokogiri::XML::Node objects to whitelist, anywhere in the
-  document, regardless of the current Sanitize config.
+completely bypass Sanitize's built-in filtering. Be careful! Your safety is in
+your own hands.
 
 ==== Example: Transformer to whitelist YouTube video embeds
 
@@ -283,16 +277,20 @@ by just whitelisting all <code><object></code>, <code><embed></code>, and
   lambda do |env|
     node      = env[:node]
     node_name = env[:node_name]
-    parent    = node.parent
+
+    # Don't continue if this node is already whitelisted or is not an element.
+    return if env[:is_whitelisted] || !node.element?
+
+    parent = node.parent
 
     # Since the transformer receives the deepest nodes first, we look for a
     # <param> element or an <embed> element whose parent is an <object>.
-    return nil unless (node_name == 'param' || node_name == 'embed') &&
+    return unless (node_name == 'param' || node_name == 'embed') &&
         parent.name.to_s.downcase == 'object'
 
     if node_name == 'param'
       # Quick XPath search to find the <param> node that contains the video URL.
-      return nil unless movie_node = parent.search('param[@name="movie"]')[0]
+      return unless movie_node = parent.search('param[@name="movie"]')[0]
       url = movie_node['value']
     else
       # Since this is an <embed>, the video URL is in the "src" attribute. No
@@ -301,17 +299,18 @@ by just whitelisting all <code><object></code>, <code><embed></code>, and
     end
 
     # Verify that the video URL is actually a valid YouTube video URL.
-    return nil unless url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
+    return unless url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
 
     # We're now certain that this is a YouTube embed, but we still need to run
     # it through a special Sanitize step to ensure that no unwanted elements or
     # attributes that don't belong in a YouTube embed can sneak in.
     Sanitize.clean_node!(parent, {
-      :elements   => ['embed', 'object', 'param'],
+      :elements => %w[embed object param],
+
       :attributes => {
-        'embed'  => ['allowfullscreen', 'allowscriptaccess', 'height', 'src', 'type', 'width'],
-        'object' => ['height', 'width'],
-        'param'  => ['name', 'value']
+        'embed'  => %w[allowfullscreen allowscriptaccess height src type width],
+        'object' => %w[height width],
+        'param'  => %w[name value]
       }
     })
 
@@ -319,30 +318,30 @@ by just whitelisting all <code><object></code>, <code><embed></code>, and
     # no unwanted elements or attributes hidden inside it, we can tell Sanitize
     # to whitelist the current node (<param> or <embed>) and its parent
     # (<object>).
-    {:whitelist_nodes => [node, parent]}
+    {:node_whitelist => [node, parent]}
   end
 
 == Contributors
 
-The following lovely people have contributed to Sanitize in the form of patches
-or ideas that later became code:
+Sanitize was created and is currently maintained by Ryan Grove (ryan@wonko.com).
 
-* Ryan Grove <ryan@wonko.com>
-* Wilson Bilkovich <wilson@supremetyrant.com>
-* Peter Cooper <git@peterc.org>
-* Gabe da Silveira <gabe@websaviour.com>
-* Nicholas Evans <owlmanatt@gmail.com>
-* Adam Hooper <adam@adamhooper.com>
-* Mutwin Kraus <mutle@blogage.de>
-* Dev Purkayastha <dev.purkayastha@gmail.com>
-* David Reese <work@whatcould.com>
-* Ardie Saeidi <ardalan.saeidi@gmail.com>
-* Rafael Souza <me@rafaelss.com>
-* Ben Wanicur <bwanicur@verticalresponse.com>
+The following lovely people have also contributed to Sanitize:
+
+* Wilson Bilkovich (wilson@supremetyrant.com)
+* Peter Cooper (git@peterc.org)
+* Gabe da Silveira (gabe@websaviour.com)
+* Nicholas Evans (owlmanatt@gmail.com)
+* Adam Hooper (adam@adamhooper.com)
+* Mutwin Kraus (mutle@blogage.de)
+* Dev Purkayastha (dev.purkayastha@gmail.com)
+* David Reese (work@whatcould.com)
+* Ardie Saeidi (ardalan.saeidi@gmail.com)
+* Rafael Souza (me@rafaelss.com)
+* Ben Wanicur (bwanicur@verticalresponse.com)
 
 == License
 
-Copyright (c) 2010 Ryan Grove <ryan@wonko.com>
+Copyright (c) 2010 Ryan Grove (ryan@wonko.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the 'Software'), to deal in

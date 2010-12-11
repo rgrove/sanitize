@@ -334,16 +334,20 @@ describe 'transformers' do
   youtube = lambda do |env|
     node      = env[:node]
     node_name = env[:node_name]
-    parent    = node.parent
+
+    # Don't continue if this node is already whitelisted or is not an element.
+    return if env[:is_whitelisted] || !node.element?
+
+    parent = node.parent
 
     # Since the transformer receives the deepest nodes first, we look for a
     # <param> element or an <embed> element whose parent is an <object>.
-    return nil unless (node_name == 'param' || node_name == 'embed') &&
+    return unless (node_name == 'param' || node_name == 'embed') &&
         parent.name.to_s.downcase == 'object'
 
     if node_name == 'param'
       # Quick XPath search to find the <param> node that contains the video URL.
-      return nil unless movie_node = parent.search('param[@name="movie"]')[0]
+      return unless movie_node = parent.search('param[@name="movie"]')[0]
       url = movie_node['value']
     else
       # Since this is an <embed>, the video URL is in the "src" attribute. No
@@ -352,17 +356,18 @@ describe 'transformers' do
     end
 
     # Verify that the video URL is actually a valid YouTube video URL.
-    return nil unless url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
+    return unless url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
 
     # We're now certain that this is a YouTube embed, but we still need to run
     # it through a special Sanitize step to ensure that no unwanted elements or
     # attributes that don't belong in a YouTube embed can sneak in.
     Sanitize.clean_node!(parent, {
-      :elements   => ['embed', 'object', 'param'],
+      :elements => %w[embed object param],
+
       :attributes => {
-        'embed'  => ['allowfullscreen', 'allowscriptaccess', 'height', 'src', 'type', 'width'],
-        'object' => ['height', 'width'],
-        'param'  => ['name', 'value']
+        'embed'  => %w[allowfullscreen allowscriptaccess height src type width],
+        'object' => %w[height width],
+        'param'  => %w[name value]
       }
     })
 
@@ -370,64 +375,83 @@ describe 'transformers' do
     # no unwanted elements or attributes hidden inside it, we can tell Sanitize
     # to whitelist the current node (<param> or <embed>) and its parent
     # (<object>).
-    {:whitelist_nodes => [node, parent]}
+    {:node_whitelist => [node, parent]}
   end
 
-  # Text transform.
-  # Example of transforming text nodes.
-  text_transform = lambda do |env|
-  	node = env[:node]
-  	node_name = env[:node_name]
-    parent    = node.parent
-
-  	return nil unless node_name == "text" && parent.name == "#document-fragment"
-
-    # we can modify the text nodes content or completely replace it
-    node.replace(Nokogiri::HTML.fragment("<p>#{node.text}</p>"))
-
-    {:whitelist_nodes => [node]}
-  end
-
-  it 'should receive the Sanitize config, current node, and node name as input' do
+  it 'should receive a complete env Hash as input' do
     Sanitize.clean!('<SPAN>foo</SPAN>', :foo => :bar, :transformers => lambda {|env|
+      return unless env[:node].element?
+
       env[:config][:foo].must_equal(:bar)
+      env[:is_whitelisted].must_equal(false)
       env[:node].must_be_kind_of(Nokogiri::XML::Node)
       env[:node_name].must_equal('span')
-      nil
+      env[:node_whitelist].must_be_kind_of(Set)
+      env[:node_whitelist].must_be_empty
     })
   end
 
-  it 'should receive allowed_elements and whitelist_nodes as input' do
-    Sanitize.clean!('<span>foo</span>', :elements => ['span'], :transformers => lambda {|env|
-      env[:allowed_elements].must_be_instance_of(Hash)
-      env[:allowed_elements]['span'].must_equal(true)
-      env[:whitelist_nodes].must_be_instance_of(Array)
-      env[:whitelist_nodes].must_be_empty
-      nil
+  it 'should traverse all node types, including the fragment itself' do
+    nodes = []
+
+    Sanitize.clean!('<div>foo</div><!--bar--><script>cdata!</script>', :transformers => proc {|env|
+      nodes << env[:node_name]
     })
+
+    nodes.must_equal(%w[
+      text div comment #cdata-section script #document-fragment
+    ])
   end
 
   it 'should traverse from the deepest node outward' do
     nodes = []
 
-    Sanitize.clean!('<div><span>foo</span></div><p>bar</p>', :transformers => lambda {|env|
-      nodes << env[:node_name]
-      nil
+    Sanitize.clean!('<div><span>foo</span></div><p>bar</p>', :transformers => proc {|env|
+      nodes << env[:node_name] if env[:node].element?
     })
 
     nodes.must_equal(['span', 'div', 'p'])
   end
 
-  it 'should whitelist the current node when :whitelist => true' do
-    Sanitize.clean!('<div class="foo">foo</div><span>bar</span>', :transformers => lambda {|env|
-      {:whitelist => true} if env[:node_name] == 'div'
-    }).must_equal('<div>foo</div>bar')
+  it 'should whitelist nodes in the node whitelist' do
+    Sanitize.clean!('<div class="foo">foo</div><span>bar</span>', :transformers => [
+      proc {|env|
+        {:node_whitelist => [env[:node]]} if env[:node_name] == 'div'
+      },
+
+      proc {|env|
+        env[:is_whitelisted].must_equal(false) unless env[:node_name] == 'div'
+        env[:is_whitelisted].must_equal(true) if env[:node_name] == 'div'
+        env[:node_whitelist].must_include(env[:node]) if env[:node_name] == 'div'
+      }
+    ]).must_equal('<div class="foo">foo</div>bar')
   end
 
-  it 'should whitelist attributes specified in :attr_whitelist' do
-    Sanitize.clean!('<div class="foo" id="bar" width="50">foo</div><span>bar</span>', :transformers => lambda {|env|
-      {:whitelist => true, :attr_whitelist => ['id', 'class']} if env[:node_name] == 'div'
-    }).must_equal('<div class="foo" id="bar">foo</div>bar')
+  it 'should clear the node whitelist after each fragment' do
+    called = false
+
+    Sanitize.clean!('<div>foo</div>', :transformers => proc {|env|
+      {:node_whitelist => [env[:node]]}
+    })
+
+    Sanitize.clean!('<div>foo</div>', :transformers =>  proc {|env|
+      called = true
+      env[:is_whitelisted].must_equal(false)
+      env[:node_whitelist].must_be_empty
+    })
+
+    called.must_equal(true)
+  end
+
+  it 'should stop running transformers if the node is destroyed' do
+    called = false
+
+    Sanitize.clean!('<div>foo</div>', :transformers => [
+      proc {|env| env[:node].unlink if env[:node_name] == 'div' },
+      proc {|env| called = true if env[:node_name] == 'div' }
+    ])
+
+    called.must_equal(false)
   end
 
   it 'should allow youtube video embeds via the youtube transformer' do
@@ -442,25 +466,6 @@ describe 'transformers' do
     output = ' '
 
     Sanitize.clean!(input, :transformers => youtube).must_equal(output)
-  end
-
-  it 'should raise Sanitize::Error when a transformer returns something silly' do
-    proc {
-      Sanitize.clean!('<b>foo</b>', :transformers => lambda {|env| 'hello' })
-    }.must_raise(Sanitize::Error)
-  end
-
-  it 'should processing text nodes when :process_text_nodes is true' do
-    input = "foo"
-    output = "<p>foo</p>"
-
-    Sanitize.clean(input, :process_text_nodes => true, :transformers => text_transform).must_equal(output)
-  end
-
-  it 'should not process text nodes by default' do
-    input = "foo"
-
-    Sanitize.clean(input, :transformers => text_transform).must_equal(input)
   end
 end
 

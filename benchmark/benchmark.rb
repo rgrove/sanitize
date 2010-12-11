@@ -49,13 +49,13 @@ class TestLoofah < Measure
         Loofah.scrub_fragment(html, :prune).to_s
       end
     else
-      measure('Loofah :strip', times) do
-        Loofah.scrub_document(html, :strip).to_s
-      end
-
-      measure('Loofah :prune', times) do
-        Loofah.scrub_document(html, :prune).to_s
-      end
+      # measure('Loofah :strip', times) do
+      #   Loofah.scrub_document(html, :strip).to_s
+      # end
+      # 
+      # measure('Loofah :prune', times) do
+      #   Loofah.scrub_document(html, :prune).to_s
+      # end
     end
 
     measure('Sanitize.clean (strip)', times) do

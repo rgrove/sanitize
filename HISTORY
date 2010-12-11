@@ -1,7 +1,13 @@
 Sanitize History
 ================================================================================
 
-Version 1.3.0 (git)
+Version 2.0.0 (git)
+  * The environment data passed into transformers and the return values expected
+    from transformers have changed. Old transformers will need to be updated.
+    See the README for details.
+  * Transformers now receive nodes of all types, not just element nodes.
+  * Sanitize's own core filtering logic is now implemented as a set of always-on
+    transformers.
   * The default value for the :output config is now :html. Previously it was
     :xhtml.
   * Added a :whitespace_elements config, which specifies elements (such as <br>
@@ -15,15 +21,6 @@ Version 1.3.0 (git)
     `ruby`, and `wbr` elements to the whitelist for `Sanitize::Config::RELAXED`.
   * The `dir`, `lang`, and `title` attributes are now whitelisted for all
     elements in `Sanitize::Config::RELAXED`.
-  * The environment hash passed into transformers now includes an
-    :allowed_elements Hash to facilitate faster lookups when attempting to
-    determine whether an element is in the whitelist. [Suggested by Nicholas
-    Evans]
-  * The environment hash passed into transformers now includes a
-    :whitelist_nodes Array, so transformers now have insight into what nodes
-    have been whitelisted by other transformers. [Suggested by Nicholas Evans]
-  * Added a :process_text_nodes config setting. If set to true, Sanitize will
-    pass text nodes to transformers. The default is false. [Ardie Saeidi]
   * Bumped minimum Nokogiri version to 1.4.4 to avoid a bug in 1.4.2+ (issue
     #315) that caused "</body></html>" to be appended to the CDATA inside
     unterminated script and style elements.

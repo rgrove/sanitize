@@ -47,10 +47,6 @@ class Sanitize
       # Character encoding to use for HTML output. Default is 'utf-8'.
       :output_encoding => 'utf-8',
 
-      # Whether or not to process text nodes. Enabling this will allow text
-      # nodes to be processed by transformers.
-      :process_text_nodes => false,
-
       # URL handling protocols to allow in specific attributes. By default, no
       # protocols are allowed. Use :relative in place of a protocol if you want
       # to allow relative URLs sans protocol.

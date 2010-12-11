@@ -27,9 +27,10 @@ class Sanitize; module Transformers
       name = env[:node_name]
       node = env[:node]
 
-      # Delete any element that isn't in the whitelist.
-      # TODO: support transformer-whitelisted nodes
-      unless @allowed_elements[name] || env[:node_whitelist].include?(node)
+      return if env[:is_whitelisted] || !node.element?
+
+      # Delete any element that isn't in the config whitelist.
+      unless @allowed_elements[name]
         # Elements like br, div, p, etc. need to be replaced with whitespace in
         # order to preserve readability.
         if @whitespace_elements[name]
@@ -38,21 +39,19 @@ class Sanitize; module Transformers
         end
 
         unless @remove_all_contents || @remove_element_contents[name]
-          node.children.each { |n| node.add_previous_sibling(n) }
+          node.children.each {|n| node.add_previous_sibling(n) }
         end
 
         node.unlink
-
-        return nil
+        return
       end
 
-      # TODO: transformers need attr_whitelist in the env?
-      attr_whitelist = Set.new(#env[:attr_whitelist] +
-          (@attributes[name] || []) + (@attributes[:all] || []))
+      attr_whitelist = Set.new((@attributes[name] || []) +
+          (@attributes[:all] || []))
 
       if attr_whitelist.empty?
         # Delete all attributes from elements with no whitelisted attributes.
-        node.attribute_nodes.each {|attr| attr.remove }
+        node.attribute_nodes.each {|attr| attr.unlink }
       else
         # Delete any attribute that isn't in the whitelist for this element.
         node.attribute_nodes.each do |attr|
@@ -82,8 +81,6 @@ class Sanitize; module Transformers
       if @add_attributes.has_key?(name)
         @add_attributes[name].each {|key, val| node[key] = val }
       end
-
-      nil
     end
   end
 
