@@ -24,6 +24,7 @@ require 'rubygems'
 require 'rake/clean'
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
+require 'rake/testtask'
 
 require './lib/sanitize/version'
 
@@ -35,7 +36,7 @@ gemspec = Gem::Specification.new do |s|
   s.version  = Sanitize::VERSION
   s.author   = 'Ryan Grove'
   s.email    = 'ryan@wonko.com'
-  s.homepage = 'http://github.com/rgrove/sanitize/'
+  s.homepage = 'https://github.com/rgrove/sanitize/'
   s.platform = Gem::Platform::RUBY
 
   s.require_path          = 'lib'
@@ -45,8 +46,8 @@ gemspec = Gem::Specification.new do |s|
   s.add_dependency('nokogiri', '~> 1.4.4')
 
   # Development dependencies.
-  s.add_development_dependency('bacon', '~> 1.1.0')
-  s.add_development_dependency('rake',  '~> 0.8.0')
+  s.add_development_dependency('minitest', '~> 2.0.0')
+  s.add_development_dependency('rake',     '~> 0.8.0')
 
   s.files = FileList[
     'HISTORY',
@@ -71,6 +72,8 @@ Rake::RDocTask.new do |rd|
   rd.options << '--line-numbers' << '--inline-source'
 end
 
+Rake::TestTask.new
+
 task :default => [:test]
 
 desc 'generate an updated gemspec'
@@ -83,8 +86,4 @@ end
 desc 'install Sanitize'
 task :install => :gem do
   sh "gem install pkg/sanitize-#{Sanitize::VERSION}.gem"
-end
-
-task :test do
-  sh 'bacon -a'
 end
