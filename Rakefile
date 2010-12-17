@@ -50,7 +50,7 @@ gemspec = Gem::Specification.new do |s|
   s.add_development_dependency('rake',     '~> 0.8.0')
 
   s.files = FileList[
-    'HISTORY',
+    'HISTORY.md',
     'LICENSE',
     'README.rdoc',
     'lib/**/*.rb'
