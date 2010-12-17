@@ -75,8 +75,9 @@ class Sanitize
 
     # Default transformers. These always run at the end of the transformer
     # chain, after any custom transformers.
+    @transformers << Transformers::CleanComment unless @config[:allow_comments]
+
     @transformers <<
-        Transformers::CleanComment <<
         Transformers::CleanCDATA <<
         Transformers::CleanElement.new(@config)
   end
