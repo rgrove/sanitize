@@ -134,13 +134,13 @@ class Sanitize
         :node_whitelist => node_whitelist
       })
 
-      # If the node has been unlinked, there's no point running subsequent
-      # transformers.
-      break if node.parent.nil? && !node.fragment?
-
       if result.is_a?(Hash) && result[:node_whitelist].respond_to?(:each)
         node_whitelist.merge(result[:node_whitelist])
       end
+
+      # If the node has been unlinked or replaced, there's no point running
+      # subsequent transformers.
+      break if node.parent.nil? && !node.fragment?
     end
 
     node
