@@ -6,18 +6,15 @@ class Sanitize; module Transformers
 
       # For faster lookups.
       @add_attributes          = config[:add_attributes]
-      @allowed_elements        = {}
+      @allowed_elements        = Set.new(config[:elements])
       @attributes              = config[:attributes]
       @protocols               = config[:protocols]
       @remove_all_contents     = false
-      @remove_element_contents = {}
-      @whitespace_elements     = {}
-
-      config[:elements].each {|el| @allowed_elements[el] = true }
-      config[:whitespace_elements].each {|el| @whitespace_elements[el] = true }
+      @remove_element_contents = Set.new
+      @whitespace_elements     = Set.new(config[:whitespace_elements])
 
       if config[:remove_contents].is_a?(Array)
-        config[:remove_contents].each {|el| @remove_element_contents[el] = true }
+        @remove_element_contents.merge(config[:remove_contents])
       else
         @remove_all_contents = !!config[:remove_contents]
       end
@@ -30,10 +27,10 @@ class Sanitize; module Transformers
       return if env[:is_whitelisted] || !node.element?
 
       # Delete any element that isn't in the config whitelist.
-      unless @allowed_elements[name]
+      unless @allowed_elements.include?(name)
         # Elements like br, div, p, etc. need to be replaced with whitespace in
         # order to preserve readability.
-        if @whitespace_elements[name]
+        if @whitespace_elements.include?(name)
           node.add_previous_sibling(Nokogiri::XML::Text.new(' ', node.document))
 
           unless node.children.empty?
@@ -41,7 +38,7 @@ class Sanitize; module Transformers
           end
         end
 
-        unless @remove_all_contents || @remove_element_contents[name]
+        unless @remove_all_contents || @remove_element_contents.include?(name)
           node.children.each {|n| node.add_previous_sibling(n) }
         end
 
