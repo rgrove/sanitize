@@ -22,8 +22,8 @@ Version 2.0.0 (git)
     `ruby`, and `wbr` elements to the whitelist for the relaxed config.
   * The `dir`, `lang`, and `title` attributes are now whitelisted for all
     elements in the relaxed config.
-  * Bumped minimum Nokogiri version to 1.4.4 to avoid a bug in 1.4.2+ (issue
-    #315) that caused `</body></html>` to be appended to the CDATA inside
+  * Bumped minimum Nokogiri version to 1.4.4 to avoid a bug in 1.4.2+
+    (issue #315) that caused `</body></html>` to be appended to the CDATA inside
     unterminated script and style elements.
 
 
