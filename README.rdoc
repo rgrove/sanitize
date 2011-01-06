@@ -176,7 +176,7 @@ The default value is <code>false</code>.
 Custom transformer or array of custom transformers to run using depth-first
 traversal. See the Transformers section below for details.
 
-=== :transformers_breadth
+==== :transformers_breadth
 
 Custom transformer or array of custom transformers to run using breadth-first
 traversal. See the Transformers section below for details.
