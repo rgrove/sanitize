@@ -173,8 +173,13 @@ The default value is <code>false</code>.
 
 ==== :transformers
 
-Custom transformer or array of custom transformers. See the Transformers section
-below for details.
+Custom transformer or array of custom transformers to run using depth-first
+traversal. See the Transformers section below for details.
+
+=== :transformers_breadth
+
+Custom transformer or array of custom transformers to run using breadth-first
+traversal. See the Transformers section below for details.
 
 ==== :whitespace_elements (Array)
 
@@ -230,6 +235,10 @@ receive as an argument an environment Hash that contains the following items:
   whitelisted by previous transformers, if any. It's generally bad form to
   remove a node that a previous transformer has whitelisted.
 
+[<code>:traversal_mode</code>]
+  Current node traversal mode, either <code>:depth</code> for depth-first (the
+  default mode) or <code>:breadth</code> for breadth-first.
+
 ==== Output
 
 A transformer doesn't have to return anything, but may optionally return a Hash,
@@ -252,9 +261,9 @@ reflected instantly in the document and passed on to subsequently-called
 transformers and to Sanitize itself. A transformer may even call Sanitize
 internally to perform custom sanitization if needed.
 
-Nodes are passed into transformers in the order in which they're traversed. It's
-important to note that Nokogiri traverses markup from the deepest node upward,
-not from the first node to the last node:
+Nodes are passed into transformers in the order in which they're traversed. By
+default, depth-first traversal is used, meaning that markup is traversed from
+the deepest node upward (not from the first node to the last node):
 
   html        = '<div><span>foo</span></div>'
   transformer = lambda{|env| puts env[:node_name] }
@@ -262,17 +271,26 @@ not from the first node to the last node:
   # Prints "text", "span", "div", "#document-fragment".
   Sanitize.clean(html, :transformers => transformer)
 
+You may use the <code>:transformers_breadth</code> config to specify one or more
+transformers that should traverse nodes in breadth-first mode:
+
+  html        = '<div><span>foo</span></div>'
+  transformer = lambda{|env| puts env[:node_name] }
+
+  # Prints "#document-fragment", "div", "span", "text".
+  Sanitize.clean(html, :transformers_breadth => transformer)
+
 Transformers have a tremendous amount of power, including the power to
 completely bypass Sanitize's built-in filtering. Be careful! Your safety is in
 your own hands.
 
 ==== Example: Transformer to whitelist YouTube video embeds
 
-The following example demonstrates how to create a Sanitize transformer that
-will safely whitelist valid YouTube video embeds without having to blindly allow
-other kinds of embedded content, which would be the case if you tried to do this
-by just whitelisting all <code><object></code>, <code><embed></code>, and
-<code><param></code> elements:
+The following example demonstrates how to create a depth-first Sanitize
+transformer that will safely whitelist valid YouTube video embeds without having
+to blindly allow other kinds of embedded content, which would be the case if you
+tried to do this by just whitelisting all <code><object></code>,
+<code><embed></code>, and <code><param></code> elements:
 
   lambda do |env|
     node      = env[:node]
@@ -323,7 +341,7 @@ by just whitelisting all <code><object></code>, <code><embed></code>, and
 
 == Contributors
 
-Sanitize was created and is currently maintained by Ryan Grove (ryan@wonko.com).
+Sanitize was created and is maintained by Ryan Grove (ryan@wonko.com).
 
 The following lovely people have also contributed to Sanitize:
 

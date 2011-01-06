@@ -16,6 +16,9 @@ Version 2.0.0 (git)
     `<br>` and `<p>`) that should be replaced with whitespace when removed in
     order to preserve readability. See the README for the default list of
     elements that will be replaced with whitespace when removed.
+  * Added a `:transformers_breadth` config, which may be used to specify
+    transformers that should traverse nodes in a breadth-first mode rather than
+    the default depth-first mode.
   * Added the `abbr`, `dfn`, `kbd`, `mark`, `s`, `samp`, `time`, and `var`
     elements to the whitelists for the basic and relaxed configs.
   * Added the `bdo`, `del`, `figcaption`, `figure`, `hgroup`, `ins`, `rp`, `rt`,

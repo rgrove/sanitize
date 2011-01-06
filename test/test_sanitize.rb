@@ -403,14 +403,26 @@ describe 'transformers' do
     ])
   end
 
-  it 'should traverse from the deepest node outward' do
+  it 'should traverse in depth-first mode by default' do
     nodes = []
 
     Sanitize.clean!('<div><span>foo</span></div><p>bar</p>', :transformers => proc {|env|
+      env[:traversal_mode].must_equal(:depth)
       nodes << env[:node_name] if env[:node].element?
     })
 
     nodes.must_equal(['span', 'div', 'p'])
+  end
+
+  it 'should traverse in breadth-first mode when using :transformers_breadth' do
+    nodes = []
+
+    Sanitize.clean!('<div><span>foo</span></div><p>bar</p>', :transformers_breadth => proc {|env|
+      env[:traversal_mode].must_equal(:breadth)
+      nodes << env[:node_name] if env[:node].element?
+    })
+
+    nodes.must_equal(['div', 'span', 'p'])
   end
 
   it 'should whitelist nodes in the node whitelist' do
