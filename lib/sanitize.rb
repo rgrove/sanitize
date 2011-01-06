@@ -70,14 +70,18 @@ class Sanitize
 
   # Returns a new Sanitize object initialized with the settings in _config_.
   def initialize(config = {})
-    @config       = Config::DEFAULT.merge(config)
-    @transformers = Array(@config[:transformers].dup)
+    @config = Config::DEFAULT.merge(config)
 
-    # Default transformers. These always run at the end of the transformer
-    # chain, after any custom transformers.
-    @transformers << Transformers::CleanComment unless @config[:allow_comments]
+    @transformers = {
+      :breadth => Array(@config[:transformers_breadth].dup),
+      :depth   => Array(@config[:transformers]) + Array(@config[:transformers_depth])
+    }
 
-    @transformers <<
+    # Default depth transformers. These always run at the end of the chain,
+    # after any custom transformers.
+    @transformers[:depth] << Transformers::CleanComment unless @config[:allow_comments]
+
+    @transformers[:depth] <<
         Transformers::CleanCDATA <<
         Transformers::CleanElement.new(@config)
   end
@@ -117,21 +121,26 @@ class Sanitize
     raise ArgumentError unless node.is_a?(Nokogiri::XML::Node)
 
     node_whitelist = Set.new
-    node.traverse {|child| transform_node!(child, node_whitelist) }
 
+    unless @transformers[:breadth].empty?
+      traverse_breadth(node) {|n| transform_node!(n, node_whitelist, :breadth) }
+    end
+
+    traverse_depth(node) {|n| transform_node!(n, node_whitelist, :depth) }
     node
   end
 
   private
 
-  def transform_node!(node, node_whitelist)
-    @transformers.each do |transformer|
+  def transform_node!(node, node_whitelist, mode)
+    @transformers[mode].each do |transformer|
       result = transformer.call({
         :config         => @config,
         :is_whitelisted => node_whitelist.include?(node),
         :node           => node,
         :node_name      => node.name.downcase,
-        :node_whitelist => node_whitelist
+        :node_whitelist => node_whitelist,
+        :traversal_mode => mode
       })
 
       if result.is_a?(Hash) && result[:node_whitelist].respond_to?(:each)
@@ -140,6 +149,20 @@ class Sanitize
     end
 
     node
+  end
+
+  # Performs breadth-first traversal, operating first on the root node, then
+  # traversing downwards.
+  def traverse_breadth(node, &block)
+    block.call(node)
+    node.children.each {|child| traverse_breadth(child, &block) }
+  end
+
+  # Performs depth-first traversal, operating first on the deepest nodes in the
+  # document, then traversing upwards to the root.
+  def traverse_depth(node, &block)
+    node.children.each {|child| traverse_depth(child, &block) }
+    block.call(node)
   end
 
   class Error < StandardError; end

@@ -66,6 +66,11 @@ class Sanitize
       # README.rdoc for details and examples.
       :transformers => [],
 
+      # By default, transformers perform depth-first traversal (deepest node
+      # upward). This setting allows you to specify transformers that should
+      # perform breadth-first traversal (top node downward).
+      :transformers_breadth => [],
+
       # Elements which, when removed, should have their contents surrounded by
       # space characters to preserve readability. For example,
       # `foo<div>bar</div>baz` will become 'foo bar baz' when the <div> is
@@ -74,6 +79,7 @@ class Sanitize
         address article aside blockquote br dd div dl dt footer h1 h2 h3 h4 h5
         h6 header hgroup hr li nav ol p pre section ul
       ]
+
     }
   end
 end
