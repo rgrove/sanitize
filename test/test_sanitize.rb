@@ -443,17 +443,6 @@ describe 'transformers' do
     called.must_equal(true)
   end
 
-  it 'should stop running transformers if the node is destroyed' do
-    called = false
-
-    Sanitize.clean!('<div>foo</div>', :transformers => [
-      proc {|env| env[:node].unlink if env[:node_name] == 'div' },
-      proc {|env| called = true if env[:node_name] == 'div' }
-    ])
-
-    called.must_equal(false)
-  end
-
   it 'should allow youtube video embeds via the youtube transformer' do
     input  = '<div><object foo="bar" height="344" width="425"><b>test</b><param foo="bar" name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
     output = ' ' + Nokogiri::HTML::DocumentFragment.parse('<object height="344" width="425">test<param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>').to_html(:encoding => 'utf-8', :indent => 0) + ' '
