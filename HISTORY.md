@@ -1,8 +1,8 @@
 Sanitize History
 ================================================================================
 
-Version 2.0.0 (git)
--------------------
+Version 2.0.0 (2011-01-15)
+--------------------------
 
   * The environment data passed into transformers and the return values expected
     from transformers have changed. Old transformers will need to be updated.

@@ -1,3 +1,3 @@
 class Sanitize
-  VERSION = '2.0.0.dev.20110105'
+  VERSION = '2.0.0'
 end
