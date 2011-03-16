@@ -1,6 +1,13 @@
 Sanitize History
 ================================================================================
 
+Version 2.0.1 (2011-03-16)
+--------------------------
+
+  * Updated the protocol regex to anchor at the beginning of the string rather
+    than the beginning of a line. [Eaden McKee]
+
+
 Version 2.0.0 (2011-01-15)
 --------------------------
 
