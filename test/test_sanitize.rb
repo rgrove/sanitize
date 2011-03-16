@@ -356,7 +356,7 @@ describe 'transformers' do
     end
 
     # Verify that the video URL is actually a valid YouTube video URL.
-    return unless url =~ /^http:\/\/(?:www\.)?youtube\.com\/v\//
+    return unless url =~ /\Ahttp:\/\/(?:www\.)?youtube\.com\/v\//
 
     # We're now certain that this is a YouTube embed, but we still need to run
     # it through a special Sanitize step to ensure that no unwanted elements or
