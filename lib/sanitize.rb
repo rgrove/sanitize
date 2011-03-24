@@ -72,6 +72,11 @@ class Sanitize
   def initialize(config = {})
     @config = Config::DEFAULT.merge(config)
 
+    # :remove_contents takes precedence over :escape_only.
+    if @config[:remove_contents] && @config[:escape_only]
+      @config[:escape_only] = false
+    end
+
     @transformers = {
       :breadth => Array(@config[:transformers_breadth].dup),
       :depth   => Array(@config[:transformers]) + Array(@config[:transformers_depth])

@@ -25,24 +25,31 @@ class Sanitize; module Transformers
       node = env[:node]
 
       return if env[:is_whitelisted] || !node.element?
+      return if @config[:escape_only] && node.ancestors.any? do |n|
+        n.element? && ! @allowed_elements.include?(n.name)
+      end
 
       # Delete any element that isn't in the config whitelist.
       unless @allowed_elements.include?(name)
-        # Elements like br, div, p, etc. need to be replaced with whitespace in
-        # order to preserve readability.
-        if @whitespace_elements.include?(name)
-          node.add_previous_sibling(Nokogiri::XML::Text.new(' ', node.document))
+        if @config[:escape_only]
+          node.replace(Nokogiri::XML::Text.new(node.serialize( :save_with => 0 ).to_s, node.document))
+        else
+          # Elements like br, div, p, etc. need to be replaced with whitespace in
+          # order to preserve readability.
+          if @whitespace_elements.include?(name)
+            node.add_previous_sibling(Nokogiri::XML::Text.new(' ', node.document))
 
-          unless node.children.empty?
-            node.add_next_sibling(Nokogiri::XML::Text.new(' ', node.document))
+            unless node.children.empty?
+              node.add_next_sibling(Nokogiri::XML::Text.new(' ', node.document))
+            end
           end
-        end
 
-        unless @remove_all_contents || @remove_element_contents.include?(name)
-          node.children.each {|n| node.add_previous_sibling(n) }
-        end
+          unless @remove_all_contents || @remove_element_contents.include?(name)
+            node.children.each {|n| node.add_previous_sibling(n) }
+          end
 
-        node.unlink
+          node.unlink
+        end
         return
       end
 
