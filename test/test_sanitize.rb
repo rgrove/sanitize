@@ -156,6 +156,30 @@ tricky = {
     :restricted => 'foo',
     :basic      => '<a rel="nofollow">foo</a>',
     :relaxed    => '<a>foo</a>'
+  },
+
+  'protocol-based JS injection: null char' => {
+    :html       => "<img src=java\0script:alert(\"XSS\")>",
+    :default    => '',
+    :restricted => '',
+    :basic      => '',
+    :relaxed    => '<img src="java">' # everything following the null char gets stripped, and URL is considered relative
+  },
+
+  'protocol-based JS injection: invalid URL char' => {
+    :html       => '<img src=java\script:alert("XSS")>',
+    :default    => '',
+    :restricted => '',
+    :basic      => '',
+    :relaxed    => '<img>'
+  },
+
+  'protocol-based JS injection: spaces and entities' => {
+    :html       => '<img src=" &#14;  javascript:alert(\'XSS\');">',
+    :default    => '',
+    :restricted => '',
+    :basic      => '',
+    :relaxed    => '<img src="">'
   }
 }
 
