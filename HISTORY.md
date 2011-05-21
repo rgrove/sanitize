@@ -1,6 +1,15 @@
 Sanitize History
 ================================================================================
 
+Version 2.0.2 (2011-05-21)
+--------------------------
+
+  * Fixed a bug in which a protocol like "java\script:" would be translated to
+    "java%5Cscript:" and allowed through the filter when relative URLs were
+    enabled. This didn't actually allow malicious code to run, but it is
+    undesired behavior.
+
+
 Version 2.0.1 (2011-03-16)
 --------------------------
 
