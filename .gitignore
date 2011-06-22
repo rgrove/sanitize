@@ -1,4 +1,5 @@
 doc/
 pkg/
+tmp/
 ._*
 .DS_Store
