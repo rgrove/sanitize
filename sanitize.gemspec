@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sanitize}
-  s.version = "2.0.3.dev.20110603"
+  s.version = "2.0.3"
 
-  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Ryan Grove}]
-  s.date = %q{2011-06-04}
+  s.date = %q{2011-07-02}
   s.email = %q{ryan@wonko.com}
   s.files = [%q{HISTORY.md}, %q{LICENSE}, %q{README.rdoc}, %q{lib/sanitize/config/basic.rb}, %q{lib/sanitize/config/relaxed.rb}, %q{lib/sanitize/config/restricted.rb}, %q{lib/sanitize/config.rb}, %q{lib/sanitize/transformers/clean_cdata.rb}, %q{lib/sanitize/transformers/clean_comment.rb}, %q{lib/sanitize/transformers/clean_element.rb}, %q{lib/sanitize/version.rb}, %q{lib/sanitize.rb}]
   s.homepage = %q{https://github.com/rgrove/sanitize/}
