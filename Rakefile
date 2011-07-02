@@ -43,7 +43,7 @@ gemspec = Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.8.7'
 
   # Runtime dependencies.
-  s.add_dependency('nokogiri', '~> 1.4.4')
+  s.add_dependency('nokogiri', '>= 1.4.4', '< 1.6')
 
   # Development dependencies.
   s.add_development_dependency('minitest', '~> 2.0.0')

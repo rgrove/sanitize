@@ -1,6 +1,12 @@
 Sanitize History
 ================================================================================
 
+Version 2.0.3 (git)
+-------------------
+
+ * Loosened the Nokogiri dependency to allow Nokogiri 1.5.x.
+
+
 Version 2.0.2 (2011-05-21)
 --------------------------
 
