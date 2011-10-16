@@ -289,25 +289,25 @@ your own hands.
 The following example demonstrates how to create a depth-first Sanitize
 transformer that will safely whitelist valid YouTube video embeds without having
 to blindly allow other kinds of embedded content, which would be the case if you
-tried to do this by just whitelisting all <iframe> elements:
+tried to do this by just whitelisting all <code><iframe></code> elements:
 
   lambda do |env|
     node      = env[:node]
     node_name = env[:node_name]
-    
+
     # Don't continue if this node is already whitelisted or is not an element.
     return if env[:is_whitelisted] || !node.element?
 
     # Don't continue unless the node is an iframe.
     return unless node_name == 'iframe'
-     
+
     # Verify that the video URL is actually a valid YouTube video URL.
-    return unless node['src'] =~ /\Ahttp:\/\/(?:www\.)?youtube\.com\//
-    
+    return unless node['src'] =~ /\Ahttps?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\//
+
     # We're now certain that this is a YouTube embed, but we still need to run
     # it through a special Sanitize step to ensure that no unwanted elements or
     # attributes that don't belong in a YouTube embed can sneak in.
-    Sanitize.clean_node!(node.parent, {
+    Sanitize.clean_node!(node, {
       :elements => %w[iframe],
 
       :attributes => {

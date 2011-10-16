@@ -354,7 +354,7 @@ describe 'Sanitize.clean!' do
 end
 
 describe 'transformers' do
-  # YouTube transformer.
+  # YouTube embed transformer.
   youtube = lambda do |env|
     node      = env[:node]
     node_name = env[:node_name]
@@ -362,44 +362,27 @@ describe 'transformers' do
     # Don't continue if this node is already whitelisted or is not an element.
     return if env[:is_whitelisted] || !node.element?
 
-    parent = node.parent
-
-    # Since the transformer receives the deepest nodes first, we look for a
-    # <param> element or an <embed> element whose parent is an <object>.
-    return unless (node_name == 'param' || node_name == 'embed') &&
-        parent.name.to_s.downcase == 'object'
-
-    if node_name == 'param'
-      # Quick XPath search to find the <param> node that contains the video URL.
-      return unless movie_node = parent.search('param[@name="movie"]')[0]
-      url = movie_node['value']
-    else
-      # Since this is an <embed>, the video URL is in the "src" attribute. No
-      # extra work needed.
-      url = node['src']
-    end
+    # Don't continue unless the node is an iframe.
+    return unless node_name == 'iframe'
 
     # Verify that the video URL is actually a valid YouTube video URL.
-    return unless url =~ /\Ahttp:\/\/(?:www\.)?youtube\.com\/v\//
+    return unless node['src'] =~ /\Ahttps?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\//
 
     # We're now certain that this is a YouTube embed, but we still need to run
     # it through a special Sanitize step to ensure that no unwanted elements or
     # attributes that don't belong in a YouTube embed can sneak in.
-    Sanitize.clean_node!(parent, {
-      :elements => %w[embed object param],
+    Sanitize.clean_node!(node, {
+      :elements => %w[iframe],
 
       :attributes => {
-        'embed'  => %w[allowfullscreen allowscriptaccess height src type width],
-        'object' => %w[height width],
-        'param'  => %w[name value]
+        'iframe'  => %w[allowfullscreen frameborder height src width]
       }
     })
 
     # Now that we're sure that this is a valid YouTube embed and that there are
     # no unwanted elements or attributes hidden inside it, we can tell Sanitize
-    # to whitelist the current node (<param> or <embed>) and its parent
-    # (<object>).
-    {:node_whitelist => [node, parent]}
+    # to whitelist the current node.
+    {:node_whitelist => [node]}
   end
 
   it 'should receive a complete env Hash as input' do
@@ -480,15 +463,29 @@ describe 'transformers' do
   end
 
   it 'should allow youtube video embeds via the youtube transformer' do
-    input  = '<div><object foo="bar" height="344" width="425"><b>test</b><param foo="bar" name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
-    output = ' ' + Nokogiri::HTML::DocumentFragment.parse('<object height="344" width="425">test<param name="movie" value="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>').to_html(:encoding => 'utf-8', :indent => 0) + ' '
+    input  = '<iframe width="420" height="315" src="http://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
+    output = Nokogiri::HTML::DocumentFragment.parse('<iframe width="420" height="315" src="http://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen>alert()</iframe>').to_html(:encoding => 'utf-8', :indent => 0)
+
+    Sanitize.clean!(input, :transformers => youtube).must_equal(output)
+  end
+
+  it 'should allow https youtube video embeds via the youtube transformer' do
+    input  = '<iframe width="420" height="315" src="https://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
+    output = Nokogiri::HTML::DocumentFragment.parse('<iframe width="420" height="315" src="https://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen>alert()</iframe>').to_html(:encoding => 'utf-8', :indent => 0)
+
+    Sanitize.clean!(input, :transformers => youtube).must_equal(output)
+  end
+
+  it 'should allow privacy-enhanced youtube video embeds via the youtube transformer' do
+    input  = '<iframe width="420" height="315" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
+    output = Nokogiri::HTML::DocumentFragment.parse('<iframe width="420" height="315" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen>alert()</iframe>').to_html(:encoding => 'utf-8', :indent => 0)
 
     Sanitize.clean!(input, :transformers => youtube).must_equal(output)
   end
 
   it 'should not allow non-youtube video embeds via the youtube transformer' do
-    input  = '<div><object height="344" width="425"><param name="movie" value="http://www.eviltube.com/v/a1Y73sPHKxw&hl=en&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.eviltube.com/v/a1Y73sPHKxw&hl=en&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></div>'
-    output = ' '
+    input  = '<iframe width="420" height="315" src="http://www.fake-youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen></iframe>'
+    output = ''
 
     Sanitize.clean!(input, :transformers => youtube).must_equal(output)
   end
