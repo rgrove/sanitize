@@ -1,16 +1,16 @@
 #--
 # Copyright (c) 2011 Ryan Grove <ryan@wonko.com>
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,10 +21,10 @@
 #++
 
 require 'rubygems'
+require 'rubygems/package_task'
 require 'rake/clean'
-require 'rake/gempackagetask'
-require 'rake/rdoctask'
 require 'rake/testtask'
+require 'rdoc/task'
 
 require './lib/sanitize/version'
 
@@ -57,12 +57,12 @@ gemspec = Gem::Specification.new do |s|
   ].to_a
 end
 
-Rake::GemPackageTask.new(gemspec) do |p|
+Gem::PackageTask.new(gemspec) do |p|
   p.need_tar = false
   p.need_zip = false
 end
 
-Rake::RDocTask.new do |rd|
+RDoc::Task.new do |rd|
   rd.main     = 'README.rdoc'
   rd.title    = 'Sanitize Documentation'
   rd.rdoc_dir = 'doc'
