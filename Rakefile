@@ -23,7 +23,6 @@
 require 'bundler'
 require 'rake/clean'
 require 'rake/testtask'
-require 'rdoc/task'
 
 Bundler::GemHelper.install_tasks
 
