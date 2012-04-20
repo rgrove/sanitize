@@ -26,14 +26,6 @@ require 'rake/testtask'
 
 Bundler::GemHelper.install_tasks
 
-RDoc::Task.new do |rd|
-  rd.main     = 'README.rdoc'
-  rd.title    = 'Sanitize Documentation'
-  rd.rdoc_dir = 'doc'
-
-  rd.rdoc_files.include('README.rdoc', 'lib/**/*.rb')
-end
-
 Rake::TestTask.new
 
 task :default => [:test]
