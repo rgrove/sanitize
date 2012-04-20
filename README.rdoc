@@ -19,6 +19,8 @@ or maliciously-formed HTML, and will always output valid HTML or XHTML.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
 
+{<img src="https://secure.travis-ci.org/rgrove/sanitize.png?branch=master" alt="Build Status" />}[http://travis-ci.org/rgrove/sanitize]
+
 == Requires
 
 * Nokogiri >= 1.4.4
