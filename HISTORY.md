@@ -4,7 +4,7 @@ Sanitize History
 Version 2.0.3 (2011-07-01)
 --------------------------
 
- * Loosened the Nokogiri dependency to allow Nokogiri 1.5.x.
+  * Loosened the Nokogiri dependency to allow Nokogiri 1.5.x.
 
 
 Version 2.0.2 (2011-05-21)
@@ -90,7 +90,7 @@ Version 1.1.0 (2009-10-11)
   * Added an `:output` config setting to allow the output format to be
     specified. Supported formats are `:xhtml` (the default) and `:html` (which
     outputs HTML4).
-  * Changed protocol regex to ensure Sanitize doesn't kill URLs with colons in 
+  * Changed protocol regex to ensure Sanitize doesn't kill URLs with colons in
     path segments. [Peter Cooper]
 
 
