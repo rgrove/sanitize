@@ -1,36 +1,30 @@
-# -*- encoding: utf-8 -*-
+# encoding: utf-8
+require './lib/sanitize/version'
 
 Gem::Specification.new do |s|
-  s.name = %q{sanitize}
-  s.version = "2.0.3"
+  s.name     = 'sanitize'
+  s.summary  = 'Whitelist-based HTML sanitizer.'
+  s.version  = Sanitize::VERSION
+  s.authors  = ['Ryan Grove']
+  s.email    = 'ryan@wonko.com'
+  s.homepage = 'https://github.com/rgrove/sanitize/'
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Ryan Grove}]
-  s.date = %q{2011-07-02}
-  s.email = %q{ryan@wonko.com}
-  s.files = [%q{HISTORY.md}, %q{LICENSE}, %q{README.rdoc}, %q{lib/sanitize/config/basic.rb}, %q{lib/sanitize/config/relaxed.rb}, %q{lib/sanitize/config/restricted.rb}, %q{lib/sanitize/config.rb}, %q{lib/sanitize/transformers/clean_cdata.rb}, %q{lib/sanitize/transformers/clean_comment.rb}, %q{lib/sanitize/transformers/clean_element.rb}, %q{lib/sanitize/version.rb}, %q{lib/sanitize.rb}]
-  s.homepage = %q{https://github.com/rgrove/sanitize/}
-  s.require_paths = [%q{lib}]
-  s.required_ruby_version = Gem::Requirement.new(">= 1.8.7")
-  s.rubyforge_project = %q{riposte}
-  s.rubygems_version = %q{1.8.5}
-  s.summary = %q{Whitelist-based HTML sanitizer.}
+  s.platform = Gem::Platform::RUBY
+  s.required_ruby_version = Gem::Requirement.new('>= 1.8.7')
+  s.required_rubygems_version = Gem::Requirement.new('>= 1.2.0')
 
-  if s.respond_to? :specification_version then
-    s.specification_version = 3
+  # Runtime dependencies.
+  s.add_dependency('nokogiri', '>= 1.4.4', '< 1.6')
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<nokogiri>, ["< 1.6", ">= 1.4.4"])
-      s.add_development_dependency(%q<minitest>, ["~> 2.0.0"])
-      s.add_development_dependency(%q<rake>, ["~> 0.8.0"])
-    else
-      s.add_dependency(%q<nokogiri>, ["< 1.6", ">= 1.4.4"])
-      s.add_dependency(%q<minitest>, ["~> 2.0.0"])
-      s.add_dependency(%q<rake>, ["~> 0.8.0"])
-    end
-  else
-    s.add_dependency(%q<nokogiri>, ["< 1.6", ">= 1.4.4"])
-    s.add_dependency(%q<minitest>, ["~> 2.0.0"])
-    s.add_dependency(%q<rake>, ["~> 0.8.0"])
-  end
+  # Development dependencies.
+  s.add_development_dependency('minitest', '~> 2.0.0')
+  s.add_development_dependency('rake',     '~> 0.8.0')
+
+  s.require_paths = ['lib']
+
+  s.files = [
+    'HISTORY.md',
+    'LICENSE',
+    'README.rdoc'
+  ] + Dir.glob('lib/**/*.rb')
 end

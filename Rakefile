@@ -20,47 +20,12 @@
 # SOFTWARE.
 #++
 
-require 'rubygems'
-require 'rubygems/package_task'
+require 'bundler'
 require 'rake/clean'
 require 'rake/testtask'
 require 'rdoc/task'
 
-require './lib/sanitize/version'
-
-gemspec = Gem::Specification.new do |s|
-  s.rubyforge_project = 'riposte'
-
-  s.name     = 'sanitize'
-  s.summary  = 'Whitelist-based HTML sanitizer.'
-  s.version  = Sanitize::VERSION
-  s.author   = 'Ryan Grove'
-  s.email    = 'ryan@wonko.com'
-  s.homepage = 'https://github.com/rgrove/sanitize/'
-  s.platform = Gem::Platform::RUBY
-
-  s.require_path          = 'lib'
-  s.required_ruby_version = '>= 1.8.7'
-
-  # Runtime dependencies.
-  s.add_dependency('nokogiri', '>= 1.4.4', '< 1.6')
-
-  # Development dependencies.
-  s.add_development_dependency('minitest', '~> 2.0.0')
-  s.add_development_dependency('rake',     '~> 0.8.0')
-
-  s.files = FileList[
-    'HISTORY.md',
-    'LICENSE',
-    'README.rdoc',
-    'lib/**/*.rb'
-  ].to_a
-end
-
-Gem::PackageTask.new(gemspec) do |p|
-  p.need_tar = false
-  p.need_zip = false
-end
+Bundler::GemHelper.install_tasks
 
 RDoc::Task.new do |rd|
   rd.main     = 'README.rdoc'
@@ -73,15 +38,3 @@ end
 Rake::TestTask.new
 
 task :default => [:test]
-
-desc 'generate an updated gemspec'
-task :gemspec do
-  filename = File.join(File.dirname(__FILE__), "#{gemspec.name}.gemspec")
-  File.open(filename, 'w') {|f| f << gemspec.to_ruby }
-  puts "Created gemspec: #{filename}"
-end
-
-desc 'install Sanitize'
-task :install => :gem do
-  sh "gem install pkg/sanitize-#{Sanitize::VERSION}.gem"
-end

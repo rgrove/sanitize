@@ -1,0 +1,20 @@
+PATH
+  remote: .
+  specs:
+    sanitize (2.0.3)
+      nokogiri (>= 1.4.4, < 1.6)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    minitest (2.0.2)
+    nokogiri (1.5.2)
+    rake (0.8.7)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  minitest (~> 2.0.0)
+  rake (~> 0.8.0)
+  sanitize!
