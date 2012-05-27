@@ -134,6 +134,11 @@ Array of element names to allow. Specify all names in lowercase.
     q s samp small strike strong sub sup time u ul var
   ]
 
+==== :escape_only (boolean)
+
+If set to +true+, Sanitize will escape non-whitelisted elements and their
+contents rather than removing them.
+
 ==== :output (Symbol)
 
 Output format. Supported formats are <code>:html</code> and <code>:xhtml</code>,
@@ -170,6 +175,9 @@ safe parts of an element's contents behind when the element is removed.
 If set to an array of element names, then only the contents of the specified
 elements (when filtered) will be removed, and the contents of all other filtered
 elements will be left behind.
+
+If both <code>:escape_only</code> and <code>:remove_contents</code> are enabled,
+<code>:remove_contents</code> will take precedence.
 
 The default value is <code>false</code>.
 

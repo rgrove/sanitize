@@ -41,6 +41,10 @@ class Sanitize
       # that all HTML will be stripped).
       :elements => [],
 
+      # If this is true, Sanitize will escape non-whitelisted elements and their
+      # contents rather than removing them.
+      :escape_only => false,
+
       # Output format. Supported formats are :html and :xhtml. Default is :html.
       :output => :html,
 

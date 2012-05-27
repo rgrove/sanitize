@@ -320,6 +320,23 @@ describe 'Custom configs' do
     Sanitize.clean(html).must_equal("foo\302\240bar")
     Sanitize.clean(html, :output_encoding => 'ASCII').must_equal("foo&#160;bar")
   end
+
+  it 'should escape filtered nodes and their contents when :escape_only == true' do
+    Sanitize.clean('foo bar <div>baz<span>quux</span></div>', :escape_only => true).must_equal('foo bar &lt;div&gt;baz&lt;span&gt;quux&lt;/span&gt;&lt;/div&gt;')
+    Sanitize.clean('foo <!-- comment --> bar', :escape_only => true).must_equal('foo &lt;!-- comment --&gt; bar')
+  end
+
+  it 'should not escape whitelisted nodes when :escape_only == true' do
+    Sanitize.clean('foo bar <div>baz<span>quux</span></div>', :escape_only => true, :elements => ["div"]).must_equal('foo bar <div>baz&lt;span&gt;quux&lt;/span&gt;</div>')
+  end
+
+  it 'should not escape comments when :escape_only == true and :allow_comments == true' do
+    Sanitize.clean('foo <!-- comment --> bar', :escape_only => true, :allow_comments => true).must_equal('foo <!-- comment --> bar')
+  end
+
+  it 'should ensure that :remove_contents takes precedence over :escape_only when both == true' do
+    Sanitize.clean('foo bar <div>baz<span>quux</span></div>', :escape_only => true, :remove_contents => true).must_equal('foo bar   ')
+  end
 end
 
 describe 'Sanitize.clean' do
