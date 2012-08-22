@@ -311,8 +311,12 @@ describe 'Custom configs' do
     Sanitize.clean('foo bar <div>baz<span>quux</span></div>', :remove_contents => true).must_equal('foo bar   ')
   end
 
-  it 'should remove the contents of specified nodes when :remove_contents is an Array of element names' do
+  it 'should remove the contents of specified nodes when :remove_contents is an Array of element names as strings' do
     Sanitize.clean('foo bar <div>baz<span>quux</span><script>alert("hello!");</script></div>', :remove_contents => ['script', 'span']).must_equal('foo bar  baz ')
+  end
+
+  it 'should remove the contents of specified nodes when :remove_contents is an Array of element names as symbols' do
+    Sanitize.clean('foo bar <div>baz<span>quux</span><script>alert("hello!");</script></div>', :remove_contents => [:script, :span]).must_equal('foo bar  baz ')
   end
 
   it 'should support encodings other than utf-8' do
