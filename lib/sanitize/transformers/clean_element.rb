@@ -14,7 +14,7 @@ class Sanitize; module Transformers
       @whitespace_elements     = Set.new(config[:whitespace_elements])
 
       if config[:remove_contents].is_a?(Array)
-        @remove_element_contents.merge(config[:remove_contents])
+        @remove_element_contents.merge(config[:remove_contents].map(&:to_s))
       else
         @remove_all_contents = !!config[:remove_contents]
       end
