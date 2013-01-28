@@ -15,7 +15,7 @@ or maliciously-formed HTML, and will always output valid HTML or XHTML.
 
 *Author*::    Ryan Grove (mailto:ryan@wonko.com)
 *Version*::   2.0.3 (2011-07-01)
-*Copyright*:: Copyright (c) 2011 Ryan Grove. All rights reserved.
+*Copyright*:: Copyright (c) 2013 Ryan Grove. All rights reserved.
 *License*::   MIT License (http://opensource.org/licenses/mit-license.php)
 *Website*::   http://github.com/rgrove/sanitize
 
@@ -344,7 +344,7 @@ The following lovely people have also contributed to Sanitize:
 
 == License
 
-Copyright (c) 2011 Ryan Grove (ryan@wonko.com)
+Copyright (c) 2013 Ryan Grove (ryan@wonko.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the 'Software'), to deal in
