@@ -49,6 +49,12 @@ behind.
 
   Sanitize.clean(html) # => 'foo'
 
+  ...
+
+  # or sanitize an entire HTML document (example assumes _html_ is whitelisted)
+  html = '<!DOCTYPE html><html><b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg"></html>'
+  Sanitize.clean_document(html) # => '<!DOCTYPE html>\n<html>foo</html>\n'
+
 == Configuration
 
 In addition to the ultra-safe default settings, Sanitize comes with three other

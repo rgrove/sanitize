@@ -59,6 +59,19 @@ class Sanitize
     Sanitize.new(config).clean!(html)
   end
 
+  # Performs a Sanitize#clean using a full-document HTML parser instead of
+  # the default fragment parser. This will add a DOCTYPE and html tag
+  # unless they are already present
+  def self.clean_document(html, config = {})
+    clean_document!(html.dup, config)
+  end
+
+  # Performs Sanitize#clean_document in place, returning _html_, or +nil+ if no
+  # changes were made.
+  def self.clean_document!(html, config = {})
+    Sanitize.new(config).clean_document!(html)
+  end
+
   # Sanitizes the specified Nokogiri::XML::Node and all its children.
   def self.clean_node!(node, config = {})
     Sanitize.new(config).clean_node!(node)
@@ -96,8 +109,8 @@ class Sanitize
 
   # Performs clean in place, returning _html_, or +nil+ if no changes were
   # made.
-  def clean!(html)
-    fragment = Nokogiri::HTML::DocumentFragment.parse(html)
+  def clean!(html, parser = Nokogiri::HTML::DocumentFragment)
+    fragment = parser.parse(html)
     clean_node!(fragment)
 
     output_method_params = {:encoding => @config[:output_encoding], :indent => 0}
@@ -114,6 +127,20 @@ class Sanitize
     result = output_method.call(output_method_params)
 
     return result == html ? nil : html[0, html.length] = result
+  end
+
+  def clean_document(html)
+    clean_document!(html.dup)
+  end
+
+  def clean_document!(html)
+    if !@config[:elements].include?('html') && !@config[:remove_contents]
+      raise 'You must have the HTML element whitelisted to call #clean_document unless remove_contents is set to true'
+      # otherwise Nokogiri will raise for having multiple root nodes when
+      # it moves its children to the root document context
+    end
+
+    clean!(html, Nokogiri::HTML::Document)
   end
 
   # Sanitizes the specified Nokogiri::XML::Node and all its children.
