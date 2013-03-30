@@ -41,7 +41,8 @@ strings = {
     :default    => 'Lorem dolor sit amet alert("hello world");',
     :restricted => 'Lorem <strong>dolor</strong> sit amet alert("hello world");',
     :basic      => 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br>amet alert("hello world");',
-    :relaxed    => 'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br>amet alert("hello world");'
+    :relaxed    => 'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br>amet alert("hello world");',
+    :document   => ' Lorem dolor sit amet alert("hello world"); '
   },
 
   :unclosed => {
@@ -65,7 +66,8 @@ strings = {
     :default    => 'Hello',
     :restricted => 'Hello',
     :basic      => 'Hello',
-    :relaxed    => 'Hello'
+    :relaxed    => 'Hello',
+    :document   => ' Hello ',
   }
 }
 
@@ -281,6 +283,46 @@ describe 'Config::RELAXED' do
   end
 end
 
+describe 'Full Document parser (using clean_document)' do
+  before {
+    @s = Sanitize.new(elements: %w[!DOCTYPE html])
+    @default_doctype = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">"
+  }
+
+  it 'should require HTML element is whitelisted to prevent parser errors' do
+    assert_raises(RuntimeError, 'You must have the HTML element whitelisted') {
+      Sanitize.clean_document!('', elements: [], remove_contents: false)
+    }
+  end
+
+  it 'should NOT require HTML element to be whitelisted if remove_contents is true' do
+    output = '<!DOCTYPE html><html>foo</html>'
+    Sanitize.clean_document!(output, remove_contents: true).must_equal "<!DOCTYPE html>\n\n"
+  end
+
+  it 'adds a doctype tag if not included' do
+    @s.clean_document('').must_equal("#{@default_doctype}\n\n")
+  end
+
+  it 'should apply whitelist filtering to HTML element' do
+    output = "<!DOCTYPE html>\n<html anything='false'></html>\n\n"
+    @s.clean_document(output).must_equal("<!DOCTYPE html>\n<html></html>\n")
+  end
+
+  strings.each do |name, data|
+    it "should wrap #{name} with DOCTYPE and HTML tag" do
+      output = data[:document] || data[:default]
+      @s.clean_document(data[:html]).must_equal("#{@default_doctype}\n<html>#{output}</html>\n")
+    end
+  end
+
+  tricky.each do |name, data|
+    it "should wrap #{name} with DOCTYPE and HTML tag" do
+      @s.clean_document(data[:html]).must_equal("#{@default_doctype}\n<html>#{data[:default]}</html>\n")
+    end
+  end
+end
+
 describe 'Custom configs' do
   it 'should allow attributes on all elements if whitelisted under :all' do
     input = '<p class="foo">bar</p>'
@@ -354,6 +396,41 @@ describe 'Sanitize.clean!' do
   it 'should return nil if the string was not modified' do
     input = 'foo'
     Sanitize.clean!(input).must_equal(nil)
+  end
+end
+
+describe 'Sanitize.clean_document' do
+  before { @config = { elements: ['html'] } }
+
+  it 'should not modify the input string' do
+    input = '<!DOCTYPE html><b>foo</b>'
+    Sanitize.clean_document(input, @config)
+    input.must_equal('<!DOCTYPE html><b>foo</b>')
+  end
+
+  it 'should return a new string' do
+    input = '<!DOCTYPE html><b>foo</b>'
+    Sanitize.clean_document(input, @config).must_equal("<!DOCTYPE html>\n<html>foo</html>\n")
+  end
+end
+
+describe 'Sanitize.clean_document!' do
+  before { @config = { elements: ['html'] } }
+
+  it 'should modify the input string' do
+    input = '<!DOCTYPE html><html><body><b>foo</b></body></html>'
+    Sanitize.clean_document!(input, @config)
+    input.must_equal("<!DOCTYPE html>\n<html>foo</html>\n")
+  end
+
+  it 'should return the string if it was modified' do
+    input = '<!DOCTYPE html><html><body><b>foo</b></body></html>'
+    Sanitize.clean_document!(input, @config).must_equal("<!DOCTYPE html>\n<html>foo</html>\n")
+  end
+
+  it 'should return nil if the string was not modified' do
+    input = "<!DOCTYPE html>\n<html></html>\n"
+    Sanitize.clean_document!(input, @config).must_equal(nil)
   end
 end
 
