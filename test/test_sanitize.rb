@@ -285,19 +285,19 @@ end
 
 describe 'Full Document parser (using clean_document)' do
   before {
-    @s = Sanitize.new(elements: %w[!DOCTYPE html])
+    @s = Sanitize.new({:elements => %w[!DOCTYPE html]})
     @default_doctype = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">"
   }
 
   it 'should require HTML element is whitelisted to prevent parser errors' do
     assert_raises(RuntimeError, 'You must have the HTML element whitelisted') {
-      Sanitize.clean_document!('', elements: [], remove_contents: false)
+      Sanitize.clean_document!('', {:elements => [], :remove_contents => false})
     }
   end
 
   it 'should NOT require HTML element to be whitelisted if remove_contents is true' do
     output = '<!DOCTYPE html><html>foo</html>'
-    Sanitize.clean_document!(output, remove_contents: true).must_equal "<!DOCTYPE html>\n\n"
+    Sanitize.clean_document!(output, {:remove_contents => true}).must_equal "<!DOCTYPE html>\n\n"
   end
 
   it 'adds a doctype tag if not included' do
@@ -400,7 +400,7 @@ describe 'Sanitize.clean!' do
 end
 
 describe 'Sanitize.clean_document' do
-  before { @config = { elements: ['html'] } }
+  before { @config = { :elements => ['html'] } }
 
   it 'should not modify the input string' do
     input = '<!DOCTYPE html><b>foo</b>'
@@ -415,7 +415,7 @@ describe 'Sanitize.clean_document' do
 end
 
 describe 'Sanitize.clean_document!' do
-  before { @config = { elements: ['html'] } }
+  before { @config = { :elements => ['html'] } }
 
   it 'should modify the input string' do
     input = '<!DOCTYPE html><html><body><b>foo</b></body></html>'
