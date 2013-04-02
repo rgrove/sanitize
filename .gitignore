@@ -3,3 +3,4 @@ pkg/
 tmp/
 ._*
 .DS_Store
+Gemfile.lock
