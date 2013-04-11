@@ -9,6 +9,8 @@ class Sanitize; module Transformers
       @allowed_elements        = Set.new(config[:elements])
       @attributes              = config[:attributes]
       @protocols               = config[:protocols]
+      @node_callback           = config[:on_node_removed]
+      @attr_callback           = config[:on_attr_removed]
       @remove_all_contents     = false
       @remove_element_contents = Set.new
       @whitespace_elements     = Set.new(config[:whitespace_elements])
@@ -28,6 +30,8 @@ class Sanitize; module Transformers
 
       # Delete any element that isn't in the config whitelist.
       unless @allowed_elements.include?(name)
+        @node_callback.call(node) if @node_callback.is_a? Proc
+
         # Elements like br, div, p, etc. need to be replaced with whitespace in
         # order to preserve readability.
         if @whitespace_elements.include?(name)
@@ -51,11 +55,11 @@ class Sanitize; module Transformers
 
       if attr_whitelist.empty?
         # Delete all attributes from elements with no whitelisted attributes.
-        node.attribute_nodes.each {|attr| attr.unlink }
+        node.attribute_nodes.each {|attr| remove_attr(attr) }
       else
         # Delete any attribute that isn't in the whitelist for this element.
         node.attribute_nodes.each do |attr|
-          attr.unlink unless attr_whitelist.include?(attr.name.downcase)
+          remove_attr(attr) unless attr_whitelist.include?(attr.name.downcase)
         end
 
         # Delete remaining attributes that use unacceptable protocols.
@@ -72,7 +76,7 @@ class Sanitize; module Transformers
               !protocol[attr_name].include?(:relative)
             end
 
-            attr.unlink if del
+            remove_attr(attr) if del
           end
         end
       end
@@ -81,6 +85,13 @@ class Sanitize; module Transformers
       if @add_attributes.has_key?(name)
         @add_attributes[name].each {|key, val| node[key] = val }
       end
+    end
+
+    private
+
+    def remove_attr(attr)
+      attr.unlink
+      @attr_callback.call(attr) if @attr_callback.is_a? Proc
     end
   end
 

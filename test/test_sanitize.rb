@@ -434,6 +434,37 @@ describe 'Sanitize.clean_document!' do
   end
 end
 
+describe 'on_node_removed callback' do
+  it 'should be invoked' do
+    called = false
+    Sanitize.clean!('<div>foo</div>', on_node_removed: Proc.new { |node| called = true })
+    called.must_equal(true)
+  end
+
+  it 'should receive each node that will be removed' do
+    removed_nodes = []
+    proc = Proc.new { |node| removed_nodes << node.to_html }
+    Sanitize.clean!('<div>foo</div><p>another</p>', on_node_removed: proc)
+    removed_nodes.must_equal(['<div>foo</div>', '<p>another</p>'])
+  end
+end
+
+describe 'on_attr_removed callback' do
+  it 'should be invoked' do
+    called = false
+    Sanitize.clean!('<div bad="true">foo</div>', on_attr_removed: Proc.new { |node| called = true }, elements: ['div'])
+    called.must_equal(true)
+  end
+
+  it 'should receive each attribute that will be removed' do
+    removed_attrs = []
+    proc = Proc.new { |attr| removed_attrs.push [attr.name, attr.value] }
+    input = '<div href="http://fake.com">foo</div><p bad="true">another</p>'
+    Sanitize.clean!(input, on_attr_removed: proc, elements: ['div', 'p'])
+    removed_attrs.must_equal([["href", "http://fake.com"], ["bad", "true"]])
+  end
+end
+
 describe 'transformers' do
   # YouTube embed transformer.
   youtube = lambda do |env|
