@@ -347,6 +347,7 @@ The following lovely people have also contributed to Sanitize:
 * Ardie Saeidi (ardalan.saeidi@gmail.com)
 * Rafael Souza (me@rafaelss.com)
 * Ben Wanicur (bwanicur@verticalresponse.com)
+* Ben Anderson (banderson@constantcontact.com)
 
 == License
 
