@@ -400,7 +400,19 @@ describe 'Sanitize.clean!' do
 end
 
 describe 'Sanitize.clean_document' do
-  before { @config = { :elements => ['html'] } }
+  before { @config = { :elements => ['html', 'p'] } }
+
+  it 'should be idempotent' do
+    input = '<!DOCTYPE html><html><p>foo</p></html>'
+    first = Sanitize.clean_document(input, @config)
+    second = Sanitize.clean_document(first, @config)
+    second.must_equal first
+    second.wont_be_nil
+  end
+
+  it 'should handle nil without raising' do
+    Sanitize.clean_document(nil).must_equal nil
+  end
 
   it 'should not modify the input string' do
     input = '<!DOCTYPE html><b>foo</b>'

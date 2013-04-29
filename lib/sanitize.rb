@@ -63,7 +63,7 @@ class Sanitize
   # the default fragment parser. This will add a DOCTYPE and html tag
   # unless they are already present
   def self.clean_document(html, config = {})
-    clean_document!(html.dup, config)
+    Sanitize.new(config).clean_document(html)
   end
 
   # Performs Sanitize#clean_document in place, returning _html_, or +nil+ if no
@@ -130,7 +130,9 @@ class Sanitize
   end
 
   def clean_document(html)
-    clean_document!(html.dup)
+    unless html.nil?
+      clean_document!(html.dup) || html
+    end
   end
 
   def clean_document!(html)
