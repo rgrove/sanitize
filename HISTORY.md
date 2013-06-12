@@ -1,8 +1,8 @@
 Sanitize History
 ================================================================================
 
-Version 2.0.4 (git)
--------------------
+Version 2.0.4 (2013-06-12)
+--------------------------
 
   * Added `Sanitize.clean_document`, which sanitizes a full HTML document rather
     than just a fragment. [Ben Anderson]
