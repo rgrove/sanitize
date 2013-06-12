@@ -10,11 +10,11 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/rgrove/sanitize/'
 
   s.platform = Gem::Platform::RUBY
-  s.required_ruby_version = Gem::Requirement.new('>= 1.8.7')
+  s.required_ruby_version = Gem::Requirement.new('>= 1.9.2')
   s.required_rubygems_version = Gem::Requirement.new('>= 1.2.0')
 
   # Runtime dependencies.
-  s.add_dependency('nokogiri', '>= 1.4.4', '< 1.6')
+  s.add_dependency('nokogiri', '>= 1.4.4')
 
   # Development dependencies.
   s.add_development_dependency('minitest', '>= 2.0.0')
