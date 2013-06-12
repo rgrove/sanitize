@@ -335,19 +335,20 @@ Sanitize was created and is maintained by Ryan Grove (ryan@wonko.com).
 
 The following lovely people have also contributed to Sanitize:
 
-* Wilson Bilkovich (wilson@supremetyrant.com)
-* Peter Cooper (git@peterc.org)
-* Gabe da Silveira (gabe@websaviour.com)
-* Nicholas Evans (owlmanatt@gmail.com)
-* Adam Hooper (adam@adamhooper.com)
-* Mutwin Kraus (mutle@blogage.de)
-* Eaden McKee (eadz@eadz.co.nz)
-* Dev Purkayastha (dev.purkayastha@gmail.com)
-* David Reese (work@whatcould.com)
-* Ardie Saeidi (ardalan.saeidi@gmail.com)
-* Rafael Souza (me@rafaelss.com)
-* Ben Wanicur (bwanicur@verticalresponse.com)
-* Ben Anderson (banderson@constantcontact.com)
+* Ben Anderson
+* Wilson Bilkovich
+* Peter Cooper
+* Gabe da Silveira
+* Nicholas Evans
+* Nils Gemeinhardt
+* Adam Hooper
+* Mutwin Kraus
+* Eaden McKee
+* Dev Purkayastha
+* David Reese
+* Ardie Saeidi
+* Rafael Souza
+* Ben Wanicur
 
 == License
 
