@@ -21,11 +21,6 @@ or maliciously-formed HTML, and will always output valid HTML or XHTML.
 
 {<img src="https://secure.travis-ci.org/rgrove/sanitize.png?branch=master" alt="Build Status" />}[http://travis-ci.org/rgrove/sanitize]
 
-== Requires
-
-* Nokogiri >= 1.4.4
-* libxml2 >= 2.7.2
-
 == Installation
 
 Latest stable release:

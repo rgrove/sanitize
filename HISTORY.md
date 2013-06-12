@@ -7,6 +7,10 @@ Version 2.0.4 (git)
   * Added `Sanitize.clean_document`, which sanitizes a full HTML document rather
     than just a fragment. [Ben Anderson]
 
+  * Nokogiri dependency bumped to 1.6.x.
+
+  * Dropped support for Ruby versions older than 1.9.2.
+
 
 Version 2.0.3 (2011-07-01)
 --------------------------
