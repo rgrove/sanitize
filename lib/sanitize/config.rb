@@ -31,15 +31,15 @@ class Sanitize
 
       # HTML attributes to add to specific elements. By default, no attributes
       # are added.
-      :add_attributes => {},
+      :add_attributes => {}.freeze,
 
       # HTML attributes to allow in specific elements. By default, no attributes
       # are allowed.
-      :attributes => {},
+      :attributes => {}.freeze,
 
       # HTML elements to allow. By default, no elements are allowed (which means
       # that all HTML will be stripped).
-      :elements => [],
+      :elements => [].freeze,
 
       # Output format. Supported formats are :html and :xhtml. Default is :html.
       :output => :html,
@@ -50,7 +50,7 @@ class Sanitize
       # URL handling protocols to allow in specific attributes. By default, no
       # protocols are allowed. Use :relative in place of a protocol if you want
       # to allow relative URLs sans protocol.
-      :protocols => {},
+      :protocols => {}.freeze,
 
       # If this is true, Sanitize will remove the contents of any filtered
       # elements in addition to the elements themselves. By default, Sanitize
@@ -64,12 +64,12 @@ class Sanitize
 
       # Transformers allow you to filter or alter nodes using custom logic. See
       # README.rdoc for details and examples.
-      :transformers => [],
+      :transformers => [].freeze,
 
       # By default, transformers perform depth-first traversal (deepest node
       # upward). This setting allows you to specify transformers that should
       # perform breadth-first traversal (top node downward).
-      :transformers_breadth => [],
+      :transformers_breadth => [].freeze,
 
       # Elements which, when removed, should have their contents surrounded by
       # space characters to preserve readability. For example,
@@ -78,8 +78,8 @@ class Sanitize
       :whitespace_elements => %w[
         address article aside blockquote br dd div dl dt footer h1 h2 h3 h4 h5
         h6 header hgroup hr li nav ol p pre section ul
-      ]
+      ].freeze
 
-    }
+    }.freeze
   end
 end

@@ -26,26 +26,26 @@ class Sanitize
       :elements => %w[
         a abbr b blockquote br cite code dd dfn dl dt em i kbd li mark ol p pre
         q s samp small strike strong sub sup time u ul var
-      ],
+      ].freeze,
 
       :attributes => {
-        'a'          => ['href'],
-        'abbr'       => ['title'],
-        'blockquote' => ['cite'],
-        'dfn'        => ['title'],
-        'q'          => ['cite'],
-        'time'       => ['datetime', 'pubdate']
-      },
+        'a'          => ['href'].freeze,
+        'abbr'       => ['title'].freeze,
+        'blockquote' => ['cite'].freeze,
+        'dfn'        => ['title'].freeze,
+        'q'          => ['cite'].freeze,
+        'time'       => ['datetime', 'pubdate'].freeze
+      }.freeze,
 
       :add_attributes => {
-        'a' => {'rel' => 'nofollow'}
-      },
+        'a' => {'rel' => 'nofollow'}.freeze
+      }.freeze,
 
       :protocols => {
-        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative]},
-        'blockquote' => {'cite' => ['http', 'https', :relative]},
-        'q'          => {'cite' => ['http', 'https', :relative]}
-      }
-    }
+        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative].freeze}.freeze,
+        'blockquote' => {'cite' => ['http', 'https', :relative].freeze}.freeze,
+        'q'          => {'cite' => ['http', 'https', :relative].freeze}.freeze
+      }.freeze
+    }.freeze
   end
 end

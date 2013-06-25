@@ -28,34 +28,34 @@ class Sanitize
         dt em figcaption figure h1 h2 h3 h4 h5 h6 hgroup i img ins kbd li mark
         ol p pre q rp rt ruby s samp small strike strong sub sup table tbody td
         tfoot th thead time tr u ul var wbr
-      ],
+      ].freeze,
 
       :attributes => {
-        :all         => ['dir', 'lang', 'title'],
-        'a'          => ['href'],
-        'blockquote' => ['cite'],
-        'col'        => ['span', 'width'],
-        'colgroup'   => ['span', 'width'],
-        'del'        => ['cite', 'datetime'],
-        'img'        => ['align', 'alt', 'height', 'src', 'width'],
-        'ins'        => ['cite', 'datetime'],
-        'ol'         => ['start', 'reversed', 'type'],
-        'q'          => ['cite'],
-        'table'      => ['summary', 'width'],
-        'td'         => ['abbr', 'axis', 'colspan', 'rowspan', 'width'],
-        'th'         => ['abbr', 'axis', 'colspan', 'rowspan', 'scope', 'width'],
-        'time'       => ['datetime', 'pubdate'],
-        'ul'         => ['type']
-      },
+        :all         => ['dir', 'lang', 'title'].freeze,
+        'a'          => ['href'].freeze,
+        'blockquote' => ['cite'].freeze,
+        'col'        => ['span', 'width'].freeze,
+        'colgroup'   => ['span', 'width'].freeze,
+        'del'        => ['cite', 'datetime'].freeze,
+        'img'        => ['align', 'alt', 'height', 'src', 'width'].freeze,
+        'ins'        => ['cite', 'datetime'].freeze,
+        'ol'         => ['start', 'reversed', 'type'].freeze,
+        'q'          => ['cite'].freeze,
+        'table'      => ['summary', 'width'].freeze,
+        'td'         => ['abbr', 'axis', 'colspan', 'rowspan', 'width'].freeze,
+        'th'         => ['abbr', 'axis', 'colspan', 'rowspan', 'scope', 'width'].freeze,
+        'time'       => ['datetime', 'pubdate'].freeze,
+        'ul'         => ['type'].freeze
+      }.freeze,
 
       :protocols => {
-        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative]},
-        'blockquote' => {'cite' => ['http', 'https', :relative]},
-        'del'        => {'cite' => ['http', 'https', :relative]},
-        'img'        => {'src'  => ['http', 'https', :relative]},
-        'ins'        => {'cite' => ['http', 'https', :relative]},
-        'q'          => {'cite' => ['http', 'https', :relative]}
-      }
-    }
+        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative].freeze}.freeze,
+        'blockquote' => {'cite' => ['http', 'https', :relative].freeze}.freeze,
+        'del'        => {'cite' => ['http', 'https', :relative].freeze}.freeze,
+        'img'        => {'src'  => ['http', 'https', :relative].freeze}.freeze,
+        'ins'        => {'cite' => ['http', 'https', :relative].freeze}.freeze,
+        'q'          => {'cite' => ['http', 'https', :relative].freeze}.freeze
+      }.freeze
+    }.freeze
   end
 end
