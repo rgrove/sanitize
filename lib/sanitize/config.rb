@@ -22,5 +22,17 @@
 
 class Sanitize
   module Config
+
+    # Deeply freeze and return a configuration Hash.
+    def self.freeze_config(config)
+      if Array === config
+        config.each { |c| freeze_config(c) }
+      elsif Hash === config
+        config.each_value { |c| freeze_config(c) }
+      end
+
+      config.freeze
+    end
+
   end
 end
