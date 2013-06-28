@@ -22,7 +22,7 @@
 
 class Sanitize
   module Config
-    BASIC = {
+    BASIC = freeze_config(
       :elements => %w[
         a abbr b blockquote br cite code dd dfn dl dt em i kbd li mark ol p pre
         q s samp small strike strong sub sup time u ul var
@@ -46,6 +46,6 @@ class Sanitize
         'blockquote' => {'cite' => ['http', 'https', :relative]},
         'q'          => {'cite' => ['http', 'https', :relative]}
       }
-    }
+    )
   end
 end
