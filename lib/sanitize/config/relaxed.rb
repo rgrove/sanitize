@@ -22,7 +22,7 @@
 
 class Sanitize
   module Config
-    RELAXED = {
+    RELAXED = freeze_config(
       :elements => %w[
         a abbr b bdo blockquote br caption cite code col colgroup dd del dfn dl
         dt em figcaption figure h1 h2 h3 h4 h5 h6 hgroup i img ins kbd li mark
@@ -56,6 +56,6 @@ class Sanitize
         'ins'        => {'cite' => ['http', 'https', :relative]},
         'q'          => {'cite' => ['http', 'https', :relative]}
       }
-    }
+    )
   end
 end
