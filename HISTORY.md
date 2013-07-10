@@ -1,6 +1,15 @@
 Sanitize History
 ================================================================================
 
+Version 2.0.5 (2013-07-10)
+--------------------------
+
+* Loosened the Nokogiri dependency back to >= 1.4.4 to allow Sanitize to coexist
+  in newer Rubies with other libraries that restrict Nokogiri to 1.5.x for 1.8.7
+  compatibility. Sanitize still no longer supports 1.8.7, but this should make
+  life easier for people who need those other libs.
+
+
 Version 2.0.4 (2013-06-12)
 --------------------------
 
