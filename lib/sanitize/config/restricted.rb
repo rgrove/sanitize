@@ -22,8 +22,8 @@
 
 class Sanitize
   module Config
-    RESTRICTED = freeze_config(
+    RESTRICTED = {
       :elements => %w[b em i strong u]
-    )
+    }
   end
 end

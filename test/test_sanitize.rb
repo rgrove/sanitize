@@ -590,34 +590,3 @@ describe 'bugs' do
     Sanitize.clean!('foo <style>bar').must_equal('foo bar')
   end
 end
-
-describe "default configurations" do
-  def assert_deep_frozen(config)
-    if Hash === config
-      config.each_value { |c| assert_deep_frozen(c) }
-      config.frozen?.must_equal(true)
-    elsif Array === config
-      config.each { |c| assert_deep_frozen(c) }
-      config.frozen?.must_equal(true)
-    end
-  end
-
-  {
-    "DEFAULT" => Sanitize::Config::DEFAULT,
-    "RESTRICTED" => Sanitize::Config::RESTRICTED,
-    "BASIC" => Sanitize::Config::BASIC,
-    "RELAXED" => Sanitize::Config::RELAXED,
-  }.each do |name, config|
-    describe name do
-      it "should be frozen" do
-        assert_deep_frozen(config)
-      end
-    end
-  end
-
-  it "cannot be modified" do
-    assert_raises(RuntimeError, "can't modify frozen") {
-      Sanitize::Config::RESTRICTED.dup[:elements].push("script")
-    }
-  end
-end
