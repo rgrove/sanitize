@@ -1,6 +1,14 @@
 Sanitize History
 ================================================================================
 
+Version 2.0.6 (2013-07-10)
+--------------------------
+
+* Fixed: Version 2.0.5 inadvertently included some work-in-progress changes that
+  shouldn't have made their way into the master branch. This is what happens
+  when I release before coffee instead of after.
+
+
 Version 2.0.5 (2013-07-10)
 --------------------------
 
