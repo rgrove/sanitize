@@ -34,7 +34,8 @@ class Sanitize
       :add_attributes => {},
 
       # HTML attributes to allow in specific elements. By default, no attributes
-      # are allowed.
+      # are allowed. Use the symbol :data to indicate that arbitrary HTML5
+      # data-* attributes should be allowed.
       :attributes => {},
 
       # HTML elements to allow. By default, no elements are allowed (which means

@@ -101,6 +101,12 @@ attributes in lowercase.
     'a' => {'rel' => 'nofollow'}
   }
 
+==== :allow_comments (boolean)
+
+Whether or not to allow HTML comments. Allowing comments is strongly
+discouraged, since IE allows script execution within conditional comments. The
+default value is <code>false</code>.
+
 ==== :attributes (Hash)
 
 Attributes to allow for specific elements. Specify all element names and
@@ -115,16 +121,19 @@ attributes in lowercase.
 If you'd like to allow certain attributes on all elements, use the symbol
 <code>:all</code> instead of an element name.
 
+  # Allow the class attribute on all elements.
   :attributes => {
     :all => ['class'],
     'a'  => ['href', 'title']
   }
 
-==== :allow_comments (boolean)
+To allow arbitrary HTML5 <code>data-*</code> attributes, use the symbol
+<code>:data</code> in place of an attribute name.
 
-Whether or not to allow HTML comments. Allowing comments is strongly
-discouraged, since IE allows script execution within conditional comments. The
-default value is <code>false</code>.
+  # Allow arbitrary HTML5 data-* attributes on <div> elements.
+  :attributes => {
+    'div' => [:data]
+  }
 
 ==== :elements (Array)
 

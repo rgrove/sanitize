@@ -366,6 +366,51 @@ describe 'Custom configs' do
     Sanitize.clean(html).must_equal("foo\302\240bar")
     Sanitize.clean(html, :output_encoding => 'ASCII').must_equal("foo&#160;bar")
   end
+
+  it 'should not allow arbitrary HTML5 data attributes by default' do
+    config = {
+      :elements => ['b']
+    }
+
+    Sanitize.clean('<b data-foo="bar"></b>', config)
+      .must_equal('<b></b>')
+
+    config[:attributes] = {'b' => ['class']}
+
+    Sanitize.clean('<b class="foo" data-foo="bar"></b>', config)
+      .must_equal('<b class="foo"></b>')
+  end
+
+  it 'should allow arbitrary HTML5 data attributes when the :attributes config includes :data' do
+    config = {
+      :attributes => {'b' => [:data]},
+      :elements   => ['b']
+    }
+
+    Sanitize.clean('<b data-foo="valid" data-bar="valid"></b>', config)
+      .must_equal('<b data-foo="valid" data-bar="valid"></b>')
+
+    Sanitize.clean('<b data-="invalid"></b>', config)
+      .must_equal('<b></b>')
+
+    Sanitize.clean('<b data-="invalid"></b>', config)
+      .must_equal('<b></b>')
+
+    Sanitize.clean('<b data-xml="invalid"></b>', config)
+      .must_equal('<b></b>')
+
+    Sanitize.clean('<b data-xmlfoo="invalid"></b>', config)
+      .must_equal('<b></b>')
+
+    Sanitize.clean('<b data-f:oo="valid"></b>', config)
+      .must_equal('<b></b>')
+
+    Sanitize.clean('<b data-f/oo="partial"></b>', config)
+      .must_equal('<b data-f></b>') # Nokogiri quirk; not ideal, but harmless
+
+    Sanitize.clean('<b data-éfoo="valid"></b>', config)
+      .must_equal('<b></b>') # Another annoying Nokogiri quirk.
+  end
 end
 
 describe 'Sanitize.clean' do

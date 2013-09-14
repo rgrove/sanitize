@@ -49,13 +49,29 @@ class Sanitize; module Transformers
       attr_whitelist = Set.new((@attributes[name] || []) +
           (@attributes[:all] || []))
 
+      allow_data_attributes = attr_whitelist.include?(:data)
+
       if attr_whitelist.empty?
         # Delete all attributes from elements with no whitelisted attributes.
         node.attribute_nodes.each {|attr| attr.unlink }
       else
-        # Delete any attribute that isn't in the whitelist for this element.
+        # Delete any attribute that isn't allowed on this element.
         node.attribute_nodes.each do |attr|
-          attr.unlink unless attr_whitelist.include?(attr.name.downcase)
+          attr_name = attr.name.downcase
+
+          unless attr_whitelist.include?(attr_name)
+            # The attribute isn't explicitly whitelisted.
+
+            if allow_data_attributes && attr_name.start_with?('data-')
+              # Arbitrary data attributes are allowed. Verify that the attribute
+              # is a valid data attribute.
+              attr.unlink unless attr_name =~ REGEX_DATA_ATTR
+            else
+              # Either the attribute isn't a data attribute, or arbitrary data
+              # attributes aren't allowed. Remove the attribute.
+              attr.unlink
+            end
+          end
         end
 
         # Delete remaining attributes that use unacceptable protocols.
