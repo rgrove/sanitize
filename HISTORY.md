@@ -8,6 +8,9 @@ Version 2.1.0 (git)
   symbol `:data` instead of an attribute name in the `:attributes` config to
   indicate that arbitrary data attributes should be allowed on an element.
 
+* Added the following elements to the relaxed config: `address`, `bdi`, `hr`,
+  and `summary`.
+
 
 Version 2.0.6 (2013-07-10)
 --------------------------
