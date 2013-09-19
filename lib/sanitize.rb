@@ -23,7 +23,7 @@
 
 require 'set'
 
-require 'nokogiri'
+require 'nokogumbo'
 require 'sanitize/version'
 require 'sanitize/config'
 require 'sanitize/config/restricted'
@@ -109,7 +109,7 @@ class Sanitize
   # When sanitizing a document, the `<html>` element must be whitelisted or an
   # error will be raised. If this is undesirable, you should probably use
   # {#fragment} instead.
-  def document(html, parser = Nokogiri::HTML::Document)
+  def document(html, parser = Nokogiri::HTML5)
     return '' unless html
 
     doc = parser.parse(html)
@@ -118,7 +118,7 @@ class Sanitize
   end
 
   # Returns a sanitized copy of the given _html_ fragment.
-  def fragment(html, parser = Nokogiri::HTML::Document)
+  def fragment(html, parser = Nokogiri::HTML5)
     return '' unless html
 
     doc = parser.parse("<html><body>#{html}")
