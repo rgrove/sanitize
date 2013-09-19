@@ -61,34 +61,25 @@ class Sanitize
   # Class Methods
   #++
 
-  # Returns a sanitized copy of _html_, using the settings in _config_ if
-  # specified.
-  def self.clean(html, config = {})
-    Sanitize.new(config).clean(html)
+  # Returns a sanitized copy of the given full _html_ document, using the
+  # settings in _config_ if specified.
+  #
+  # When sanitizing a document, the `<html>` element must be whitelisted or an
+  # error will be raised. If this is undesirable, you should probably use
+  # {#fragment} instead.
+  def self.document(html, config = {})
+    Sanitize.new(config).document(html)
   end
 
-  # Performs Sanitize#clean in place, returning _html_, or +nil+ if no changes
-  # were made.
-  def self.clean!(html, config = {})
-    Sanitize.new(config).clean!(html)
+  # Returns a sanitized copy of the given _html_ fragment, using the settings in
+  # _config_ if specified.
+  def self.fragment(html, config = {})
+    Sanitize.new(config).fragment(html)
   end
 
-  # Performs a Sanitize#clean using a full-document HTML parser instead of
-  # the default fragment parser. This will add a DOCTYPE and html tag
-  # unless they are already present
-  def self.clean_document(html, config = {})
-    Sanitize.new(config).clean_document(html)
-  end
-
-  # Performs Sanitize#clean_document in place, returning _html_, or +nil+ if no
-  # changes were made.
-  def self.clean_document!(html, config = {})
-    Sanitize.new(config).clean_document!(html)
-  end
-
-  # Sanitizes the specified Nokogiri::XML::Node and all its children.
-  def self.clean_node!(node, config = {})
-    Sanitize.new(config).clean_node!(node)
+  # Sanitizes the given `Nokogiri::XML::Node` instance and all its children.
+  def self.node!(node, config = {})
+    Sanitize.new(config).node!(node)
   end
 
   #--
@@ -113,58 +104,53 @@ class Sanitize
         Transformers::CleanElement.new(@config)
   end
 
+  # Returns a sanitized copy of the given _html_ document.
+  #
+  # When sanitizing a document, the `<html>` element must be whitelisted or an
+  # error will be raised. If this is undesirable, you should probably use
+  # {#fragment} instead.
+  def document(html, parser = Nokogiri::HTML::Document)
+    return '' unless html
+
+    doc = parser.parse(html)
+    node!(doc)
+    to_html(doc)
+  end
+
   # Returns a sanitized copy of the given _html_ fragment.
-  def clean(html)
-    if html
-      dupe = html.dup
-      clean!(dupe) || dupe
-    end
-  end
+  def fragment(html, parser = Nokogiri::HTML::Document)
+    return '' unless html
 
-  # Performs clean in place, returning _html_, or +nil+ if no changes were
-  # made.
-  def clean!(html, parser = Nokogiri::HTML::DocumentFragment)
-    fragment = parser.parse(html)
-    clean_node!(fragment)
+    doc = parser.parse("<html><body>#{html}")
 
-    output_method_params = {:encoding => @config[:output_encoding], :indent => 0}
-
-    if @config[:output] == :xhtml
-      output_method = fragment.method(:to_xhtml)
-      output_method_params[:save_with] = Nokogiri::XML::Node::SaveOptions::AS_XHTML
-    elsif @config[:output] == :html
-      output_method = fragment.method(:to_html)
+    # Hack to allow fragments containing <body>. Borrowed from
+    # Nokogiri::HTML::DocumentFragment.
+    if html =~ /\A<body(?:\s|>)/i
+      path = '/html/body'
     else
-      raise Error, "unsupported output format: #{@config[:output]}"
+      path = '/html/body/node()'
     end
 
-    result = output_method.call(output_method_params)
+    frag = doc.fragment
+    doc.xpath(path).each {|node| frag << node }
 
-    return result == html ? nil : html[0, html.length] = result
+    node!(frag)
+    to_html(frag)
   end
 
-  # Returns a sanitized copy of the given full _html_ document.
-  def clean_document(html)
-    unless html.nil?
-      clean_document!(html.dup) || html
-    end
-  end
-
-  # Performs clean_document in place, returning _html_, or +nil+ if no changes
-  # were made.
-  def clean_document!(html)
-    if !@config[:elements].include?('html') && !@config[:remove_contents]
-      raise 'You must have the HTML element whitelisted to call #clean_document unless remove_contents is set to true'
-      # otherwise Nokogiri will raise for having multiple root nodes when
-      # it moves its children to the root document context
-    end
-
-    clean!(html, Nokogiri::HTML::Document)
-  end
-
-  # Sanitizes the specified Nokogiri::XML::Node and all its children.
-  def clean_node!(node)
+  # Sanitizes the given `Nokogiri::XML::Node` and all its children, modifying it
+  # in place.
+  #
+  # If _node_ is a `Nokogiri::XML::Document`, the `<html>` element must be
+  # whitelisted or an error will be raised.
+  def node!(node)
     raise ArgumentError unless node.is_a?(Nokogiri::XML::Node)
+
+    if node.is_a?(Nokogiri::XML::Document)
+      unless @config[:elements].include?('html')
+        raise Error, 'When sanitizing a document, "<html>" must be whitelisted.'
+      end
+    end
 
     node_whitelist = Set.new
 
@@ -177,6 +163,13 @@ class Sanitize
   end
 
   private
+
+  def to_html(node)
+    node.to_html(
+      :encoding => @config[:output_encoding],
+      :indent   => 0
+    )
+  end
 
   def transform_node!(node, node_whitelist, mode)
     @transformers[mode].each do |transformer|

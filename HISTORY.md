@@ -1,6 +1,31 @@
 Sanitize History
 ================================================================================
 
+Version 3.0.0 (git)
+-------------------
+
+As of this version, Sanitize adheres strictly to the [SemVer 2.0.0][semver]
+versioning standard. This release contains API changes that are incompatible
+with previous releases, as indicated by the major version increment.
+
+Incompatible changes are prefixed with `[!]`.
+
+* [!] The `clean!` and `clean_document!` methods were removed, since they
+  weren't useful and tended to confuse people.
+
+* [!] The `clean` method was renamed to `fragment` to more clearly indicate that
+  its intended use is to sanitize an HTML fragment.
+
+* [!] The `clean_document` method was renamed to `document`.
+
+* [!] The `clean_node!` method was renamed to `node!`.
+
+* [!] The `document` method now raises a `Sanitize::Error` if the `<html>`
+  element isn't whitelisted, rather than a `RuntimeError`. This error is also
+  now raised regardless of the `:remove_contents` config setting.
+
+[semver]:http://semver.org/
+
 Version 2.1.0 (git)
 -------------------
 
