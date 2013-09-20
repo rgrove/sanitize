@@ -27,6 +27,6 @@ Gem::Specification.new do |s|
   s.files = [
     'HISTORY.md',
     'LICENSE',
-    'README.rdoc'
+    'README.md'
   ] + Dir.glob('lib/**/*.rb') + Dir.glob('test/**/*.rb')
 end
