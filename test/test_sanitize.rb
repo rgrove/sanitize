@@ -344,6 +344,16 @@ describe 'Custom configs' do
     Sanitize.clean(input, { :elements => ['a'], :attributes => {'a' => ['href']}, :protocols => { 'a' => { 'href' => [:relative] }} }).must_equal(input)
   end
 
+  it 'should allow relative URLs containing colons where the colon is part of an anchor' do
+    input = '<a href="#fn:1">Footnote 1</a>'
+    Sanitize.clean(input, { :elements => ['a'], :attributes => {'a' => ['href']}, :protocols => { 'a' => { 'href' => [:relative] }} }).must_equal(input)
+  end
+
+  it 'should allow relative URLs containing colons where the colon is part of an anchor' do
+    input = '<a href="somepage#fn:1">Footnote 1</a>'
+    Sanitize.clean(input, { :elements => ['a'], :attributes => {'a' => ['href']}, :protocols => { 'a' => { 'href' => [:relative] }} }).must_equal(input)
+  end
+
   it 'should output HTML when :output == :html' do
     input = 'foo<br/>bar<br>baz'
     Sanitize.clean(input, :elements => ['br'], :output => :html).must_equal('foo<br>bar<br>baz')
