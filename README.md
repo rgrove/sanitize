@@ -354,32 +354,10 @@ lambda do |env|
 end
 ```
 
-Contributors
-------------
-
-Sanitize was created and is maintained by Ryan Grove (ryan@wonko.com).
-
-The following lovely people have also contributed to Sanitize:
-
-* Ben Anderson
-* Wilson Bilkovich
-* Peter Cooper
-* Gabe da Silveira
-* Nicholas Evans
-* Nils Gemeinhardt
-* Adam Hooper
-* Mutwin Kraus
-* Eaden McKee
-* Dev Purkayastha
-* David Reese
-* Ardie Saeidi
-* Rafael Souza
-* Ben Wanicur
-
 License
 -------
 
-Copyright (c) 2013 Ryan Grove (ryan@wonko.com)
+Copyright (c) 2014 Ryan Grove (ryan@wonko.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the 'Software'), to deal in

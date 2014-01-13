@@ -26,8 +26,9 @@ Incompatible changes are prefixed with `[!]`.
 
 [semver]:http://semver.org/
 
-Version 2.1.0 (git)
--------------------
+
+Version 2.1.0 (2014-01-13)
+--------------------------
 
 * Added support for whitelisting arbitrary HTML5 `data-*` attributes. Use the
   symbol `:data` instead of an attribute name in the `:attributes` config to
@@ -35,6 +36,11 @@ Version 2.1.0 (git)
 
 * Added the following elements to the relaxed config: `address`, `bdi`, `hr`,
   and `summary`.
+
+* Fixed: A colon (`:`) character in a URL fragment identifier such as `#foo:1`
+  was incorrectly treated as a protocol delimiter. [@heathd - #87][87]
+
+[87]:https://github.com/rgrove/sanitize/pull/87
 
 
 Version 2.0.6 (2013-07-10)
