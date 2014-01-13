@@ -1,8 +1,8 @@
 Sanitize History
 ================================================================================
 
-Version 2.1.0 (git)
--------------------
+Version 2.1.0 (2014-01-13)
+--------------------------
 
 * Added support for whitelisting arbitrary HTML5 `data-*` attributes. Use the
   symbol `:data` instead of an attribute name in the `:attributes` config to
