@@ -209,15 +209,14 @@ traversal. See the Transformers section below for details.
 Custom transformer or array of custom transformers to run using breadth-first
 traversal. See the Transformers section below for details.
 
-#### :whitespace_elements (Array)
+#### :whitespace_elements (Hash)
 
-Array of lowercase element names that should be replaced with whitespace when
-removed in order to preserve readability. For example,
-`foo<div>bar</div>baz` will become
-`foo bar baz` when the `<div>` is removed.
+Hash of lowercase element names that should be replaced and replacement values
+in order to preserve readability. For example, `foo<div>bar</div>baz` will
+become `foo bar baz` when the `<div>` is removed.
 
-By default, the following elements are included in the
-`:whitespace_elements` array:
+By default, the following elements (as keys) are included in the
+`:whitespace_elements` hash:
 
 ```
 address article aside blockquote br dd div dl dt footer h1 h2 h3 h4 h5

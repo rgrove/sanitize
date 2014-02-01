@@ -73,14 +73,37 @@ class Sanitize
       :transformers_breadth => [],
 
       # Elements which, when removed, should have their contents surrounded by
-      # space characters to preserve readability. For example,
-      # `foo<div>bar</div>baz` will become 'foo bar baz' when the <div> is
-      # removed.
-      :whitespace_elements => %w[
-        address article aside blockquote br dd div dl dt footer h1 h2 h3 h4 h5
-        h6 header hgroup hr li nav ol p pre section ul
-      ]
-
+      # values specified with `before` and `after` keys to preserve readability.
+      # For example, `foo<div>bar</div>baz` will become 'foo bar baz' when the
+      # <div> is removed.
+      :whitespace_elements => {
+        'address'    => { :before => ' ', :after => ' ' },
+        'article'    => { :before => ' ', :after => ' ' },
+        'aside'      => { :before => ' ', :after => ' ' },
+        'blockquote' => { :before => ' ', :after => ' ' },
+        'br'         => { :before => ' ', :after => ' ' },
+        'dd'         => { :before => ' ', :after => ' ' },
+        'div'        => { :before => ' ', :after => ' ' },
+        'dl'         => { :before => ' ', :after => ' ' },
+        'dt'         => { :before => ' ', :after => ' ' },
+        'footer'     => { :before => ' ', :after => ' ' },
+        'h1'         => { :before => ' ', :after => ' ' },
+        'h2'         => { :before => ' ', :after => ' ' },
+        'h3'         => { :before => ' ', :after => ' ' },
+        'h4'         => { :before => ' ', :after => ' ' },
+        'h5'         => { :before => ' ', :after => ' ' },
+        'h6'         => { :before => ' ', :after => ' ' },
+        'header'     => { :before => ' ', :after => ' ' },
+        'hgroup'     => { :before => ' ', :after => ' ' },
+        'hr'         => { :before => ' ', :after => ' ' },
+        'li'         => { :before => ' ', :after => ' ' },
+        'nav'        => { :before => ' ', :after => ' ' },
+        'ol'         => { :before => ' ', :after => ' ' },
+        'p'          => { :before => ' ', :after => ' ' },
+        'pre'        => { :before => ' ', :after => ' ' },
+        'section'    => { :before => ' ', :after => ' ' },
+        'ul'         => { :before => ' ', :after => ' ' }
+      }
     }
   end
 end
