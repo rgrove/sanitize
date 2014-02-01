@@ -11,7 +11,16 @@ class Sanitize; module Transformers
       @protocols               = config[:protocols]
       @remove_all_contents     = false
       @remove_element_contents = Set.new
-      @whitespace_elements     = Set.new(config[:whitespace_elements])
+      @whitespace_elements     = Hash.new
+
+      # Converting :whitespace_element into a Hash for backwards compatibility.
+      if config[:whitespace_elements].is_a?(Array)
+        config[:whitespace_elements].each do |element|
+          @whitespace_elements[element] = { :before => ' ', :after => ' ' }
+        end
+      else
+        @whitespace_elements = config[:whitespace_elements]
+      end
 
       if config[:remove_contents].is_a?(Array)
         @remove_element_contents.merge(config[:remove_contents].map(&:to_s))
@@ -31,10 +40,10 @@ class Sanitize; module Transformers
         # Elements like br, div, p, etc. need to be replaced with whitespace in
         # order to preserve readability.
         if @whitespace_elements.include?(name)
-          node.add_previous_sibling(Nokogiri::XML::Text.new(' ', node.document))
+          node.add_previous_sibling(Nokogiri::XML::Text.new(@whitespace_elements[name][:before].to_s, node.document))
 
           unless node.children.empty?
-            node.add_next_sibling(Nokogiri::XML::Text.new(' ', node.document))
+            node.add_next_sibling(Nokogiri::XML::Text.new(@whitespace_elements[name][:after].to_s, node.document))
           end
         end
 

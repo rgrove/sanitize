@@ -421,6 +421,21 @@ describe 'Custom configs' do
     Sanitize.clean('<b data-éfoo="valid"></b>', config)
       .must_equal('<b></b>') # Another annoying Nokogiri quirk.
   end
+
+  it 'should replace whitespace_elements with configured :before and :after values' do
+    config = {
+      :whitespace_elements => {
+        'p'   => { :before => "\n", :after => "\n" },
+        'div' => { :before => "\n", :after => "\n" },
+        'br'  => { :before => "\n", :after => "\n" },
+      }
+    }
+
+    Sanitize.clean('<p>foo</p>', config).must_equal("\nfoo\n")
+    Sanitize.clean('<p>foo</p><p>bar</p>', config).must_equal("\nfoo\n\nbar\n")
+    Sanitize.clean('foo<div>bar</div>baz', config).must_equal("foo\nbar\nbaz")
+    Sanitize.clean('foo<br>bar<br>baz', config).must_equal("foo\nbar\nbaz")
+  end
 end
 
 describe 'Sanitize.clean' do
@@ -643,5 +658,18 @@ describe 'bugs' do
   it 'should not have Nokogiri 1.4.2+ unterminated script/style element bug' do
     Sanitize.clean!('foo <script>bar').must_equal('foo bar')
     Sanitize.clean!('foo <style>bar').must_equal('foo bar')
+  end
+end
+
+describe 'backwards compatibility' do
+  it 'should work with legacy :whitespace_elements Arrays' do
+    config = {
+      :whitespace_elements => %w[p div br]
+    }
+
+    Sanitize.clean('<p>foo</p>', config).must_equal(' foo ')
+    Sanitize.clean('<p>foo</p><p>bar</p>', config).must_equal(' foo  bar ')
+    Sanitize.clean('foo<div>bar</div>baz', config).must_equal('foo bar baz')
+    Sanitize.clean('foo<br>bar<br>baz', config).must_equal('foo bar baz')
   end
 end
