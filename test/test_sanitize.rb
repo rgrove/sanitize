@@ -416,6 +416,21 @@ describe 'Custom configs' do
     Sanitize.fragment('<b data-éfoo="valid"></b>', config)
       .must_equal('<b></b>') # Another annoying Nokogiri quirk.
   end
+
+  it 'should replace whitespace_elements with configured :before and :after values' do
+    config = {
+      :whitespace_elements => {
+        'p'   => { :before => "\n", :after => "\n" },
+        'div' => { :before => "\n", :after => "\n" },
+        'br'  => { :before => "\n", :after => "\n" },
+      }
+    }
+
+    Sanitize.clean('<p>foo</p>', config).must_equal("\nfoo\n")
+    Sanitize.clean('<p>foo</p><p>bar</p>', config).must_equal("\nfoo\n\nbar\n")
+    Sanitize.clean('foo<div>bar</div>baz', config).must_equal("foo\nbar\nbaz")
+    Sanitize.clean('foo<br>bar<br>baz', config).must_equal("foo\nbar\nbaz")
+  end
 end
 
 describe 'Sanitize.clean' do
@@ -471,7 +486,7 @@ describe 'transformers' do
     return unless node_name == 'iframe'
 
     # Verify that the video URL is actually a valid YouTube video URL.
-    return unless node['src'] =~ /\Ahttps?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\//
+    return unless node['src'] =~ %r|\A(?:https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/|
 
     # We're now certain that this is a YouTube embed, but we still need to run
     # it through a special Sanitize step to ensure that no unwanted elements or
@@ -581,6 +596,13 @@ describe 'transformers' do
     Sanitize.fragment(input, :transformers => youtube).must_equal(output)
   end
 
+  it 'should allow protocol relative youtube video embeds via the youtube transformer' do
+    input  = '<iframe width="420" height="315" src="//www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
+    output = Nokogiri::HTML::DocumentFragment.parse('<iframe width="420" height="315" src="//www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen>alert()</iframe>').to_html(:encoding => 'utf-8', :indent => 0)
+
+    Sanitize.clean!(input, :transformers => youtube).must_equal(output)
+  end
+
   it 'should allow privacy-enhanced youtube video embeds via the youtube transformer' do
     input  = '<iframe width="420" height="315" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
     output = Nokogiri::HTML::DocumentFragment.parse('<iframe width="420" height="315" src="http://www.youtube-nocookie.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen>alert()</iframe>').to_html(:encoding => 'utf-8', :indent => 0)
@@ -600,5 +622,18 @@ describe 'bugs' do
   it 'should not have Nokogiri 1.4.2+ unterminated script/style element bug' do
     Sanitize.fragment('foo <script>bar').must_equal('foo bar')
     Sanitize.fragment('foo <style>bar').must_equal('foo bar')
+  end
+end
+
+describe 'backwards compatibility' do
+  it 'should work with legacy :whitespace_elements Arrays' do
+    config = {
+      :whitespace_elements => %w[p div br]
+    }
+
+    Sanitize.clean('<p>foo</p>', config).must_equal(' foo ')
+    Sanitize.clean('<p>foo</p><p>bar</p>', config).must_equal(' foo  bar ')
+    Sanitize.clean('foo<div>bar</div>baz', config).must_equal('foo bar baz')
+    Sanitize.clean('foo<br>bar<br>baz', config).must_equal('foo bar baz')
   end
 end

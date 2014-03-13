@@ -27,6 +27,17 @@ Incompatible changes are prefixed with `[!]`.
 [semver]:http://semver.org/
 
 
+Version 2.2.0 (git)
+-------------------
+
+* The `:whitespace_elements` config is now a Hash, and allows you to specify the
+  text that should be inserted before and after these elements when they're
+  removed. The old-style Array-based config value is still supported for
+  backwards compatibility. [@alperkokmen - #94][94]
+
+[94]:https://github.com/rgrove/sanitize/pull/94/
+
+
 Version 2.1.0 (2014-01-13)
 --------------------------
 
