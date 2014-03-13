@@ -529,7 +529,7 @@ describe 'transformers' do
     return unless node_name == 'iframe'
 
     # Verify that the video URL is actually a valid YouTube video URL.
-    return unless node['src'] =~ /\Ahttps?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\//
+    return unless node['src'] =~ %r|\A(?:https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/|
 
     # We're now certain that this is a YouTube embed, but we still need to run
     # it through a special Sanitize step to ensure that no unwanted elements or
@@ -635,6 +635,13 @@ describe 'transformers' do
   it 'should allow https youtube video embeds via the youtube transformer' do
     input  = '<iframe width="420" height="315" src="https://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
     output = Nokogiri::HTML::DocumentFragment.parse('<iframe width="420" height="315" src="https://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen>alert()</iframe>').to_html(:encoding => 'utf-8', :indent => 0)
+
+    Sanitize.clean!(input, :transformers => youtube).must_equal(output)
+  end
+
+  it 'should allow protocol relative youtube video embeds via the youtube transformer' do
+    input  = '<iframe width="420" height="315" src="//www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
+    output = Nokogiri::HTML::DocumentFragment.parse('<iframe width="420" height="315" src="//www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen>alert()</iframe>').to_html(:encoding => 'utf-8', :indent => 0)
 
     Sanitize.clean!(input, :transformers => youtube).must_equal(output)
   end

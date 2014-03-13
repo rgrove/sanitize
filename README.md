@@ -333,7 +333,7 @@ lambda do |env|
   return unless node_name == 'iframe'
 
   # Verify that the video URL is actually a valid YouTube video URL.
-  return unless node['src'] =~ /\A(https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\//
+  return unless node['src'] =~ %r|\A(?:https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/|
 
   # We're now certain that this is a YouTube embed, but we still need to run
   # it through a special Sanitize step to ensure that no unwanted elements or
