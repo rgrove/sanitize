@@ -5,10 +5,16 @@ Version 3.0.0 (git)
 -------------------
 
 As of this version, Sanitize adheres strictly to the [SemVer 2.0.0][semver]
-versioning standard. This release contains API changes that are incompatible
-with previous releases, as indicated by the major version increment.
+versioning standard. This release contains API and output changes that are
+incompatible with previous releases, as indicated by the major version
+increment.
 
-Incompatible changes are prefixed with `[!]`.
+Backwards-incompatible changes are prefixed with `[!]`.
+
+* [!] HTML is now parsed using Google's Gumbo HTML5 parser, which adheres to the
+  HTML5 parsing spec and behaves much more like modern browser parsers. As a
+  result, HTML output may differ in some ways from previous versions of
+  Sanitize.
 
 * [!] The `clean!` and `clean_document!` methods were removed, since they
   weren't useful and tended to confuse people.
