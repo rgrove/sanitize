@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency('nokogumbo', '~> 1.1.5')
 
   # Development dependencies.
-  s.add_development_dependency('minitest',  '~> 4.7')
+  s.add_development_dependency('minitest',  '~> 5.3.4')
   s.add_development_dependency('rake',      '~> 10.1')
   s.add_development_dependency('redcarpet', '~> 3.0.0')
   s.add_development_dependency('yard',      '~> 0.8.7')
