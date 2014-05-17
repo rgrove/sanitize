@@ -145,7 +145,7 @@ class Sanitize
 
   def to_html(node)
     node.to_html(
-      :encoding => @config[:output_encoding],
+      :encoding => 'utf-8',
       :indent   => 0
     )
   end

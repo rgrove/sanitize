@@ -158,15 +158,6 @@ Array of element names to allow. Specify all names in lowercase.
 ]
 ```
 
-#### :output (Symbol)
-
-Output format. Supported formats are `:html` and `:xhtml`,
-defaulting to `:html`.
-
-#### :output_encoding (String)
-
-Character encoding to use for HTML output. Default is `utf-8`.
-
 #### :protocols (Hash)
 
 URL protocols to allow in specific attributes. If an attribute is listed here

@@ -30,6 +30,12 @@ Backwards-incompatible changes are prefixed with `[!]`.
   element isn't whitelisted, rather than a `RuntimeError`. This error is also
   now raised regardless of the `:remove_contents` config setting.
 
+* [!] The `:output` config has been removed. Output is now always HTML, not
+  XHTML.
+
+* [!] The `:output_encoding` config has been removed. Output is now always
+  UTF-8.
+
 [semver]:http://semver.org/
 
 
