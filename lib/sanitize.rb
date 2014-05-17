@@ -36,27 +36,6 @@ require 'sanitize/transformers/clean_element'
 class Sanitize
   attr_reader :config
 
-  # Matches a valid HTML5 data attribute name. The unicode ranges included here
-  # are a conservative subset of the full range of characters that are
-  # technically allowed, with the intent of matching the most common characters
-  # used in data attribute names while excluding uncommon or potentially
-  # misleading characters, or characters with the potential to be normalized
-  # into unsafe or confusing forms.
-  #
-  # If you need data attr names with characters that aren't included here (such
-  # as combining marks, full-width characters, or CJK), please consider creating
-  # a custom transformer to validate attributes according to your needs.
-  #
-  # http://www.whatwg.org/specs/web-apps/current-work/multipage/elements.html#embedding-custom-non-visible-data-with-the-data-*-attributes
-  REGEX_DATA_ATTR = /\Adata-(?!xml)[a-z_][\w.\u00E0-\u00F6\u00F8-\u017F\u01DD-\u02AF-]*\z/u
-
-  # Matches an attribute value that could be treated by a browser as a URL
-  # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
-  # or more characters followed by a colon is considered a match, even if the
-  # colon is encoded as an entity and even if it's an incomplete entity (which
-  # IE6 and Opera will still parse).
-  REGEX_PROTOCOL = /\A([^\/#]*?)(?:\:|&#0*58|&#x0*3a)/i
-
   #--
   # Class Methods
   #++
