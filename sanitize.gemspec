@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
 
   # Runtime dependencies.
   s.add_dependency('nokogiri',  '>= 1.4.4')
-  s.add_dependency('nokogumbo', '~> 1.1.1')
+  s.add_dependency('nokogumbo', '~> 1.1.5')
 
   # Development dependencies.
   s.add_development_dependency('minitest',  '~> 4.7')
