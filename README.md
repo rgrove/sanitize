@@ -10,11 +10,14 @@ elements, certain attributes within those elements, and even certain URL
 protocols within attributes that contain URLs. Any HTML elements or attributes
 that you don't explicitly allow will be removed.
 
-Because it's based on Nokogiri, a full-fledged HTML parser, rather than a bunch
-of fragile regular expressions, Sanitize has no trouble dealing with malformed
-or maliciously-formed HTML and returning safe output.
+Sanitize is based on Google's [Gumbo HTML5 parser][gumbo], which parses HTML
+exactly the same way modern browsers do. As long as your whitelist config only
+allows safe markup, even the most malformed or malicious input will be
+transformed into safe output.
 
 [![Build Status](https://travis-ci.org/rgrove/sanitize.png?branch=master)](https://travis-ci.org/rgrove/sanitize?branch=master)
+
+[gumbo]:https://github.com/google/gumbo-parser
 
 Installation
 -------------
@@ -31,7 +34,6 @@ settings by default, which means it will strip all HTML and leave only text
 behind.
 
 ```ruby
-require 'rubygems'
 require 'sanitize'
 
 html = '<b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg">'
