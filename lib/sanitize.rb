@@ -119,9 +119,14 @@ class Sanitize
   private
 
   def to_html(node)
+    so = Nokogiri::XML::Node::SaveOptions
+
+    # Serialize to HTML without any formatting to prevent Nokogiri from adding
+    # newlines after certain tags.
     node.to_html(
-      :encoding => 'utf-8',
-      :indent   => 0
+      :encoding  => 'utf-8',
+      :indent    => 0,
+      :save_with => so::NO_DECLARATION | so::NO_EMPTY_TAGS | so::AS_HTML
     )
   end
 

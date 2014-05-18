@@ -41,6 +41,14 @@ increment.
 
 * The `:output_encoding` config has been removed. Output is now always UTF-8.
 
+### Other changes
+
+* Fixed: Nokogiri has been smacked and instructed to stop adding newlines after
+  certain elements, because if people wanted newlines there they'd have put them
+  there, dammit. [#103][103]
+
+[103]:https://github.com/rgrove/sanitize/issues/103
+
 
 Version 2.2.0 (git)
 -------------------
