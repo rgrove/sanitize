@@ -64,19 +64,19 @@ class Sanitize
   # When sanitizing a document, the `<html>` element must be whitelisted or an
   # error will be raised. If this is undesirable, you should probably use
   # {#fragment} instead.
-  def document(html, parser = Nokogiri::HTML5)
+  def document(html)
     return '' unless html
 
-    doc = parser.parse(html)
+    doc = Nokogiri::HTML5.parse(html)
     node!(doc)
     to_html(doc)
   end
 
   # Returns a sanitized copy of the given _html_ fragment.
-  def fragment(html, parser = Nokogiri::HTML5)
+  def fragment(html)
     return '' unless html
 
-    doc = parser.parse("<html><body>#{html}")
+    doc = Nokogiri::HTML5.parse("<html><body>#{html}")
 
     # Hack to allow fragments containing <body>. Borrowed from
     # Nokogiri::HTML::DocumentFragment.
