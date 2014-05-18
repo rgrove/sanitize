@@ -69,16 +69,13 @@ class Sanitize
   def initialize(config = {})
     @config = Config::DEFAULT.merge(config)
 
-    @transformers = {
-      :breadth => Array(@config[:transformers_breadth].dup),
-      :depth   => Array(@config[:transformers]) + Array(@config[:transformers_depth])
-    }
+    @transformers = Array(@config[:transformers].dup)
 
-    # Default depth transformers. These always run at the end of the chain,
-    # after any custom transformers.
-    @transformers[:depth] << Transformers::CleanComment unless @config[:allow_comments]
+    # Default transformers always run at the end of the chain, after any custom
+    # transformers.
+    @transformers << Transformers::CleanComment unless @config[:allow_comments]
 
-    @transformers[:depth] <<
+    @transformers <<
         Transformers::CleanCDATA <<
         Transformers::CleanElement.new(@config)
   end
@@ -133,11 +130,10 @@ class Sanitize
 
     node_whitelist = Set.new
 
-    unless @transformers[:breadth].empty?
-      traverse_breadth(node) {|n| transform_node!(n, node_whitelist, :breadth) }
+    traverse(node) do |n|
+      transform_node!(n, node_whitelist)
     end
 
-    traverse_depth(node) {|n| transform_node!(n, node_whitelist, :depth) }
     node
   end
 
@@ -150,15 +146,14 @@ class Sanitize
     )
   end
 
-  def transform_node!(node, node_whitelist, mode)
-    @transformers[mode].each do |transformer|
+  def transform_node!(node, node_whitelist)
+    @transformers.each do |transformer|
       result = transformer.call({
         :config         => @config,
         :is_whitelisted => node_whitelist.include?(node),
         :node           => node,
         :node_name      => node.name.downcase,
         :node_whitelist => node_whitelist,
-        :traversal_mode => mode
       })
 
       if result.is_a?(Hash) && result[:node_whitelist].respond_to?(:each)
@@ -169,18 +164,26 @@ class Sanitize
     node
   end
 
-  # Performs breadth-first traversal, operating first on the root node, then
-  # traversing downwards.
-  def traverse_breadth(node, &block)
+  # Performs top-down traversal of the given node, operating first on the node
+  # itself, then traversing each child (if any) in order.
+  def traverse(node, &block)
     block.call(node)
-    node.children.each {|child| traverse_breadth(child, &block) }
-  end
 
-  # Performs depth-first traversal, operating first on the deepest nodes in the
-  # document, then traversing upwards to the root.
-  def traverse_depth(node, &block)
-    node.children.each {|child| traverse_depth(child, &block) }
-    block.call(node)
+    child = node.child
+
+    while child do
+      prev = child.previous_sibling
+      traverse(child, &block)
+
+      if child.parent != node
+        # The child was unlinked or reparented, so traverse the previous node's
+        # next sibling, or the parent's first child if there is no previous
+        # node.
+        child = prev ? prev.next_sibling : node.child
+      else
+        child = child.next_sibling
+      end
+    end
   end
 
   class Error < StandardError; end

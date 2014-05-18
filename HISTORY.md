@@ -9,34 +9,37 @@ versioning standard. This release contains API and output changes that are
 incompatible with previous releases, as indicated by the major version
 increment.
 
-Backwards-incompatible changes are prefixed with `[!]`.
-
-* [!] HTML is now parsed using Google's Gumbo HTML5 parser, which adheres to the
-  HTML5 parsing spec and behaves much more like modern browser parsers. As a
-  result, HTML output may differ in some ways from previous versions of
-  Sanitize.
-
-* [!] The `clean!` and `clean_document!` methods were removed, since they
-  weren't useful and tended to confuse people.
-
-* [!] The `clean` method was renamed to `fragment` to more clearly indicate that
-  its intended use is to sanitize an HTML fragment.
-
-* [!] The `clean_document` method was renamed to `document`.
-
-* [!] The `clean_node!` method was renamed to `node!`.
-
-* [!] The `document` method now raises a `Sanitize::Error` if the `<html>`
-  element isn't whitelisted, rather than a `RuntimeError`. This error is also
-  now raised regardless of the `:remove_contents` config setting.
-
-* [!] The `:output` config has been removed. Output is now always HTML, not
-  XHTML.
-
-* [!] The `:output_encoding` config has been removed. Output is now always
-  UTF-8.
-
 [semver]:http://semver.org/
+
+### Backwards-incompatible changes
+
+* HTML is now parsed using Google's Gumbo HTML5 parser, which adheres to the
+  HTML5 parsing spec and behaves much more like modern browser parsers than the
+  previous libxml2-based parser. As a result, HTML output may differ from that
+  of previous versions of Sanitize.
+
+* All transformers now traverse the document from the top down, starting with
+  the first node, then its first child, and so on. The `:transformers_breadth`
+  config has been removed, and old bottom-up transformers (the previous default)
+  may need to be rewritten.
+
+* The `clean!` and `clean_document!` methods were removed, since they weren't
+  useful and tended to confuse people.
+
+* The `clean` method was renamed to `fragment` to more clearly indicate that its
+  intended use is to sanitize an HTML fragment.
+
+* The `clean_document` method was renamed to `document`.
+
+* The `clean_node!` method was renamed to `node!`.
+
+* The `document` method now raises a `Sanitize::Error` if the `<html>` element
+  isn't whitelisted, rather than a `RuntimeError`. This error is also now raised
+  regardless of the `:remove_contents` config setting.
+
+* The `:output` config has been removed. Output is now always HTML, not XHTML.
+
+* The `:output_encoding` config has been removed. Output is now always UTF-8.
 
 
 Version 2.2.0 (git)
