@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class Sanitize; module Transformers
 
   CleanComment = lambda do |env|

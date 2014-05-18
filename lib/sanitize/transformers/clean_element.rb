@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class Sanitize; module Transformers; class CleanElement
 
   # Matches a valid HTML5 data attribute name. The unicode ranges included here

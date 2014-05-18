@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class Sanitize; module Transformers
 
   CleanCDATA = lambda do |env|
