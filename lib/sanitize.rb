@@ -21,17 +21,17 @@
 # SOFTWARE.
 #++
 
+require 'nokogumbo'
 require 'set'
 
-require 'nokogumbo'
-require 'sanitize/version'
-require 'sanitize/config'
-require 'sanitize/config/restricted'
-require 'sanitize/config/basic'
-require 'sanitize/config/relaxed'
-require 'sanitize/transformers/clean_cdata'
-require 'sanitize/transformers/clean_comment'
-require 'sanitize/transformers/clean_element'
+require_relative 'sanitize/version'
+require_relative 'sanitize/config/default'
+require_relative 'sanitize/config/restricted'
+require_relative 'sanitize/config/basic'
+require_relative 'sanitize/config/relaxed'
+require_relative 'sanitize/transformers/clean_cdata'
+require_relative 'sanitize/transformers/clean_comment'
+require_relative 'sanitize/transformers/clean_element'
 
 class Sanitize
   attr_reader :config
