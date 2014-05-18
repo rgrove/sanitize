@@ -40,6 +40,18 @@ class Sanitize
     Sanitize.new(config).node!(node)
   end
 
+  # Aliases for pre-3.0.0 backcompat.
+  class << Sanitize
+    # @deprecated Use {.document} instead.
+    alias_method :clean_document, :document
+
+    # @deprecated Use {.fragment} instead.
+    alias_method :clean, :fragment
+
+    # @deprecated Use {.node!} instead.
+    alias_method :clean_node!, :node!
+  end
+
   #--
   # Instance Methods
   #++
@@ -72,6 +84,9 @@ class Sanitize
     to_html(doc)
   end
 
+  # @deprecated Use {#document} instead.
+  alias_method :clean_document, :document
+
   # Returns a sanitized copy of the given _html_ fragment.
   def fragment(html)
     return '' unless html
@@ -92,6 +107,9 @@ class Sanitize
     node!(frag)
     to_html(frag)
   end
+
+  # @deprecated Use {#fragment} instead.
+  alias_method :clean, :fragment
 
   # Sanitizes the given `Nokogiri::XML::Node` and all its children, modifying it
   # in place.
@@ -115,6 +133,9 @@ class Sanitize
 
     node
   end
+
+  # @deprecated Use {#node!} instead.
+  alias_method :clean_node!, :node!
 
   private
 
