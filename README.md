@@ -29,20 +29,34 @@ gem install sanitize
 Usage
 -----
 
+Sanitize can sanitize both HTML fragments and fully qualified documents.
+
 If you don't specify any configuration options, Sanitize will use its strictest
 settings by default, which means it will strip all HTML and leave only text
 behind.
 
+### Fragments
+
 ```ruby
-require 'sanitize'
+Sanitize.fragment('<b><a href="http://foo.com/">foo</a></b><img src="bar.jpg">')
+# => 'foo'
+```
 
-html = '<b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg">'
+### Documents
 
-Sanitize.clean(html) # => 'foo'
+When sanitizing a document, the `<html>` element must be whitelisted (otherwise
+what's the point?).
 
-# or sanitize an entire HTML document (example assumes _html_ is whitelisted)
-html = '<!DOCTYPE html><html><b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg"></html>'
-Sanitize.clean_document(html) # => '<!DOCTYPE html>\n<html>foo</html>\n'
+```ruby
+html = <<END
+  <!DOCTYPE html>
+  <html>
+    <b><a href="http://foo.com/">foo</a></b><img src="bar.jpg">
+  </html>'
+END
+
+Sanitize.document(html, :elements => ['html'])
+# => '<!DOCTYPE html>\n<html>foo\n\n</html>\n'
 ```
 
 Configuration
@@ -53,35 +67,34 @@ built-in modes.
 
 ### Sanitize::Config::RESTRICTED
 
-Allows only very simple inline formatting markup. No links, images, or block
-elements.
+Allows only very simple inline markup. No links, images, or block elements.
 
 ```ruby
-Sanitize.clean(html, Sanitize::Config::RESTRICTED) # => '<b>foo</b>'
+Sanitize.fragment(html, Sanitize::Config::RESTRICTED)
+# => '<b>foo</b>'
 ```
 
 ### Sanitize::Config::BASIC
 
-Allows a variety of markup including formatting tags, links, and lists. Images
-and tables are not allowed, links are limited to FTP, HTTP, HTTPS, and mailto
-protocols, and a `rel="nofollow"` attribute is added to all links to
+Allows a variety of markup including formatting elements, links, and lists.
+Images and tables are not allowed, links are limited to FTP, HTTP, HTTPS, and
+mailto protocols, and a `rel="nofollow"` attribute is added to all links to
 mitigate SEO spam.
 
 ```ruby
-Sanitize.clean(html, Sanitize::Config::BASIC)
+Sanitize.fragment(html, Sanitize::Config::BASIC)
 # => '<b><a href="http://foo.com/" rel="nofollow">foo</a></b>'
 ```
 
 ### Sanitize::Config::RELAXED
 
-Allows an even wider variety of markup than BASIC, including images and tables.
-Links are still limited to FTP, HTTP, HTTPS, and mailto protocols, while images
-are limited to HTTP and HTTPS. In this mode, `rel="nofollow"` is not added to
-links.
+Allows an even wider variety of markup, including images and tables. Links are
+still limited to FTP, HTTP, HTTPS, and mailto protocols, while images are
+limited to HTTP and HTTPS. In this mode, `rel="nofollow"` is not added to links.
 
 ```ruby
-Sanitize.clean(html, Sanitize::Config::RELAXED)
-# => '<b><a href="http://foo.com/">foo</a></b><img src="http://foo.com/bar.jpg">'
+Sanitize.fragment(html, Sanitize::Config::RELAXED)
+# => '<b><a href="http://foo.com/">foo</a></b><img src="bar.jpg">'
 ```
 
 ### Custom Configuration
@@ -90,9 +103,18 @@ If the built-in modes don't meet your needs, you can easily specify a custom
 configuration:
 
 ```ruby
-Sanitize.clean(html, :elements => ['a', 'span'],
-    :attributes => {'a' => ['href', 'title'], 'span' => ['class']},
-    :protocols => {'a' => {'href' => ['http', 'https', 'mailto']}})
+Sanitize.fragment(html,
+  :elements => ['a', 'span'],
+
+  :attributes => {
+    'a'    => ['href', 'title'],
+    'span' => ['class']
+  },
+
+  :protocols => {
+    'a' => {'href' => ['http', 'https', 'mailto']}
+  }
+)
 ```
 
 #### :add_attributes (Hash)
@@ -115,7 +137,7 @@ default value is `false`.
 
 #### :attributes (Hash)
 
-Attributes to allow for specific elements. Specify all element names and
+Attributes to allow on specific elements. Specify all element names and
 attributes in lowercase.
 
 ```ruby
@@ -126,8 +148,8 @@ attributes in lowercase.
 }
 ```
 
-If you'd like to allow certain attributes on all elements, use the symbol
-`:all` instead of an element name.
+If you'd like to allow certain attributes on all elements, use the symbol `:all`
+instead of an element name.
 
 ```ruby
 # Allow the class attribute on all elements.
@@ -137,8 +159,8 @@ If you'd like to allow certain attributes on all elements, use the symbol
 }
 ```
 
-To allow arbitrary HTML5 `data-*` attributes, use the symbol
-`:data` in place of an attribute name.
+To allow arbitrary HTML5 `data-*` attributes, use the symbol `:data` in place of
+an attribute name.
 
 ```ruby
 # Allow arbitrary HTML5 data-* attributes on <div> elements.
@@ -149,7 +171,8 @@ To allow arbitrary HTML5 `data-*` attributes, use the symbol
 
 #### :elements (Array)
 
-Array of element names to allow. Specify all names in lowercase.
+Array of HTML element names to allow. Specify all names in lowercase. Any
+elements not in this array will be removed.
 
 ```ruby
 :elements => %w[
@@ -182,7 +205,7 @@ include the symbol `:relative` in the protocol array:
 
 #### :remove_contents (boolean or Array)
 
-If set to +true+, Sanitize will remove the contents of any non-whitelisted
+If set to `true`, Sanitize will remove the contents of any non-whitelisted
 elements in addition to the elements themselves. By default, Sanitize leaves the
 safe parts of an element's contents behind when the element is removed.
 
@@ -194,26 +217,25 @@ The default value is `false`.
 
 #### :transformers
 
-Custom transformer or array of custom transformers to run using depth-first
-traversal. See the Transformers section below for details.
-
-#### :transformers_breadth
-
-Custom transformer or array of custom transformers to run using breadth-first
-traversal. See the Transformers section below for details.
+Custom transformer or array of custom transformers. See the Transformers section
+below for details.
 
 #### :whitespace_elements (Hash)
 
-Hash of lowercase element names that should be replaced and replacement values
-in order to preserve readability. For example, `foo<div>bar</div>baz` will
-become `foo bar baz` when the `<div>` is removed.
+Hash of element names which, when removed, should have their contents surrounded
+by whitespace to preserve readability.
 
-By default, the following elements (as keys) are included in the
-`:whitespace_elements` hash:
+Each element name is a key pointing to another Hash, which provides the specific
+whitespace that should be inserted `:before` and `:after` the removed element's
+position. The `:after` value will only be inserted if the removed element has
+children, in which case it will be inserted after those children.
 
-```
-address article aside blockquote br dd div dl dt footer h1 h2 h3 h4 h5
-h6 header hgroup hr li nav ol p pre section ul
+```ruby
+:whitespace_elements => {
+  'br'  => { :before => "\n", :after => "" },
+  'div' => { :before => "\n", :after => "\n" },
+  'p'   => { :before => "\n", :after => "\n" }
+}
 ```
 
 ### Transformers
@@ -222,18 +244,21 @@ Transformers allow you to filter and modify nodes using your own custom logic,
 on top of (or instead of) Sanitize's core filter. A transformer is any object
 that responds to `call()` (such as a lambda or proc).
 
-To use one or more transformers, pass them to the `:transformers`
-config setting. You may pass a single transformer or an array of transformers.
+To use one or more transformers, pass them to the `:transformers` config
+setting. You may pass a single transformer or an array of transformers.
 
 ```ruby
-Sanitize.clean(html, :transformers => [transformer_one, transformer_two])
+Sanitize.fragment(html, :transformers => [
+  transformer_one,
+  transformer_two
+])
 ```
 
 #### Input
 
-Each registered transformer's `call()` method will be called once for
-each node in the HTML (including elements, text nodes, comments, etc.), and will
-receive as an argument an environment Hash that contains the following items:
+Each transformer's `call()` method will be called once for each node in the HTML
+(including elements, text nodes, comments, etc.), and will receive as an
+argument a Hash that contains the following items:
 
   * **:config** - The current Sanitize configuration Hash.
 
@@ -254,9 +279,6 @@ receive as an argument an environment Hash that contains the following items:
     document that have been whitelisted by previous transformers, if any. It's
     generally bad form to remove a node that a previous transformer has
     whitelisted.
-
-  * **:traversal_mode** - Current node traversal mode, either `:depth` for
-    depth-first (the default mode) or `:breadth` for breadth-first.
 
 #### Output
 
@@ -280,27 +302,29 @@ in the document and passed on to subsequently called transformers and to
 Sanitize itself. A transformer may even call Sanitize internally to perform
 custom sanitization if needed.
 
-Nodes are passed into transformers in the order in which they're traversed. By
-default, depth-first traversal is used, meaning that markup is traversed from
-the deepest node upward (not from the first node to the last node):
+Nodes are passed into transformers in the order in which they're traversed.
+Sanitize performs top-down traversal, meaning that nodes are traversed in the
+same order you'd read them in the HTML, starting at the top node, then its first
+child, and so on.
 
 ```ruby
-html        = '<div><span>foo</span></div>'
-transformer = lambda{|env| puts env[:node_name] }
+html = <<END
+  <header>
+    <span>
+      <strong>foo</strong>
+    </span>
+    <p>bar</p>
+  </header>
 
-# Prints "text", "span", "div", "#document-fragment".
-Sanitize.clean(html, :transformers => transformer)
-```
+  <footer></footer>
+END
 
-You may use the `:transformers_breadth` config to specify one or more
-transformers that should traverse nodes in breadth-first mode:
+transformer = lambda do |env|
+  puts env[:node_name] if env[:node].element?
+end
 
-```ruby
-html        = '<div><span>foo</span></div>'
-transformer = lambda{|env| puts env[:node_name] }
-
-# Prints "#document-fragment", "div", "span", "text".
-Sanitize.clean(html, :transformers_breadth => transformer)
+# Prints "header", "span", "strong", "p", "footer".
+Sanitize.fragment(html, :transformers => transformer)
 ```
 
 Transformers have a tremendous amount of power, including the power to
@@ -309,13 +333,13 @@ your own hands.
 
 #### Example: Transformer to whitelist YouTube video embeds
 
-The following example demonstrates how to create a depth-first Sanitize
-transformer that will safely whitelist valid YouTube video embeds without having
-to blindly allow other kinds of embedded content, which would be the case if you
-tried to do this by just whitelisting all `<iframe>` elements:
+The following example demonstrates how to create a transformer that will safely
+whitelist valid YouTube video embeds without having to blindly allow other kinds
+of embedded content, which would be the case if you tried to do this by just
+whitelisting all `<iframe>` elements:
 
 ```ruby
-lambda do |env|
+youtube_transformer = lambda do |env|
   node      = env[:node]
   node_name = env[:node_name]
 
@@ -326,12 +350,12 @@ lambda do |env|
   return unless node_name == 'iframe'
 
   # Verify that the video URL is actually a valid YouTube video URL.
-  return unless node['src'] =~ %r|\A(?:https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/|
+  return unless node['src'] =~ %r|\A(?:https?:)?//(?:www\.)?youtube(?:-nocookie)?\.com/|
 
   # We're now certain that this is a YouTube embed, but we still need to run
   # it through a special Sanitize step to ensure that no unwanted elements or
   # attributes that don't belong in a YouTube embed can sneak in.
-  Sanitize.clean_node!(node, {
+  Sanitize.node!(node, {
     :elements => %w[iframe],
 
     :attributes => {
@@ -344,6 +368,14 @@ lambda do |env|
   # to whitelist the current node.
   {:node_whitelist => [node]}
 end
+
+html = <<END
+<iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ"
+    frameborder="0" allowfullscreen></iframe>
+END
+
+Sanitize.fragment(html, :transformers => youtube_transformer)
+# => '<iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen=""></iframe>'
 ```
 
 License
