@@ -61,11 +61,6 @@ class Sanitize
       # README.rdoc for details and examples.
       :transformers => [],
 
-      # By default, transformers perform depth-first traversal (deepest node
-      # upward). This setting allows you to specify transformers that should
-      # perform breadth-first traversal (top node downward).
-      :transformers_breadth => [],
-
       # Elements which, when removed, should have their contents surrounded by
       # values specified with `before` and `after` keys to preserve readability.
       # For example, `foo<div>bar</div>baz` will become 'foo bar baz' when the
