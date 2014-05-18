@@ -43,6 +43,11 @@ increment.
 
 ### Other changes
 
+* Added an `:allow_doctype` setting. When `true`, well-formed doctype
+  definitions will be allowed in documents. When `false` (the default), doctype
+  definitions will be removed from documents. Doctype definitions are never
+  allowed in fragments, regardless of this setting.
+
 * Fixed: Nokogiri has been smacked and instructed to stop adding newlines after
   certain elements, because if people wanted newlines there they'd have put them
   there, dammit. [#103][103]

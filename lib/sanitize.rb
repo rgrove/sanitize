@@ -10,6 +10,7 @@ require_relative 'sanitize/config/basic'
 require_relative 'sanitize/config/relaxed'
 require_relative 'sanitize/transformers/clean_cdata'
 require_relative 'sanitize/transformers/clean_comment'
+require_relative 'sanitize/transformers/clean_doctype'
 require_relative 'sanitize/transformers/clean_element'
 
 class Sanitize
@@ -65,6 +66,7 @@ class Sanitize
     # Default transformers always run at the end of the chain, after any custom
     # transformers.
     @transformers << Transformers::CleanComment unless @config[:allow_comments]
+    @transformers << Transformers::CleanDoctype unless @config[:allow_doctype]
 
     @transformers <<
         Transformers::CleanCDATA <<

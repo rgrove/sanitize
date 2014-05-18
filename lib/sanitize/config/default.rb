@@ -3,14 +3,19 @@
 class Sanitize
   module Config
     DEFAULT = {
+      # HTML attributes to add to specific elements. By default, no attributes
+      # are added.
+      :add_attributes => {},
+
       # Whether or not to allow HTML comments. Allowing comments is strongly
       # discouraged, since IE allows script execution within conditional
       # comments.
       :allow_comments => false,
 
-      # HTML attributes to add to specific elements. By default, no attributes
-      # are added.
-      :add_attributes => {},
+      # Whether or not to allow well-formed HTML doctype declarations such as
+      # "<!DOCTYPE html>" when sanitizing a document. This setting is ignored
+      # when sanitizing fragments.
+      :allow_doctype => false,
 
       # HTML attributes to allow in specific elements. By default, no attributes
       # are allowed. Use the symbol :data to indicate that arbitrary HTML5

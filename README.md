@@ -135,6 +135,12 @@ Whether or not to allow HTML comments. Allowing comments is strongly
 discouraged, since IE allows script execution within conditional comments. The
 default value is `false`.
 
+#### :allow_doctype (boolean)
+
+Whether or not to allow well-formed HTML doctype declarations such as "<!DOCTYPE
+html>" when sanitizing a document. This setting is ignored when sanitizing
+fragments. The default value is `false`.
+
 #### :attributes (Hash)
 
 Attributes to allow on specific elements. Specify all element names and
