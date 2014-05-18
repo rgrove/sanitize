@@ -7,17 +7,17 @@
 # following license:
 #
 # Copyright (c) 2009 Mike Dalessio, Bryan Helmkamp
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -40,6 +40,13 @@ class TestLoofah < Measure
   def bench(html, times, is_fragment)
     clear
 
+    @sanitize_config = Sanitize::Config::RELAXED.dup
+    @sanitize_config[:allow_doctype] = true
+    @sanitize_config[:elements] << 'html'
+
+    @sanitize_config_prune = @sanitize_config.dup
+    @sanitize_config_prune[:remove_contents] = true
+
     if is_fragment
       measure('Loofah :strip', times) do
         Loofah.scrub_fragment(html, :strip).to_s
@@ -49,21 +56,31 @@ class TestLoofah < Measure
         Loofah.scrub_fragment(html, :prune).to_s
       end
     else
-      # measure('Loofah :strip', times) do
-      #   Loofah.scrub_document(html, :strip).to_s
-      # end
-      # 
-      # measure('Loofah :prune', times) do
-      #   Loofah.scrub_document(html, :prune).to_s
-      # end
+      measure('Loofah :strip', times) do
+        Loofah.scrub_document(html, :strip).to_s
+      end
+
+      measure('Loofah :prune', times) do
+        Loofah.scrub_document(html, :prune).to_s
+      end
     end
 
-    measure('Sanitize.clean (strip)', times) do
-      Sanitize.clean(html, Sanitize::Config::RELAXED)
-    end
+    if is_fragment
+      measure('Sanitize.fragment (strip)', times) do
+        Sanitize.fragment(html, @sanitize_config)
+      end
 
-    measure('Sanitize.clean (prune)', times) do
-      Sanitize.clean(html, Sanitize::Config::RELAXED.merge(:remove_contents => true))
+      measure('Sanitize.fragment (prune)', times) do
+        Sanitize.fragment(html, @sanitize_config_prune)
+      end
+    else
+      measure('Sanitize.document (strip)', times) do
+        Sanitize.document(html, @sanitize_config)
+      end
+
+      measure('Sanitize.document (prune)', times) do
+        Sanitize.document(html, @sanitize_config_prune)
+      end
     end
   end
 end
@@ -74,6 +91,9 @@ puts "Nokogiri version: #{Nokogiri::VERSION_INFO.inspect}"
 puts
 
 benchmarks = [TestLoofah.new]
+
+puts "These values are time measurements. Lower is faster!"
+puts
 
 puts "-- Rehearsal --"
 benchmarks.each {|bm| bm.test_set(:scale => 10) }
