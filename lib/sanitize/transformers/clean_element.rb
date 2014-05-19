@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'set'
+
 class Sanitize; module Transformers; class CleanElement
 
   # Matches a valid HTML5 data attribute name. The unicode ranges included here
@@ -24,21 +26,28 @@ class Sanitize; module Transformers; class CleanElement
   REGEX_PROTOCOL = /\A([^\/#]*?)(?:\:|&#0*58|&#x0*3a)/i
 
   def initialize(config)
-    @config = config
-
-    # For faster lookups.
     @add_attributes          = config[:add_attributes]
-    @allowed_elements        = Set.new(config[:elements])
-    @attributes              = config[:attributes]
+    @attributes              = config[:attributes].dup
+    @elements                = Set.new(config[:elements])
     @protocols               = config[:protocols]
     @remove_all_contents     = false
     @remove_element_contents = Set.new
-    @whitespace_elements     = Hash.new
+    @whitespace_elements     = {}
 
-    # Converting :whitespace_element into a Hash for backwards compatibility.
+    if @attributes.include?(:all)
+      @attributes[:all] = Set.new(@attributes[:all])
+    end
+
+    @attributes.each do |element_name, attrs|
+      unless element_name == :all
+        @attributes[element_name] = Set.new(attrs).merge(@attributes[:all] || [])
+      end
+    end
+
+    # Backcompat: if :whitespace_elements is an array, convert it to a hash.
     if config[:whitespace_elements].is_a?(Array)
       config[:whitespace_elements].each do |element|
-        @whitespace_elements[element] = { :before => ' ', :after => ' ' }
+        @whitespace_elements[element] = {:before => ' ', :after => ' '}
       end
     else
       @whitespace_elements = config[:whitespace_elements]
@@ -55,10 +64,10 @@ class Sanitize; module Transformers; class CleanElement
     name = env[:node_name]
     node = env[:node]
 
-    return if env[:is_whitelisted] || !node.element?
+    return if node.type != Nokogiri::XML::Node::ELEMENT_NODE || env[:is_whitelisted]
 
     # Delete any element that isn't in the config whitelist.
-    unless @allowed_elements.include?(name)
+    unless @elements.include?(name)
       # Elements like br, div, p, etc. need to be replaced with whitespace in
       # order to preserve readability.
       if @whitespace_elements.include?(name)
@@ -77,21 +86,33 @@ class Sanitize; module Transformers; class CleanElement
       return
     end
 
-    attr_whitelist = Set.new((@attributes[name] || []) +
-        (@attributes[:all] || []))
+    attr_whitelist = @attributes[name] || @attributes[:all]
 
-    allow_data_attributes = attr_whitelist.include?(:data)
-
-    if attr_whitelist.empty?
+    if attr_whitelist.nil?
       # Delete all attributes from elements with no whitelisted attributes.
       node.attribute_nodes.each {|attr| attr.unlink }
     else
+      allow_data_attributes = attr_whitelist.include?(:data)
+
       # Delete any attribute that isn't allowed on this element.
       node.attribute_nodes.each do |attr|
         attr_name = attr.name.downcase
 
-        unless attr_whitelist.include?(attr_name)
-          # The attribute isn't explicitly whitelisted.
+        if attr_whitelist.include?(attr_name)
+          # The attribute is whitelisted.
+
+          # Remove any attributes that use unacceptable protocols.
+          if @protocols.include?(name) && @protocols[name].include?(attr_name)
+            attr_protocols = @protocols[name][attr_name]
+
+            if attr.value.to_s.downcase =~ REGEX_PROTOCOL
+              attr.unlink unless attr_protocols.include?($1.downcase)
+            else
+              attr.unlink unless attr_protocols.include?(:relative)
+            end
+          end
+        else
+          # The attribute isn't whitelisted.
 
           if allow_data_attributes && attr_name.start_with?('data-')
             # Arbitrary data attributes are allowed. Verify that the attribute
@@ -104,28 +125,10 @@ class Sanitize; module Transformers; class CleanElement
           end
         end
       end
-
-      # Delete remaining attributes that use unacceptable protocols.
-      if @protocols.has_key?(name)
-        protocol = @protocols[name]
-
-        node.attribute_nodes.each do |attr|
-          attr_name = attr.name.downcase
-          next false unless protocol.has_key?(attr_name)
-
-          del = if attr.value.to_s.downcase =~ REGEX_PROTOCOL
-            !protocol[attr_name].include?($1.downcase)
-          else
-            !protocol[attr_name].include?(:relative)
-          end
-
-          attr.unlink if del
-        end
-      end
     end
 
     # Add required attributes.
-    if @add_attributes.has_key?(name)
+    if @add_attributes.include?(name)
       @add_attributes[name].each {|key, val| node[key] = val }
     end
   end
