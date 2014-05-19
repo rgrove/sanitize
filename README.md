@@ -10,14 +10,22 @@ elements, certain attributes within those elements, and even certain URL
 protocols within attributes that contain URLs. Any HTML elements or attributes
 that you don't explicitly allow will be removed.
 
-Sanitize is based on Google's [Gumbo HTML5 parser][gumbo], which parses HTML
+Sanitize is based on [Google's Gumbo HTML5 parser][gumbo], which parses HTML
 exactly the same way modern browsers do. As long as your whitelist config only
 allows safe markup, even the most malformed or malicious input will be
 transformed into safe output.
 
-[![Build Status](https://travis-ci.org/rgrove/sanitize.png?branch=master)](https://travis-ci.org/rgrove/sanitize?branch=master)
+[![Build Status](https://travis-ci.org/rgrove/sanitize.svg?branch=master)](https://travis-ci.org/rgrove/sanitize)
+[![Gem Version](https://badge.fury.io/rb/sanitize.svg)](http://badge.fury.io/rb/sanitize)
 
 [gumbo]:https://github.com/google/gumbo-parser
+
+Links
+-----
+
+* [Home](https://github.com/rgrove/sanitize/)
+* [API Docs](http://rubydoc.info/github/rgrove/sanitize/master)
+* [Issues](https://github.com/rgrove/sanitize/issues)
 
 Installation
 -------------
@@ -31,39 +39,56 @@ Usage
 
 Sanitize can sanitize both HTML fragments and fully qualified documents.
 
-If you don't specify any configuration options, Sanitize will use its strictest
-settings by default, which means it will strip all HTML and leave only text
-behind.
-
 ### Fragments
 
+A fragment is a snippet of HTML that doesn't contain a root-level `<html>`
+element.
+
 ```ruby
-Sanitize.fragment('<b><a href="http://foo.com/">foo</a></b><img src="bar.jpg">')
+html = '<b><a href="http://foo.com/">foo</a></b><img src="bar.jpg">'
+
+Sanitize.fragment(html)
 # => 'foo'
+```
+
+If you don't specify any configuration options, Sanitize will use its strictest
+settings by default, which means it will strip all HTML and leave only safe text
+behind.
+
+To keep certain elements, add them to the element whitelist.
+
+```ruby
+Sanitize.fragment(html, :elements => ['b'])
+# => '<b>foo</b>'
 ```
 
 ### Documents
 
-When sanitizing a document, the `<html>` element must be whitelisted (otherwise
-what's the point?).
+When sanitizing a document, the `<html>` element must be whitelisted. You can
+also set `:allow_doctype` to `true` to allow well-formed document type
+definitions.
 
 ```ruby
-html = <<END
+html = %[
   <!DOCTYPE html>
   <html>
     <b><a href="http://foo.com/">foo</a></b><img src="bar.jpg">
-  </html>'
-END
+  </html>
+]
 
-Sanitize.document(html, :elements => ['html'])
-# => '<!DOCTYPE html>\n<html>foo\n\n</html>\n'
+Sanitize.document(html,
+  :allow_doctype => true,
+  :elements      => ['html']
+)
+# => "<!DOCTYPE html>\n<html>foo\n  \n</html>\n"
 ```
 
 Configuration
 -------------
 
 In addition to the ultra-safe default settings, Sanitize comes with three other
-built-in modes.
+built-in configurations that you can use out of the box or adapt to meet your
+needs.
 
 ### Sanitize::Config::RESTRICTED
 
@@ -77,6 +102,7 @@ Sanitize.fragment(html, Sanitize::Config::RESTRICTED)
 ### Sanitize::Config::BASIC
 
 Allows a variety of markup including formatting elements, links, and lists.
+
 Images and tables are not allowed, links are limited to FTP, HTTP, HTTPS, and
 mailto protocols, and a `rel="nofollow"` attribute is added to all links to
 mitigate SEO spam.
@@ -314,7 +340,7 @@ same order you'd read them in the HTML, starting at the top node, then its first
 child, and so on.
 
 ```ruby
-html = <<END
+html = %[
   <header>
     <span>
       <strong>foo</strong>
@@ -323,7 +349,7 @@ html = <<END
   </header>
 
   <footer></footer>
-END
+]
 
 transformer = lambda do |env|
   puts env[:node_name] if env[:node].element?
@@ -375,10 +401,10 @@ youtube_transformer = lambda do |env|
   {:node_whitelist => [node]}
 end
 
-html = <<END
+html = %[
 <iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ"
     frameborder="0" allowfullscreen></iframe>
-END
+]
 
 Sanitize.fragment(html, :transformers => youtube_transformer)
 # => '<iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen=""></iframe>'
