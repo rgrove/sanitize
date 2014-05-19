@@ -19,8 +19,13 @@ describe 'Parser' do
   end
 
   it 'should not have the Nokogiri 1.4.2+ unterminated script/style element bug' do
-    Sanitize.fragment('foo <script>bar').must_equal('foo bar')
-    Sanitize.fragment('foo <style>bar').must_equal('foo bar')
+    Sanitize.fragment('foo <script>bar').must_equal 'foo bar'
+    Sanitize.fragment('foo <style>bar').must_equal 'foo bar'
+  end
+
+  it 'ambiguous non-tag brackets like "1 > 2 and 2 < 1" should be parsed correctly' do
+    Sanitize.fragment('1 > 2 and 2 < 1').must_equal '1 &gt; 2 and 2 &lt; 1'
+    Sanitize.fragment('OMG HAPPY BIRTHDAY! *<:-D').must_equal 'OMG HAPPY BIRTHDAY! *&lt;:-D'
   end
 
   describe 'when siblings are added after a node during traversal' do

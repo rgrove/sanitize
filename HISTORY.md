@@ -48,6 +48,10 @@ increment.
   definitions will be removed from documents. Doctype definitions are never
   allowed in fragments, regardless of this setting.
 
+* Fixed: Non-tag brackets in input like "1 > 2 and 2 < 1" are now parsed and
+  escaped correctly in accordance with the HTML5 spec, becoming
+  "1 &gt; 2 and 2 &lt; 1". [#83][83]
+
 * Fixed: Siblings added after the current node during traversal are now
   also traversed. In previous versions they were simply skipped. [#91][91]
 
@@ -55,6 +59,7 @@ increment.
   certain elements, because if people wanted newlines there they'd have put them
   there, dammit. [#103][103]
 
+[83]:https://github.com/rgrove/sanitize/issues/83
 [91]:https://github.com/rgrove/sanitize/issues/91
 [103]:https://github.com/rgrove/sanitize/issues/103
 
