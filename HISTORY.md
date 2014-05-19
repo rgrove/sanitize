@@ -48,10 +48,14 @@ increment.
   definitions will be removed from documents. Doctype definitions are never
   allowed in fragments, regardless of this setting.
 
+* Fixed: Siblings added after the current node during traversal are now
+  also traversed. In previous versions they were simply skipped. [#91][91]
+
 * Fixed: Nokogiri has been smacked and instructed to stop adding newlines after
   certain elements, because if people wanted newlines there they'd have put them
   there, dammit. [#103][103]
 
+[91]:https://github.com/rgrove/sanitize/issues/91
 [103]:https://github.com/rgrove/sanitize/issues/103
 
 
