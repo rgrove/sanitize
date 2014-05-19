@@ -22,4 +22,49 @@ describe 'Parser' do
     Sanitize.fragment('foo <script>bar').must_equal('foo bar')
     Sanitize.fragment('foo <style>bar').must_equal('foo bar')
   end
+
+  describe 'when siblings are added after a node during traversal' do
+    it 'the added siblings should be traversed' do
+      html = %[
+        <div id="one">
+            <div id="one_one">
+                <div id="one_one_one"></div>
+            </div>
+            <div id="one_two"></div>
+        </div>
+        <div id="two">
+            <div id="two_one"><div id="two_one_one"></div></div>
+            <div id="two_two"></div>
+        </div>
+        <div id="three"></div>
+      ]
+
+      siblings = []
+
+      Sanitize.fragment(html, :transformers => ->(env) {
+          name = env[:node].name
+
+          if name == 'div'
+            env[:node].add_next_sibling('<b id="added_' + env[:node]['id'] + '">')
+          elsif name == 'b'
+            siblings << env[:node][:id]
+          end
+
+          return {:node_whitelist => [env[:node]]}
+      })
+
+      # All siblings should be traversed, and in the order added.
+      siblings.must_equal [
+        "added_one_one_one",
+        "added_one_one",
+        "added_one_two",
+        "added_one",
+        "added_two_one_one",
+        "added_two_one",
+        "added_two_two",
+        "added_two",
+        "added_three"
+      ]
+    end
+  end
 end
