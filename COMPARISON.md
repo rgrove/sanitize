@@ -27,7 +27,7 @@ Element-specific attribute whitelist                  | ✓                     
 Attribute-specific protocol whitelist                 | ✓                          |                        | ✓                              |
 Supports HTML5 `data-` attributes                     | ✓                          | ✓                      |                                |
 Optionally escapes unsafe HTML instead of removing it |                            | ✓                      |                                |
-Allows custom manual HTML manipulation (transformers) | ✓                          | ✓                      |                                |
+Allows custom HTML manipulation (transformers)        | ✓                          | ✓                      |                                |
 Built-in MathML support                               |                            | always enabled         |                                |
 Built-in SVG support                                  |                            | always enabled         |                                |
 Basic CSS sanitization                                |                            | regex-based            | regex-based                    |
@@ -41,10 +41,10 @@ Basic CSS sanitization                                |                         
   using regexes and does not actually parse HTML.
 
 * Both Sanitize and Loofah fix up badly broken, misnested, or maliciously
-  crafted HTML and output valid syntactically valid markup. Sanitize's HTML5
-  parser handles a wider variety of edge cases than Loofah's libxml2 parser.
-  HTMLFilter does basic tag balancing but not much more, and garbage in
-  generally results in garbage out.
+  crafted HTML and output syntactically valid markup. Sanitize's HTML5 parser
+  handles a wider variety of edge cases than Loofah's libxml2 parser. HTMLFilter
+  does basic tag balancing but not much more, and garbage in generally results
+  in garbage out.
 
 * Loofah's whitelist configuration is hard-coded and can only be customized by
   either editing its source or monkeypatching. Sanitize and HTMLFilter both have
@@ -53,8 +53,8 @@ Basic CSS sanitization                                |                         
 * Loofah has a single global whitelist for attributes, which it uses for all
   elements. HTMLFilter has per-element attribute whitelists, but provides no way
   to whitelist global attributes (i.e., attributes that should be allowed on any
-  element). Sanitize supports both globally and element-specific attribute
-  whitelists.
+  element, such as `class`). Sanitize supports both global and element-specific
+  attribute whitelists.
 
 * Sanitize and Loofah both support HTML5 data attributes. In Sanitize, data
   attributes can be enabled or disabled in either the global or element-specific
@@ -64,7 +64,7 @@ Basic CSS sanitization                                |                         
 * Both Sanitize and Loofah allow you to write blocks or methods that can perform
   custom manipulation on HTML nodes as they're traversed. Sanitize calls them
   "transformers", whereas Loofah calls them "scrubbers". They're more or less
-  equivalent in terms of the functionality they allow.
+  equivalent in terms of functionality.
 
 * Loofah has hard-coded whitelists for sanitizing MathML and SVG, which cannot
   be disabled via configuration. Sanitize does not provide built-in configs for
@@ -86,13 +86,13 @@ indicate faster completion).
 
 [benchmark]:https://github.com/rgrove/sanitize/tree/dev-3.0.0/benchmark
 
-Benchmark                                | [Sanitize 3.0.0][sanitize]             | [Loofah 2.0.0][loofah]               | [HTMLFilter 1.3.0][htmlfilter]
----------------------------------------- |:--------------------------------------:|:------------------------------------:|:------------------------------:
-Small HTML fragment (757 bytes) x 1000   | <br>0.848s strip / 0.833s prune        | **✓<br>0.713s strip / 0.715s prune** | 1.215s
-Large HTML fragment (33531 bytes) x 100  | **✓<br>3.421s strip / 3.427s prune**   | <br>5.358s strip / 5.367s prune      | 10.455s
-Small HTML document (25286 bytes) x 100  | **✓<br>1.651s strip / 1.621s prune**   | <br>2.449s strip / 2.411s prune      | _ERROR_
-Medium HTML document (86685 bytes) x 100 | **✓<br>6.217s strip / 6.137s prune**   | <br>10.885s strip / 10.539s prune    | _ERROR_
-Huge HTML document (7172510 bytes) x 5   | **✓<br>31.653s strip / 31.916s prune** | <br>53.152s strip / 56.393s prune    | 108.433s
+Benchmark                                  | [Sanitize 3.0.0][sanitize]             | [Loofah 2.0.0][loofah]               | [HTMLFilter 1.3.0][htmlfilter]
+------------------------------------------ |:--------------------------------------:|:------------------------------------:|:------------------------------:
+Small HTML fragment (757 bytes) x 1000     | <br>0.848s strip / 0.833s prune        | **✓<br>0.713s strip / 0.715s prune** | 1.215s
+Large HTML fragment (33,531 bytes) x 100   | **✓<br>3.421s strip / 3.427s prune**   | <br>5.358s strip / 5.367s prune      | 10.455s
+Small HTML document (25,286 bytes) x 100   | **✓<br>1.651s strip / 1.621s prune**   | <br>2.449s strip / 2.411s prune      | _ERROR_
+Medium HTML document (86,685 bytes) x 100  | **✓<br>6.217s strip / 6.137s prune**   | <br>10.885s strip / 10.539s prune    | _ERROR_
+Huge HTML document (7,172,510 bytes) x 5   | **✓<br>31.653s strip / 31.916s prune** | <br>53.152s strip / 56.393s prune    | 108.433s
 
 To run this benchmark yourself:
 
