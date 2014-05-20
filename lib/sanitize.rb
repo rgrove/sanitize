@@ -143,15 +143,36 @@ class Sanitize
   private
 
   def to_html(node)
+    # Hacky workaround for a libxml2 bug that adds an undesired Content-Type
+    # meta tag to all serialized HTML.
+    #
+    # https://github.com/sparklemotion/nokogiri/issues/1008
+    regex_meta   = %r|(<html[^>]*>\s*<head[^>]*>\s*)<meta http-equiv="Content-Type" content="text/html; charset=utf-8">|i
+    replace_meta = true
+
+    if node.type == Nokogiri::XML::Node::DOCUMENT_NODE ||
+        node.type == Nokogiri::XML::Node::HTML_DOCUMENT_NODE
+
+      # Only replace the content-type meta tag if <meta> isn't whitelisted or
+      # the original document didn't actually include a content-type meta tag.
+      replace_meta = !@config[:elements].include?('meta') ||
+        node.xpath('/html/head/meta[@http-equiv]').none? do |meta|
+          meta['http-equiv'].downcase == 'content-type'
+        end
+    end
+
     so = Nokogiri::XML::Node::SaveOptions
 
     # Serialize to HTML without any formatting to prevent Nokogiri from adding
     # newlines after certain tags.
-    node.to_html(
+    html = node.to_html(
       :encoding  => 'utf-8',
       :indent    => 0,
       :save_with => so::NO_DECLARATION | so::NO_EMPTY_TAGS | so::AS_HTML
     )
+
+    html.gsub!(regex_meta, '\1') if replace_meta
+    html
   end
 
   def transform_node!(node, node_whitelist)

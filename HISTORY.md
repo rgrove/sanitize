@@ -73,9 +73,14 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
   certain elements, because if people wanted newlines there they'd have put them
   there, dammit. [#103][103]
 
+* Fixed: Added a workaround for a libxml2 bug that caused an undesired
+  content-type meta tag to be added to all documents with `<head>` elements.
+  [Nokogiri #1008][n1008]
+
 [83]:https://github.com/rgrove/sanitize/issues/83
 [91]:https://github.com/rgrove/sanitize/issues/91
 [103]:https://github.com/rgrove/sanitize/issues/103
+[n1008]:https://github.com/sparklemotion/nokogiri/issues/1008
 
 
 Version 2.2.0 (git)
