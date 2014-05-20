@@ -156,13 +156,13 @@ class Sanitize
 
   def transform_node!(node, node_whitelist)
     @transformers.each do |transformer|
-      result = transformer.call({
+      result = transformer.call(
         :config         => @config,
         :is_whitelisted => node_whitelist.include?(node),
         :node           => node,
         :node_name      => node.name.downcase,
         :node_whitelist => node_whitelist,
-      })
+      )
 
       if result.is_a?(Hash) && result[:node_whitelist].respond_to?(:each)
         node_whitelist.merge(result[:node_whitelist])

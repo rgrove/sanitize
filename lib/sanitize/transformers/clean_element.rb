@@ -61,10 +61,10 @@ class Sanitize; module Transformers; class CleanElement
   end
 
   def call(env)
-    name = env[:node_name]
     node = env[:node]
-
     return if node.type != Nokogiri::XML::Node::ELEMENT_NODE || env[:is_whitelisted]
+
+    name = env[:node_name]
 
     # Delete any element that isn't in the config whitelist.
     unless @elements.include?(name)
