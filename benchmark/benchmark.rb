@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-# To run benchmark.rb, you'll need the "hitimes" and "loofah" gems.
+# To run benchmark.rb, you'll need the "hitimes", "htmlfilter", and loofah"
+# gems.
 #
 # The benchmarks and much of the code here are patterned after the benchmarks in
 # the Loofah project (http://github.com/flavorjones/loofah), which has the
@@ -26,27 +27,49 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-DIR           = File.expand_path(File.dirname(__FILE__))
-HTML_SLASHDOT = File.read("#{DIR}/html/test_slashdot.html")
-HTML_BIG      = File.read("#{DIR}/html/test_big.html")
-HTML_SMALL    = File.read("#{DIR}/html/test_small.html")
-HTML_SNIPPET  = 'this is a tiny <em>snippet</em> of html'
+DIR = File.expand_path(File.dirname(__FILE__))
+
+DOCUMENT_HUGE   = File.read("#{DIR}/html/document-huge.html")
+DOCUMENT_MEDIUM = File.read("#{DIR}/html/document-medium.html")
+DOCUMENT_SMALL  = File.read("#{DIR}/html/document-small.html")
+
+FRAGMENT_LARGE = File.read("#{DIR}/html/fragment-large.html")
+FRAGMENT_SMALL = File.read("#{DIR}/html/fragment-small.html")
 
 require "#{DIR}/helpers"
 
-class TestLoofah < Measure
+class Benchmark < Measure
   include TestSet
 
   def bench(html, times, is_fragment)
     clear
 
-    @sanitize_config = Sanitize::Config::RELAXED.dup
-    @sanitize_config[:allow_doctype] = true
-    @sanitize_config[:elements] << 'html'
+    @sanitize_config = Sanitize::Config::RELAXED
 
-    @sanitize_config_prune = @sanitize_config.dup
-    @sanitize_config_prune[:remove_contents] = true
+    @sanitize_config_prune = Sanitize::Config.merge(@sanitize_config,
+      :remove_contents => true
+    )
 
+    # Sanitize
+    if is_fragment
+      measure('Sanitize.fragment (strip)', times) do
+        Sanitize.fragment(html, @sanitize_config)
+      end
+
+      measure('Sanitize.fragment (prune)', times) do
+        Sanitize.fragment(html, @sanitize_config_prune)
+      end
+    else
+      measure('Sanitize.document (strip)', times) do
+        Sanitize.document(html, @sanitize_config)
+      end
+
+      measure('Sanitize.document (prune)', times) do
+        Sanitize.document(html, @sanitize_config_prune)
+      end
+    end
+
+    # Loofah
     if is_fragment
       measure('Loofah :strip', times) do
         Loofah.scrub_fragment(html, :strip).to_s
@@ -65,38 +88,28 @@ class TestLoofah < Measure
       end
     end
 
-    if is_fragment
-      measure('Sanitize.fragment (strip)', times) do
-        Sanitize.fragment(html, @sanitize_config)
-      end
-
-      measure('Sanitize.fragment (prune)', times) do
-        Sanitize.fragment(html, @sanitize_config_prune)
-      end
-    else
-      measure('Sanitize.document (strip)', times) do
-        Sanitize.document(html, @sanitize_config)
-      end
-
-      measure('Sanitize.document (prune)', times) do
-        Sanitize.document(html, @sanitize_config_prune)
-      end
+    # HTMLFilter
+    measure('HTMLFilter', times) do
+      HTMLFilter.new(HTMLFilter::RELAXED).filter(html)
     end
   end
 end
 
-puts "Loofah version  : #{Loofah::VERSION}"
-puts "Sanitize version: #{Sanitize::VERSION}"
+puts "Ruby version      : #{RUBY_VERSION}"
+puts "Sanitize version  : #{Sanitize::VERSION}"
+puts "Loofah version    : #{Loofah::VERSION}"
+puts "HTMLFilter version: #{HTMLFilter::VERSION}"
+puts
 puts "Nokogiri version: #{Nokogiri::VERSION_INFO.inspect}"
 puts
 
-benchmarks = [TestLoofah.new]
+benchmarks = [Benchmark.new]
 
 puts "These values are time measurements. Lower is faster!"
 puts
 
-puts "-- Rehearsal --"
-benchmarks.each {|bm| bm.test_set(:scale => 10) }
+# puts "-- Rehearsal --"
+# benchmarks.each {|bm| bm.test_set(:scale => 10) }
 
 puts "-- Benchmark --"
 benchmarks.each {|bm| bm.test_set }

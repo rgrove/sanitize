@@ -1,0 +1,13 @@
+<p>Sanitize is a whitelist-based HTML sanitizer. Given a list of acceptable
+elements and attributes, Sanitize will remove all unacceptable HTML from a
+string.</p>
+
+<p>Using a simple configuration syntax, you can tell Sanitize to allow certain
+elements, certain attributes within those elements, and even certain URL
+protocols within attributes that contain URLs. Any HTML elements or attributes
+that you don't explicitly allow will be removed.</p>
+
+<p>Sanitize is based on <a href="https://github.com/google/gumbo-parser">Google's Gumbo HTML5 parser</a>, which parses HTML
+exactly the same way modern browsers do. As long as your whitelist config only
+allows safe markup, even the most malformed or malicious input will be
+transformed into safe output.</p>

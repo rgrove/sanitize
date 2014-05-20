@@ -3,17 +3,17 @@
 # license:
 #
 # Copyright (c) 2009 Mike Dalessio, Bryan Helmkamp
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,12 +22,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-$:.unshift("#{DIR}/../lib")
-
-require 'rubygems'
 require 'hitimes'
+require 'htmlfilter'
 require 'loofah'
-require 'sanitize'
+require_relative '../lib/sanitize'
 
 class Measure
   def initialize
@@ -46,12 +44,20 @@ class Measure
     end
 
     timer = Hitimes::TimedMetric.new(name)
+    error = nil
 
-    timer.start
-    ntimes.times {|j| yield }
-    timer.stop
+    begin
+      timer.start
+      ntimes.times {|j| yield }
+    rescue => ex
+      error = ex
+    ensure
+      timer.stop
+    end
 
-    if @baseline
+    if error
+      printf "  %30s\n", timer.name + ' ERROR!'
+    elsif @baseline
       printf "  %30s %7.3f (%8.6f) %5.2fx\n", timer.name, timer.sum, timer.sum / ntimes, timer.sum / @baseline
     else
       @baseline = timer.sum
@@ -66,24 +72,29 @@ module TestSet
   def test_set(options = {})
     scale = options[:scale] || 1
 
-    n = 100 / scale
-    puts "  Slashdot HTML doc (#{HTML_SLASHDOT.length} bytes) x #{n}"
-    bench(HTML_SLASHDOT, n, false)
-    puts
-
-    n = 100 / scale
-    puts "  Big HTML doc (#{HTML_BIG.length} bytes) x #{n}"
-    bench(HTML_BIG, n, false)
-    puts
-
     n = 1000 / scale
-    puts "  Small HTML fragment (#{HTML_SMALL.length} bytes) x #{n}"
-    bench HTML_SMALL, n, true
+    puts "  Small HTML fragment (#{FRAGMENT_SMALL.length} bytes) x #{n}"
+    bench(FRAGMENT_SMALL, n, true)
     puts
 
-    n = 10_000 / scale
-    puts "  Tiny HTML fragment (#{HTML_SNIPPET.length} bytes) x #{n}"
-    bench(HTML_SNIPPET, n, true)
+    n = 100 / scale
+    puts "  Large HTML fragment (#{FRAGMENT_LARGE.length} bytes) x #{n}"
+    bench(FRAGMENT_LARGE, n, true)
+    puts
+
+    n = 100 / scale
+    puts "  Small HTML document (#{DOCUMENT_SMALL.length} bytes) x #{n}"
+    bench(DOCUMENT_SMALL, n, false)
+    puts
+
+    n = 100 / scale
+    puts "  Medium HTML document (#{DOCUMENT_MEDIUM.length} bytes) x #{n}"
+    bench(DOCUMENT_MEDIUM, n, false)
+    puts
+
+    n = 5 / scale
+    puts "  Huge HTML document (#{DOCUMENT_HUGE.length} bytes) x #{n}"
+    bench(DOCUMENT_HUGE, n, false)
     puts
   end
 end

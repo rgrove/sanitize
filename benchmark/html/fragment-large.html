@@ -1,0 +1,466 @@
+  <div id="readme" class="clearfix announce instapaper_body md">
+    <span class="name">
+      <span class="octicon octicon-book"></span>
+      README.md
+    </span>
+
+    <article class="markdown-body entry-content" itemprop="mainContentOfPage"><h1>
+<a name="user-content-sanitize" class="anchor" href="#sanitize"><span class="octicon octicon-link"></span></a>Sanitize</h1>
+
+<p>Sanitize is a whitelist-based HTML sanitizer. Given a list of acceptable
+elements and attributes, Sanitize will remove all unacceptable HTML from a
+string.</p>
+
+<p>Using a simple configuration syntax, you can tell Sanitize to allow certain
+elements, certain attributes within those elements, and even certain URL
+protocols within attributes that contain URLs. Any HTML elements or attributes
+that you don't explicitly allow will be removed.</p>
+
+<p>Sanitize is based on <a href="https://github.com/google/gumbo-parser">Google's Gumbo HTML5 parser</a>, which parses HTML
+exactly the same way modern browsers do. As long as your whitelist config only
+allows safe markup, even the most malformed or malicious input will be
+transformed into safe output.</p>
+
+<p><a href="https://travis-ci.org/rgrove/sanitize"><img src="https://camo.githubusercontent.com/8cbb6b37206c06dca9aad142aeabdb2db8a5614b/68747470733a2f2f7472617669732d63692e6f72672f7267726f76652f73616e6974697a652e7376673f6272616e63683d6d6173746572" alt="Build Status" data-canonical-src="https://travis-ci.org/rgrove/sanitize.svg?branch=master" style="max-width:100%;"></a>
+<a href="http://badge.fury.io/rb/sanitize"><img src="https://camo.githubusercontent.com/f74d6ba1eba40a388a496b343275302bdb4260d5/68747470733a2f2f62616467652e667572792e696f2f72622f73616e6974697a652e737667" alt="Gem Version" data-canonical-src="https://badge.fury.io/rb/sanitize.svg" style="max-width:100%;"></a></p>
+
+<h2>
+<a name="user-content-links" class="anchor" href="#links"><span class="octicon octicon-link"></span></a>Links</h2>
+
+<ul class="task-list">
+<li><a href="https://github.com/rgrove/sanitize/">Home</a></li>
+<li><a href="http://rubydoc.info/github/rgrove/sanitize/master">API Docs</a></li>
+<li><a href="https://github.com/rgrove/sanitize/issues">Issues</a></li>
+</ul><h2>
+<a name="user-content-installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<pre><code>gem install sanitize
+</code></pre>
+
+<h2>
+<a name="user-content-usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Sanitize can sanitize both HTML fragments and fully qualified documents.</p>
+
+<h3>
+<a name="user-content-fragments" class="anchor" href="#fragments"><span class="octicon octicon-link"></span></a>Fragments</h3>
+
+<p>A fragment is a snippet of HTML that doesn't contain a root-level <code>&lt;html&gt;</code>
+element.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">html</span> <span class="o">=</span> <span class="s1">'&lt;b&gt;&lt;a href="http://foo.com/"&gt;foo&lt;/a&gt;&lt;/b&gt;&lt;img src="bar.jpg"&gt;'</span>
+
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+<span class="c1"># =&gt; 'foo'</span>
+</pre></div>
+
+<p>If you don't specify any configuration options, Sanitize will use its strictest
+settings by default, which means it will strip all HTML and leave only safe text
+behind.</p>
+
+<p>To keep certain elements, add them to the element whitelist.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="ss">:elements</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'b'</span><span class="o">]</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;b&gt;foo&lt;/b&gt;'</span>
+</pre></div>
+
+<h3>
+<a name="user-content-documents" class="anchor" href="#documents"><span class="octicon octicon-link"></span></a>Documents</h3>
+
+<p>When sanitizing a document, the <code>&lt;html&gt;</code> element must be whitelisted. You can
+also set <code>:allow_doctype</code> to <code>true</code> to allow well-formed document type
+definitions.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">html</span> <span class="o">=</span> <span class="sx">%[</span>
+<span class="sx">  &lt;!DOCTYPE html&gt;</span>
+<span class="sx">  &lt;html&gt;</span>
+<span class="sx">    &lt;b&gt;&lt;a href="http://foo.com/"&gt;foo&lt;/a&gt;&lt;/b&gt;&lt;img src="bar.jpg"&gt;</span>
+<span class="sx">  &lt;/html&gt;</span>
+<span class="sx">]</span>
+
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">document</span><span class="p">(</span><span class="n">html</span><span class="p">,</span>
+  <span class="ss">:allow_doctype</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+  <span class="ss">:elements</span>      <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'html'</span><span class="o">]</span>
+<span class="p">)</span>
+<span class="c1"># =&gt; "&lt;!DOCTYPE html&gt;\n&lt;html&gt;foo\n  \n&lt;/html&gt;\n"</span>
+</pre></div>
+
+<h2>
+<a name="user-content-configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<p>In addition to the ultra-safe default settings, Sanitize comes with three other
+built-in configurations that you can use out of the box or adapt to meet your
+needs.</p>
+
+<h3>
+<a name="user-content-sanitizeconfigrestricted" class="anchor" href="#sanitizeconfigrestricted"><span class="octicon octicon-link"></span></a>Sanitize::Config::RESTRICTED</h3>
+
+<p>Allows only very simple inline markup. No links, images, or block elements.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">RESTRICTED</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;b&gt;foo&lt;/b&gt;'</span>
+</pre></div>
+
+<h3>
+<a name="user-content-sanitizeconfigbasic" class="anchor" href="#sanitizeconfigbasic"><span class="octicon octicon-link"></span></a>Sanitize::Config::BASIC</h3>
+
+<p>Allows a variety of markup including formatting elements, links, and lists.</p>
+
+<p>Images and tables are not allowed, links are limited to FTP, HTTP, HTTPS, and
+mailto protocols, and a <code>rel="nofollow"</code> attribute is added to all links to
+mitigate SEO spam.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">BASIC</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;b&gt;&lt;a href="http://foo.com/" rel="nofollow"&gt;foo&lt;/a&gt;&lt;/b&gt;'</span>
+</pre></div>
+
+<h3>
+<a name="user-content-sanitizeconfigrelaxed" class="anchor" href="#sanitizeconfigrelaxed"><span class="octicon octicon-link"></span></a>Sanitize::Config::RELAXED</h3>
+
+<p>Allows an even wider variety of markup, including images and tables. Links are
+still limited to FTP, HTTP, HTTPS, and mailto protocols, while images are
+limited to HTTP and HTTPS. In this mode, <code>rel="nofollow"</code> is not added to links.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">RELAXED</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;b&gt;&lt;a href="http://foo.com/"&gt;foo&lt;/a&gt;&lt;/b&gt;&lt;img src="bar.jpg"&gt;'</span>
+</pre></div>
+
+<h3>
+<a name="user-content-custom-configuration" class="anchor" href="#custom-configuration"><span class="octicon octicon-link"></span></a>Custom Configuration</h3>
+
+<p>If the built-in modes don't meet your needs, you can easily specify a custom
+configuration:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span>
+  <span class="ss">:elements</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'span'</span><span class="o">]</span><span class="p">,</span>
+
+  <span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="s1">'a'</span>    <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'href'</span><span class="p">,</span> <span class="s1">'title'</span><span class="o">]</span><span class="p">,</span>
+    <span class="s1">'span'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'class'</span><span class="o">]</span>
+  <span class="p">},</span>
+
+  <span class="ss">:protocols</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="s1">'a'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'href'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'http'</span><span class="p">,</span> <span class="s1">'https'</span><span class="p">,</span> <span class="s1">'mailto'</span><span class="o">]</span><span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+
+<p>You can also start with one of Sanitize's built-in configurations and then
+customize it to meet your needs.</p>
+
+<p>The built-in configs are deeply frozen to prevent people from modifying them
+(either accidentally or maliciously). To customize a built-in config, create a
+new copy using <code>Sanitize::Config.merge()</code>, like so:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># Create a customized copy of the Basic config, adding &lt;div&gt; and &lt;table&gt; to the</span>
+<span class="c1"># existing whitelisted elements.</span>
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">BASIC</span><span class="p">,</span>
+  <span class="ss">:elements</span>        <span class="o">=&gt;</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">BASIC</span><span class="o">[</span><span class="ss">:elements</span><span class="o">]</span> <span class="o">+</span> <span class="o">[</span><span class="s1">'div'</span><span class="p">,</span> <span class="s1">'table'</span><span class="o">]</span><span class="p">,</span>
+  <span class="ss">:remove_contents</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+<span class="p">))</span>
+</pre></div>
+
+<p>The example above adds the <code>&lt;div&gt;</code> and <code>&lt;table&gt;</code> elements to a copy of the
+existing list of elements in <code>Sanitize::Config::BASIC</code>. If you instead want to
+completely overwrite the elements array with your own, you can omit the <code>+</code>
+operation:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># Overwrite :elements instead of creating a copy with new entries.</span>
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">BASIC</span><span class="p">,</span>
+  <span class="ss">:elements</span>        <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'div'</span><span class="p">,</span> <span class="s1">'table'</span><span class="o">]</span><span class="p">,</span>
+  <span class="ss">:remove_contents</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+<span class="p">))</span>
+</pre></div>
+
+<h3>
+<a name="user-content-config-settings" class="anchor" href="#config-settings"><span class="octicon octicon-link"></span></a>Config Settings</h3>
+
+<h4>
+<a name="user-content-add_attributes-hash" class="anchor" href="#add_attributes-hash"><span class="octicon octicon-link"></span></a>:add_attributes (Hash)</h4>
+
+<p>Attributes to add to specific elements. If the attribute already exists, it will
+be replaced with the value specified here. Specify all element names and
+attributes in lowercase.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:add_attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'a'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'rel'</span> <span class="o">=&gt;</span> <span class="s1">'nofollow'</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
+<a name="user-content-allow_comments-boolean" class="anchor" href="#allow_comments-boolean"><span class="octicon octicon-link"></span></a>:allow_comments (boolean)</h4>
+
+<p>Whether or not to allow HTML comments. Allowing comments is strongly
+discouraged, since IE allows script execution within conditional comments. The
+default value is <code>false</code>.</p>
+
+<h4>
+<a name="user-content-allow_doctype-boolean" class="anchor" href="#allow_doctype-boolean"><span class="octicon octicon-link"></span></a>:allow_doctype (boolean)</h4>
+
+<p>Whether or not to allow well-formed HTML doctype declarations such as "&lt;!DOCTYPE
+html&gt;" when sanitizing a document. This setting is ignored when sanitizing
+fragments. The default value is <code>false</code>.</p>
+
+<h4>
+<a name="user-content-attributes-hash" class="anchor" href="#attributes-hash"><span class="octicon octicon-link"></span></a>:attributes (Hash)</h4>
+
+<p>Attributes to allow on specific elements. Specify all element names and
+attributes in lowercase.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'a'</span>          <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'href'</span><span class="p">,</span> <span class="s1">'title'</span><span class="o">]</span><span class="p">,</span>
+  <span class="s1">'blockquote'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'cite'</span><span class="o">]</span><span class="p">,</span>
+  <span class="s1">'img'</span>        <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'alt'</span><span class="p">,</span> <span class="s1">'src'</span><span class="p">,</span> <span class="s1">'title'</span><span class="o">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>If you'd like to allow certain attributes on all elements, use the symbol <code>:all</code>
+instead of an element name.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># Allow the class attribute on all elements.</span>
+<span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="ss">:all</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'class'</span><span class="o">]</span><span class="p">,</span>
+  <span class="s1">'a'</span>  <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'href'</span><span class="p">,</span> <span class="s1">'title'</span><span class="o">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>To allow arbitrary HTML5 <code>data-*</code> attributes, use the symbol <code>:data</code> in place of
+an attribute name.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># Allow arbitrary HTML5 data-* attributes on &lt;div&gt; elements.</span>
+<span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'div'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:data</span><span class="o">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
+<a name="user-content-elements-array" class="anchor" href="#elements-array"><span class="octicon octicon-link"></span></a>:elements (Array)</h4>
+
+<p>Array of HTML element names to allow. Specify all names in lowercase. Any
+elements not in this array will be removed.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:elements</span> <span class="o">=&gt;</span> <span class="sx">%w[</span>
+<span class="sx">  a abbr b blockquote br cite code dd dfn dl dt em i kbd li mark ol p pre</span>
+<span class="sx">  q s samp small strike strong sub sup time u ul var</span>
+<span class="sx">]</span>
+</pre></div>
+
+<h4>
+<a name="user-content-protocols-hash" class="anchor" href="#protocols-hash"><span class="octicon octicon-link"></span></a>:protocols (Hash)</h4>
+
+<p>URL protocols to allow in specific attributes. If an attribute is listed here
+and contains a protocol other than those specified (or if it contains no
+protocol at all), it will be removed.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:protocols</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'a'</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'href'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'ftp'</span><span class="p">,</span> <span class="s1">'http'</span><span class="p">,</span> <span class="s1">'https'</span><span class="p">,</span> <span class="s1">'mailto'</span><span class="o">]</span><span class="p">},</span>
+  <span class="s1">'img'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'src'</span>  <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'http'</span><span class="p">,</span> <span class="s1">'https'</span><span class="o">]</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>If you'd like to allow the use of relative URLs which don't have a protocol,
+include the symbol <code>:relative</code> in the protocol array:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:protocols</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'a'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'href'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'http'</span><span class="p">,</span> <span class="s1">'https'</span><span class="p">,</span> <span class="ss">:relative</span><span class="o">]</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
+<a name="user-content-remove_contents-boolean-or-array" class="anchor" href="#remove_contents-boolean-or-array"><span class="octicon octicon-link"></span></a>:remove_contents (boolean or Array)</h4>
+
+<p>If set to <code>true</code>, Sanitize will remove the contents of any non-whitelisted
+elements in addition to the elements themselves. By default, Sanitize leaves the
+safe parts of an element's contents behind when the element is removed.</p>
+
+<p>If set to an array of element names, then only the contents of the specified
+elements (when filtered) will be removed, and the contents of all other filtered
+elements will be left behind.</p>
+
+<p>The default value is <code>false</code>.</p>
+
+<h4>
+<a name="user-content-transformers" class="anchor" href="#transformers"><span class="octicon octicon-link"></span></a>:transformers</h4>
+
+<p>Custom transformer or array of custom transformers. See the Transformers section
+below for details.</p>
+
+<h4>
+<a name="user-content-whitespace_elements-hash" class="anchor" href="#whitespace_elements-hash"><span class="octicon octicon-link"></span></a>:whitespace_elements (Hash)</h4>
+
+<p>Hash of element names which, when removed, should have their contents surrounded
+by whitespace to preserve readability.</p>
+
+<p>Each element name is a key pointing to another Hash, which provides the specific
+whitespace that should be inserted <code>:before</code> and <code>:after</code> the removed element's
+position. The <code>:after</code> value will only be inserted if the removed element has
+children, in which case it will be inserted after those children.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:whitespace_elements</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'br'</span>  <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">:before</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="ss">:after</span> <span class="o">=&gt;</span> <span class="s2">""</span> <span class="p">},</span>
+  <span class="s1">'div'</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">:before</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="ss">:after</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="p">},</span>
+  <span class="s1">'p'</span>   <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">:before</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="ss">:after</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="user-content-transformers-1" class="anchor" href="#transformers-1"><span class="octicon octicon-link"></span></a>Transformers</h2>
+
+<p>Transformers allow you to filter and modify nodes using your own custom logic,
+on top of (or instead of) Sanitize's core filter. A transformer is any object
+that responds to <code>call()</code> (such as a lambda or proc).</p>
+
+<p>To use one or more transformers, pass them to the <code>:transformers</code> config
+setting. You may pass a single transformer or an array of transformers.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="ss">:transformers</span> <span class="o">=&gt;</span> <span class="o">[</span>
+  <span class="n">transformer_one</span><span class="p">,</span>
+  <span class="n">transformer_two</span>
+<span class="o">]</span><span class="p">)</span>
+</pre></div>
+
+<h3>
+<a name="user-content-input" class="anchor" href="#input"><span class="octicon octicon-link"></span></a>Input</h3>
+
+<p>Each transformer's <code>call()</code> method will be called once for each node in the HTML
+(including elements, text nodes, comments, etc.), and will receive as an
+argument a Hash that contains the following items:</p>
+
+<ul class="task-list">
+<li><p><strong>:config</strong> - The current Sanitize configuration Hash.</p></li>
+<li><p><strong>:is_whitelisted</strong> - <code>true</code> if the current node has been whitelisted by a
+previous transformer, <code>false</code> otherwise. It's generally bad form to remove
+a node that a previous transformer has whitelisted.</p></li>
+<li><p><strong>:node</strong> - A <code>Nokogiri::XML::Node</code> object representing an HTML node. The
+node may be an element, a text node, a comment, a CDATA node, or a document
+fragment. Use Nokogiri's inspection methods (<code>element?</code>, <code>text?</code>, etc.) to
+selectively ignore node types you aren't interested in.</p></li>
+<li><p><strong>:node_name</strong> - The name of the current HTML node, always lowercase (e.g.
+"div" or "span"). For non-element nodes, the name will be something like
+"text", "comment", "#cdata-section", "#document-fragment", etc.</p></li>
+<li><p><strong>:node_whitelist</strong> - Set of <code>Nokogiri::XML::Node</code> objects in the current
+document that have been whitelisted by previous transformers, if any. It's
+generally bad form to remove a node that a previous transformer has
+whitelisted.</p></li>
+</ul><h3>
+<a name="user-content-output" class="anchor" href="#output"><span class="octicon octicon-link"></span></a>Output</h3>
+
+<p>A transformer doesn't have to return anything, but may optionally return a Hash,
+which may contain the following items:</p>
+
+<ul class="task-list">
+<li>
+<strong>:node_whitelist</strong> -  Array or Set of specific Nokogiri::XML::Node objects
+to add to the document's whitelist, bypassing the current Sanitize config.
+These specific nodes and all their attributes will be whitelisted, but
+their children will not be.</li>
+</ul><p>If a transformer returns anything other than a Hash, the return value will be
+ignored.</p>
+
+<h3>
+<a name="user-content-processing" class="anchor" href="#processing"><span class="octicon octicon-link"></span></a>Processing</h3>
+
+<p>Each transformer has full access to the <code>Nokogiri::XML::Node</code> that's passed into
+it and to the rest of the document via the node's <code>document()</code> method. Any
+changes made to the current node or to the document will be reflected instantly
+in the document and passed on to subsequently called transformers and to
+Sanitize itself. A transformer may even call Sanitize internally to perform
+custom sanitization if needed.</p>
+
+<p>Nodes are passed into transformers in the order in which they're traversed.
+Sanitize performs top-down traversal, meaning that nodes are traversed in the
+same order you'd read them in the HTML, starting at the top node, then its first
+child, and so on.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">html</span> <span class="o">=</span> <span class="sx">%[</span>
+<span class="sx">  &lt;header&gt;</span>
+<span class="sx">    &lt;span&gt;</span>
+<span class="sx">      &lt;strong&gt;foo&lt;/strong&gt;</span>
+<span class="sx">    &lt;/span&gt;</span>
+<span class="sx">    &lt;p&gt;bar&lt;/p&gt;</span>
+<span class="sx">  &lt;/header&gt;</span>
+
+<span class="sx">  &lt;footer&gt;&lt;/footer&gt;</span>
+<span class="sx">]</span>
+
+<span class="n">transformer</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="n">env</span><span class="o">[</span><span class="ss">:node_name</span><span class="o">]</span> <span class="k">if</span> <span class="n">env</span><span class="o">[</span><span class="ss">:node</span><span class="o">].</span><span class="n">element?</span>
+<span class="k">end</span>
+
+<span class="c1"># Prints "header", "span", "strong", "p", "footer".</span>
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="ss">:transformers</span> <span class="o">=&gt;</span> <span class="n">transformer</span><span class="p">)</span>
+</pre></div>
+
+<p>Transformers have a tremendous amount of power, including the power to
+completely bypass Sanitize's built-in filtering. Be careful! Your safety is in
+your own hands.</p>
+
+<h3>
+<a name="user-content-example-transformer-to-whitelist-youtube-video-embeds" class="anchor" href="#example-transformer-to-whitelist-youtube-video-embeds"><span class="octicon octicon-link"></span></a>Example: Transformer to whitelist YouTube video embeds</h3>
+
+<p>The following example demonstrates how to create a transformer that will safely
+whitelist valid YouTube video embeds without having to blindly allow other kinds
+of embedded content, which would be the case if you tried to do this by just
+whitelisting all <code>&lt;iframe&gt;</code> elements:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">youtube_transformer</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="n">node</span>      <span class="o">=</span> <span class="n">env</span><span class="o">[</span><span class="ss">:node</span><span class="o">]</span>
+  <span class="n">node_name</span> <span class="o">=</span> <span class="n">env</span><span class="o">[</span><span class="ss">:node_name</span><span class="o">]</span>
+
+  <span class="c1"># Don't continue if this node is already whitelisted or is not an element.</span>
+  <span class="k">return</span> <span class="k">if</span> <span class="n">env</span><span class="o">[</span><span class="ss">:is_whitelisted</span><span class="o">]</span> <span class="o">||</span> <span class="o">!</span><span class="n">node</span><span class="o">.</span><span class="n">element?</span>
+
+  <span class="c1"># Don't continue unless the node is an iframe.</span>
+  <span class="k">return</span> <span class="k">unless</span> <span class="n">node_name</span> <span class="o">==</span> <span class="s1">'iframe'</span>
+
+  <span class="c1"># Verify that the video URL is actually a valid YouTube video URL.</span>
+  <span class="k">return</span> <span class="k">unless</span> <span class="n">node</span><span class="o">[</span><span class="s1">'src'</span><span class="o">]</span> <span class="o">=~</span> <span class="sr">%r|\A(?:https?:)?//(?:www\.)?youtube(?:-nocookie)?\.com/|</span>
+
+  <span class="c1"># We're now certain that this is a YouTube embed, but we still need to run</span>
+  <span class="c1"># it through a special Sanitize step to ensure that no unwanted elements or</span>
+  <span class="c1"># attributes that don't belong in a YouTube embed can sneak in.</span>
+  <span class="no">Sanitize</span><span class="o">.</span><span class="n">node!</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">{</span>
+    <span class="ss">:elements</span> <span class="o">=&gt;</span> <span class="sx">%w[iframe]</span><span class="p">,</span>
+
+    <span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="s1">'iframe'</span>  <span class="o">=&gt;</span> <span class="sx">%w[allowfullscreen frameborder height src width]</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+
+  <span class="c1"># Now that we're sure that this is a valid YouTube embed and that there are</span>
+  <span class="c1"># no unwanted elements or attributes hidden inside it, we can tell Sanitize</span>
+  <span class="c1"># to whitelist the current node.</span>
+  <span class="p">{</span><span class="ss">:node_whitelist</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="n">node</span><span class="o">]</span><span class="p">}</span>
+<span class="k">end</span>
+
+<span class="n">html</span> <span class="o">=</span> <span class="sx">%[</span>
+<span class="sx">&lt;iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ"</span>
+<span class="sx">    frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;</span>
+<span class="sx">]</span>
+
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="ss">:transformers</span> <span class="o">=&gt;</span> <span class="n">youtube_transformer</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen=""&gt;&lt;/iframe&gt;'</span>
+</pre></div>
+
+<h2>
+<a name="user-content-license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright (c) 2014 Ryan Grove (<a href="mailto:ryan@wonko.com">ryan@wonko.com</a>)</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the 'Software'), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p></article>
+  </div>

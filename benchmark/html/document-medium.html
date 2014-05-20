@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html class="   ">
+  <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# object: http://ogp.me/ns/object# article: http://ogp.me/ns/article# profile: http://ogp.me/ns/profile#">
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+
+    <title>rgrove/sanitize at dev-3.0.0 · GitHub</title>
+    <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub" />
+    <link rel="fluid-icon" href="https://github.com/fluidicon.png" title="GitHub" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-114.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-144.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144.png" />
+    <meta property="fb:app_id" content="1401488693436528"/>
+
+      <meta content="@github" name="twitter:site" /><meta content="summary" name="twitter:card" /><meta content="rgrove/sanitize" name="twitter:title" /><meta content="Whitelist-based Ruby HTML sanitizer." name="twitter:description" /><meta content="https://avatars0.githubusercontent.com/u/1465?s=400" name="twitter:image:src" />
+<meta content="GitHub" property="og:site_name" /><meta content="object" property="og:type" /><meta content="https://avatars0.githubusercontent.com/u/1465?s=400" property="og:image" /><meta content="rgrove/sanitize" property="og:title" /><meta content="https://github.com/rgrove/sanitize" property="og:url" /><meta content="Whitelist-based Ruby HTML sanitizer." property="og:description" />
+
+    <link rel="assets" href="https://assets-cdn.github.com/">
+    <link rel="conduit-xhr" href="https://ghconduit.com:25035/">
+    <link rel="xhr-socket" href="/_sockets" />
+
+    <meta name="msapplication-TileImage" content="/windows-tile.png" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="selected-link" value="repo_source" data-pjax-transient />
+      <meta name="google-analytics" content="UA-3769691-2">
+
+    <meta content="collector.githubapp.com" name="octolytics-host" /><meta content="collector-cdn.github.com" name="octolytics-script-host" /><meta content="github" name="octolytics-app-id" /><meta content="4C69DD2E:5170:6C7636:537BD990" name="octolytics-dimension-request_id" />
+
+
+
+
+    <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico" />
+
+    <meta content="authenticity_token" name="csrf-param" />
+<meta content="vNsFBLnpso1tK/VKf2J+RA/S+CS/gAV56qG3exeB2dczzElTQhMtnOYq+nHZD6HlsH3FIXsvb9TUz7C8hRC+Aw==" name="csrf-token" />
+
+    <link href="https://assets-cdn.github.com/assets/github-dc3b5ef1bc6b1a7195c5411444124d626d072527.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="https://assets-cdn.github.com/assets/github2-aaf82d4c2cd800a7e0df9bc5616889f46dc919b3.css" media="all" rel="stylesheet" type="text/css" />
+
+
+
+    <meta http-equiv="x-pjax-version" content="28535d584f42419aa9cc2690ca69da48">
+
+
+  <meta name="description" content="Whitelist-based Ruby HTML sanitizer." />
+
+  <meta content="1465" name="octolytics-dimension-user_id" /><meta content="rgrove" name="octolytics-dimension-user_login" /><meta content="96577" name="octolytics-dimension-repository_id" /><meta content="rgrove/sanitize" name="octolytics-dimension-repository_nwo" /><meta content="true" name="octolytics-dimension-repository_public" /><meta content="false" name="octolytics-dimension-repository_is_fork" /><meta content="96577" name="octolytics-dimension-repository_network_root_id" /><meta content="rgrove/sanitize" name="octolytics-dimension-repository_network_root_nwo" />
+  <link href="https://github.com/rgrove/sanitize/commits/dev-3.0.0.atom" rel="alternate" title="Recent Commits to sanitize:dev-3.0.0" type="application/atom+xml" />
+
+  </head>
+
+
+  <body class="logged_out  env-production macintosh vis-public">
+    <a href="#start-of-content" tabindex="1" class="accessibility-aid js-skip-to-content">Skip to content</a>
+    <div class="wrapper">
+
+
+
+
+
+
+
+      <div class="header header-logged-out">
+  <div class="container clearfix">
+
+    <a class="header-logo-wordmark" href="https://github.com/">
+      <span class="mega-octicon octicon-logo-github"></span>
+    </a>
+
+    <div class="header-actions">
+        <a class="button primary" href="/join">Sign up</a>
+      <a class="button signin" href="/login?return_to=%2Frgrove%2Fsanitize%2Ftree%2Fdev-3.0.0">Sign in</a>
+    </div>
+
+    <div class="command-bar js-command-bar  in-repository">
+
+      <ul class="top-nav">
+          <li class="explore"><a href="/explore">Explore</a></li>
+        <li class="features"><a href="/features">Features</a></li>
+          <li class="enterprise"><a href="https://enterprise.github.com/">Enterprise</a></li>
+          <li class="blog"><a href="/blog">Blog</a></li>
+      </ul>
+        <form accept-charset="UTF-8" action="/search" class="command-bar-form" id="top_search_form" method="get">
+
+<div class="commandbar">
+  <span class="message"></span>
+  <input type="text" data-hotkey="s, /" name="q" id="js-command-bar-field" placeholder="Search or type a command" tabindex="1" autocapitalize="off"
+
+
+      data-repo="rgrove/sanitize"
+      data-branch="dev-3.0.0"
+      data-sha="027259501299baa4767034acc355c600bd9ef720"
+  >
+  <div class="display hidden"></div>
+</div>
+
+    <input type="hidden" name="nwo" value="rgrove/sanitize" />
+
+    <div class="select-menu js-menu-container js-select-menu search-context-select-menu">
+      <span class="minibutton select-menu-button js-menu-target" role="button" aria-haspopup="true">
+        <span class="js-select-button">This repository</span>
+      </span>
+
+      <div class="select-menu-modal-holder js-menu-content js-navigation-container" aria-hidden="true">
+        <div class="select-menu-modal">
+
+          <div class="select-menu-item js-navigation-item js-this-repository-navigation-item selected">
+            <span class="select-menu-item-icon octicon octicon-check"></span>
+            <input type="radio" class="js-search-this-repository" name="search_target" value="repository" checked="checked" />
+            <div class="select-menu-item-text js-select-button-text">This repository</div>
+          </div> <!-- /.select-menu-item -->
+
+          <div class="select-menu-item js-navigation-item js-all-repositories-navigation-item">
+            <span class="select-menu-item-icon octicon octicon-check"></span>
+            <input type="radio" name="search_target" value="global" />
+            <div class="select-menu-item-text js-select-button-text">All repositories</div>
+          </div> <!-- /.select-menu-item -->
+
+        </div>
+      </div>
+    </div>
+
+  <span class="help tooltipped tooltipped-s" aria-label="Show command bar help">
+    <span class="octicon octicon-question"></span>
+  </span>
+
+
+  <input type="hidden" name="ref" value="cmdform">
+
+</form>
+    </div>
+
+  </div>
+</div>
+
+
+
+      <div id="start-of-content" class="accessibility-aid"></div>
+          <div class="site" itemscope itemtype="http://schema.org/WebPage">
+    <div id="js-flash-container">
+
+    </div>
+    <div class="pagehead repohead instapaper_ignore readability-menu">
+      <div class="container">
+
+
+<ul class="pagehead-actions">
+
+
+  <li>
+    <a href="/login?return_to=%2Frgrove%2Fsanitize"
+    class="minibutton with-count star-button tooltipped tooltipped-n"
+    aria-label="You must be signed in to star a repository" rel="nofollow">
+    <span class="octicon octicon-star"></span>Star
+  </a>
+
+    <a class="social-count js-social-count" href="/rgrove/sanitize/stargazers">
+      1,152
+    </a>
+
+  </li>
+
+    <li>
+      <a href="/login?return_to=%2Frgrove%2Fsanitize"
+        class="minibutton with-count js-toggler-target fork-button tooltipped tooltipped-n"
+        aria-label="You must be signed in to fork a repository" rel="nofollow">
+        <span class="octicon octicon-git-branch"></span>Fork
+      </a>
+      <a href="/rgrove/sanitize/network" class="social-count">
+        65
+      </a>
+    </li>
+</ul>
+
+        <h1 itemscope itemtype="http://data-vocabulary.org/Breadcrumb" class="entry-title public">
+          <span class="repo-label"><span>public</span></span>
+          <span class="mega-octicon octicon-repo"></span>
+          <span class="author"><a href="/rgrove" class="url fn" itemprop="url" rel="author"><span itemprop="title">rgrove</span></a></span><!--
+       --><span class="path-divider">/</span><!--
+       --><strong><a href="/rgrove/sanitize" class="js-current-repository js-repo-home-link">sanitize</a></strong>
+
+          <span class="page-context-loader">
+            <img alt="" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+          </span>
+
+        </h1>
+      </div><!-- /.container -->
+    </div><!-- /.repohead -->
+
+    <div class="container">
+      <div class="repository-with-sidebar repo-container new-discussion-timeline js-new-discussion-timeline with-full-navigation ">
+        <div class="repository-sidebar clearfix">
+
+
+<div class="sunken-menu vertical-right repo-nav js-repo-nav js-repository-container-pjax js-octicon-loaders">
+  <div class="sunken-menu-contents">
+    <ul class="sunken-menu-group">
+      <li class="tooltipped tooltipped-w" aria-label="Code">
+        <a href="/rgrove/sanitize/tree/dev-3.0.0" aria-label="Code" class="selected js-selected-navigation-item sunken-menu-item" data-hotkey="g c" data-pjax="true" data-selected-links="repo_source repo_downloads repo_commits repo_releases repo_tags repo_branches /rgrove/sanitize/tree/dev-3.0.0">
+          <span class="octicon octicon-code"></span> <span class="full-word">Code</span>
+          <img alt="" class="mini-loader" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+</a>      </li>
+
+        <li class="tooltipped tooltipped-w" aria-label="Issues">
+          <a href="/rgrove/sanitize/issues" aria-label="Issues" class="js-selected-navigation-item sunken-menu-item js-disable-pjax" data-hotkey="g i" data-selected-links="repo_issues /rgrove/sanitize/issues">
+            <span class="octicon octicon-issue-opened"></span> <span class="full-word">Issues</span>
+            <span class='counter'>4</span>
+            <img alt="" class="mini-loader" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+</a>        </li>
+
+      <li class="tooltipped tooltipped-w" aria-label="Pull Requests">
+        <a href="/rgrove/sanitize/pulls" aria-label="Pull Requests" class="js-selected-navigation-item sunken-menu-item js-disable-pjax" data-hotkey="g p" data-selected-links="repo_pulls /rgrove/sanitize/pulls">
+            <span class="octicon octicon-git-pull-request"></span> <span class="full-word">Pull Requests</span>
+            <span class='counter'>0</span>
+            <img alt="" class="mini-loader" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+</a>      </li>
+
+
+        <li class="tooltipped tooltipped-w" aria-label="Wiki">
+          <a href="/rgrove/sanitize/wiki" aria-label="Wiki" class="js-selected-navigation-item sunken-menu-item js-disable-pjax" data-hotkey="g w" data-selected-links="repo_wiki /rgrove/sanitize/wiki">
+            <span class="octicon octicon-book"></span> <span class="full-word">Wiki</span>
+            <img alt="" class="mini-loader" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+</a>        </li>
+    </ul>
+    <div class="sunken-menu-separator"></div>
+    <ul class="sunken-menu-group">
+
+      <li class="tooltipped tooltipped-w" aria-label="Pulse">
+        <a href="/rgrove/sanitize/pulse" aria-label="Pulse" class="js-selected-navigation-item sunken-menu-item" data-pjax="true" data-selected-links="pulse /rgrove/sanitize/pulse">
+          <span class="octicon octicon-pulse"></span> <span class="full-word">Pulse</span>
+          <img alt="" class="mini-loader" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+</a>      </li>
+
+      <li class="tooltipped tooltipped-w" aria-label="Graphs">
+        <a href="/rgrove/sanitize/graphs" aria-label="Graphs" class="js-selected-navigation-item sunken-menu-item" data-pjax="true" data-selected-links="repo_graphs repo_contributors /rgrove/sanitize/graphs">
+          <span class="octicon octicon-graph"></span> <span class="full-word">Graphs</span>
+          <img alt="" class="mini-loader" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+</a>      </li>
+
+      <li class="tooltipped tooltipped-w" aria-label="Network">
+        <a href="/rgrove/sanitize/network" aria-label="Network" class="js-selected-navigation-item sunken-menu-item js-disable-pjax" data-selected-links="repo_network /rgrove/sanitize/network">
+          <span class="octicon octicon-git-branch"></span> <span class="full-word">Network</span>
+          <img alt="" class="mini-loader" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+</a>      </li>
+    </ul>
+
+
+  </div>
+</div>
+
+              <div class="only-with-full-nav">
+
+
+
+
+<div class="clone-url open"
+  data-protocol-type="http"
+  data-url="/users/set_protocol?protocol_selector=http&amp;protocol_type=clone">
+  <h3><strong>HTTPS</strong> clone URL</h3>
+  <div class="clone-url-box">
+    <input type="text" class="clone js-url-field"
+           value="https://github.com/rgrove/sanitize.git" readonly="readonly">
+    <span class="url-box-clippy">
+    <button aria-label="copy to clipboard" class="js-zeroclipboard minibutton zeroclipboard-button" data-clipboard-text="https://github.com/rgrove/sanitize.git" data-copied-hint="copied!" type="button"><span class="octicon octicon-clippy"></span></button>
+    </span>
+  </div>
+</div>
+
+
+
+<div class="clone-url "
+  data-protocol-type="subversion"
+  data-url="/users/set_protocol?protocol_selector=subversion&amp;protocol_type=clone">
+  <h3><strong>Subversion</strong> checkout URL</h3>
+  <div class="clone-url-box">
+    <input type="text" class="clone js-url-field"
+           value="https://github.com/rgrove/sanitize" readonly="readonly">
+    <span class="url-box-clippy">
+    <button aria-label="copy to clipboard" class="js-zeroclipboard minibutton zeroclipboard-button" data-clipboard-text="https://github.com/rgrove/sanitize" data-copied-hint="copied!" type="button"><span class="octicon octicon-clippy"></span></button>
+    </span>
+  </div>
+</div>
+
+
+<p class="clone-options">You can clone with
+      <a href="#" class="js-clone-selector" data-protocol="http">HTTPS</a>
+      or <a href="#" class="js-clone-selector" data-protocol="subversion">Subversion</a>.
+  <span class="help tooltipped tooltipped-n" aria-label="Get help on which URL is right for you.">
+    <a href="https://help.github.com/articles/which-remote-url-should-i-use">
+    <span class="octicon octicon-question"></span>
+    </a>
+  </span>
+</p>
+
+  <a href="http://mac.github.com" data-url="github-mac://openRepo/https://github.com/rgrove/sanitize" class="minibutton sidebar-button js-conduit-rewrite-url" title="Save rgrove/sanitize to your computer and use it in GitHub Desktop." aria-label="Save rgrove/sanitize to your computer and use it in GitHub Desktop.">
+    <span class="octicon octicon-device-desktop"></span>
+    Clone in Desktop
+  </a>
+
+
+                <a href="/rgrove/sanitize/archive/dev-3.0.0.zip"
+                   class="minibutton sidebar-button"
+                   aria-label="Download rgrove/sanitize as a zip file"
+                   title="Download rgrove/sanitize as a zip file"
+                   rel="nofollow">
+                  <span class="octicon octicon-cloud-download"></span>
+                  Download ZIP
+                </a>
+              </div>
+        </div><!-- /.repository-sidebar -->
+
+        <div id="js-repo-pjax-container" class="repository-content context-loader-container" data-pjax-container>
+
+
+<span id="js-show-full-navigation"></span>
+
+<div class="repository-meta js-details-container ">
+    <div class="repository-description js-details-show">
+      <p>Whitelist-based Ruby HTML sanitizer.</p>
+    </div>
+
+
+
+</div>
+
+<div class="capped-box overall-summary ">
+
+  <div class="stats-switcher-viewport js-stats-switcher-viewport">
+    <div class="stats-switcher-wrapper">
+    <ul class="numbers-summary">
+      <li class="commits">
+        <a data-pjax href="/rgrove/sanitize/commits/dev-3.0.0">
+            <span class="num">
+              <span class="octicon octicon-history"></span>
+              241
+            </span>
+            commits
+        </a>
+      </li>
+      <li>
+        <a data-pjax href="/rgrove/sanitize/branches">
+          <span class="num">
+            <span class="octicon octicon-git-branch"></span>
+            5
+          </span>
+          branches
+        </a>
+      </li>
+
+      <li>
+        <a data-pjax href="/rgrove/sanitize/releases">
+          <span class="num">
+            <span class="octicon octicon-tag"></span>
+            19
+          </span>
+          releases
+        </a>
+      </li>
+
+      <li>
+
+  <a href="/rgrove/sanitize/graphs/contributors">
+    <span class="num">
+      <span class="octicon octicon-organization"></span>
+      16
+    </span>
+    contributors
+  </a>
+      </li>
+    </ul>
+
+      <div class="repository-lang-stats">
+        <ol class="repository-lang-stats-numbers">
+          <li>
+              <a href="/rgrove/sanitize/search?l=ruby">
+                <span class="color-block language-color" style="background-color:#701516;"></span>
+                <span class="lang">Ruby</span>
+                <span class="percent">100%</span>
+              </a>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  <div class="tooltipped tooltipped-s" aria-label="Show language statistics">
+    <a href="#"
+     class="repository-lang-stats-graph js-toggle-lang-stats"
+     style="background-color:#701516">
+  <span class="language-color" style="width:100%; background-color:#701516;" itemprop="keywords">Ruby</span>
+    </a>
+  </div>
+
+
+
+<div class="file-navigation in-mid-page">
+    <a href="/rgrove/sanitize/compare/dev-3.0.0" aria-label="Compare, review, create a pull request" class="minibutton compact primary tooltipped tooltipped-s" aria-label="Compare &amp; review" data-pjax>
+      <span class="octicon octicon-git-compare"></span>
+    </a>
+
+
+
+<div class="select-menu js-menu-container js-select-menu" >
+  <span class="minibutton select-menu-button js-menu-target" data-hotkey="w"
+    data-master-branch="master"
+    data-ref="dev-3.0.0"
+    role="button" aria-label="Switch branches or tags" tabindex="0" aria-haspopup="true">
+    <span class="octicon octicon-git-branch"></span>
+    <i>branch:</i>
+    <span class="js-select-button">dev-3.0.0</span>
+  </span>
+
+  <div class="select-menu-modal-holder js-menu-content js-navigation-container" data-pjax aria-hidden="true">
+
+    <div class="select-menu-modal">
+      <div class="select-menu-header">
+        <span class="select-menu-title">Switch branches/tags</span>
+        <span class="octicon octicon-remove-close js-menu-close"></span>
+      </div> <!-- /.select-menu-header -->
+
+      <div class="select-menu-filters">
+        <div class="select-menu-text-filter">
+          <input type="text" aria-label="Filter branches/tags" id="context-commitish-filter-field" class="js-filterable-field js-navigation-enable" placeholder="Filter branches/tags">
+        </div>
+        <div class="select-menu-tabs">
+          <ul>
+            <li class="select-menu-tab">
+              <a href="#" data-tab-filter="branches" class="js-select-menu-tab">Branches</a>
+            </li>
+            <li class="select-menu-tab">
+              <a href="#" data-tab-filter="tags" class="js-select-menu-tab">Tags</a>
+            </li>
+          </ul>
+        </div><!-- /.select-menu-tabs -->
+      </div><!-- /.select-menu-filters -->
+
+      <div class="select-menu-list select-menu-tab-bucket js-select-menu-tab-bucket" data-tab-filter="branches">
+
+        <div data-filterable-for="context-commitish-filter-field" data-filterable-type="substring">
+
+
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/dev-2.2.0"
+                 data-name="dev-2.2.0"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="dev-2.2.0">dev-2.2.0</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item selected">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/dev-3.0.0"
+                 data-name="dev-3.0.0"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="dev-3.0.0">dev-3.0.0</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/freeze"
+                 data-name="freeze"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="freeze">freeze</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/gumbo"
+                 data-name="gumbo"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="gumbo">gumbo</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/master"
+                 data-name="master"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="master">master</a>
+            </div> <!-- /.select-menu-item -->
+        </div>
+
+          <div class="select-menu-no-results">Nothing to show</div>
+      </div> <!-- /.select-menu-list -->
+
+      <div class="select-menu-list select-menu-tab-bucket js-select-menu-tab-bucket" data-tab-filter="tags">
+        <div data-filterable-for="context-commitish-filter-field" data-filterable-type="substring">
+
+
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/v2.0.6"
+                 data-name="v2.0.6"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="v2.0.6">v2.0.6</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/v2.0.5"
+                 data-name="v2.0.5"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="v2.0.5">v2.0.5</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/v2.0.4"
+                 data-name="v2.0.4"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="v2.0.4">v2.0.4</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/v2.0.3"
+                 data-name="v2.0.3"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="v2.0.3">v2.0.3</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-2.0.2"
+                 data-name="release-2.0.2"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-2.0.2">release-2.0.2</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-2.0.1"
+                 data-name="release-2.0.1"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-2.0.1">release-2.0.1</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-2.0.0"
+                 data-name="release-2.0.0"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-2.0.0">release-2.0.0</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.2.1"
+                 data-name="release-1.2.1"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.2.1">release-1.2.1</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.2.0"
+                 data-name="release-1.2.0"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.2.0">release-1.2.0</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.1.0"
+                 data-name="release-1.1.0"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.1.0">release-1.1.0</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.0.8"
+                 data-name="release-1.0.8"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.0.8">release-1.0.8</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.0.7"
+                 data-name="release-1.0.7"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.0.7">release-1.0.7</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.0.6"
+                 data-name="release-1.0.6"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.0.6">release-1.0.6</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.0.5"
+                 data-name="release-1.0.5"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.0.5">release-1.0.5</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.0.4"
+                 data-name="release-1.0.4"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.0.4">release-1.0.4</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.0.3"
+                 data-name="release-1.0.3"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.0.3">release-1.0.3</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.0.2"
+                 data-name="release-1.0.2"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.0.2">release-1.0.2</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.0.1"
+                 data-name="release-1.0.1"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.0.1">release-1.0.1</a>
+            </div> <!-- /.select-menu-item -->
+            <div class="select-menu-item js-navigation-item ">
+              <span class="select-menu-item-icon octicon octicon-check"></span>
+              <a href="/rgrove/sanitize/tree/release-1.0.0"
+                 data-name="release-1.0.0"
+                 data-skip-pjax="true"
+                 rel="nofollow"
+                 class="js-navigation-open select-menu-item-text js-select-button-text css-truncate-target"
+                 title="release-1.0.0">release-1.0.0</a>
+            </div> <!-- /.select-menu-item -->
+        </div>
+
+        <div class="select-menu-no-results">Nothing to show</div>
+      </div> <!-- /.select-menu-list -->
+
+    </div> <!-- /.select-menu-modal -->
+  </div> <!-- /.select-menu-modal-holder -->
+</div> <!-- /.select-menu -->
+
+
+  <div class="breadcrumb"><span class='repo-root js-repo-root'><span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/rgrove/sanitize/tree/dev-3.0.0" data-branch="dev-3.0.0" data-direction="back" data-pjax="true" itemscope="url"><span itemprop="title">sanitize</span></a></span></span><span class="separator"> / </span><form action="/login?return_to=%2Frgrove%2Fsanitize%2Ftree%2Fdev-3.0.0" aria-label="Sign in to make or propose changes" class="js-new-blob-form tooltipped tooltipped-e new-file-link" method="post"><span aria-label="Sign in to make or propose changes" class="js-new-blob-submit octicon octicon-file-add" data-test-id="create-new-git-file" role="button"></span></form></div>
+</div>
+
+
+
+<a href="/rgrove/sanitize/find/dev-3.0.0"
+  data-hotkey="t" class="js-show-file-finder" style="display:none" data-pjax>Show File Finder</a>
+
+    <div class="branch-infobar clearfix">
+      <p>
+          This branch is
+          43 commits ahead and
+          0 commits behind master
+      </p>
+
+      <ul class="lightweight-actions">
+        <li>
+            <a href="/rgrove/sanitize/pull/new/dev-3.0.0">
+              <span class="octicon octicon-git-pull-request"></span>
+              Pull Request
+            </a>
+        </li>
+        <!--
+        <li>
+          <a href="#">
+            <span class="octicon octicon-comment-discussion"></span>
+            Branch discussion
+          </a>
+        </li>
+        -->
+        <li>
+          <a href="/rgrove/sanitize/compare/dev-3.0.0">
+            <span class="octicon octicon-diff"></span>
+            Compare
+          </a>
+        </li>
+      </ul>
+
+    </div>
+
+
+  <div class="commit commit-tease js-details-container" >
+    <p class="commit-title ">
+        <a href="/rgrove/sanitize/commit/2e6c581fa92602e899407f018feb0320c5d130be" class="message" data-pjax="true" title="Add a couple of legacy attributes to the relaxed config.">Add a couple of legacy attributes to the relaxed config.</a>
+
+    </p>
+    <div class="commit-meta">
+      <button aria-label="Copy SHA" class="js-zeroclipboard zeroclipboard-link" data-clipboard-text="2e6c581fa92602e899407f018feb0320c5d130be" data-copied-hint="copied!" type="button"><span class="octicon octicon-clippy"></span></button>
+      <a href="/rgrove/sanitize/commit/2e6c581fa92602e899407f018feb0320c5d130be" class="sha-block" data-pjax>latest commit <span class="sha">2e6c581fa9</span></a>
+
+      <div class="authorship">
+        <img alt="Ryan Grove" class="gravatar js-avatar" data-user="1465" height="20" src="https://avatars3.githubusercontent.com/u/1465?s=140" width="20" />
+        <span class="author-name"><a href="/rgrove" data-skip-pjax="true" rel="author">rgrove</a></span>
+        authored <time class="updated" datetime="2014-05-20T12:45:52-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-20 12:45:52 -0700">May 20, 2014</time>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="file-wrap">
+    <table class="files" data-pjax>
+
+
+<tbody class=""
+  data-url="/rgrove/sanitize/file-list/dev-3.0.0"
+  data-deferred-content-error="Failed to load latest commit information.">
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-directory"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/tree/dev-3.0.0/benchmark" class="js-directory-link" id="07978586e47c8709a63e895fbf3c3c7d-5a95f75a08fc12884dfe0fc2842346d1aec98c4a" title="benchmark">benchmark</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/ce844b7eb13bfee84276d41ba91ff183773f484b" class="message" data-pjax="true" title="Update benchmarks. We got a lot faster. Thanks Gumbo!">Update benchmarks. We got a lot faster. Thanks Gumbo!</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-18T16:41:36-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-18 16:41:36 -0700">May 18, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-directory"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/tree/dev-3.0.0/lib" class="js-directory-link" id="e8acc63b1e238f3255c900eed37254b8-2ba6ea05e193fc4e89efd4072ed1d5e66a263a53" title="lib">lib</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/2e6c581fa92602e899407f018feb0320c5d130be" class="message" data-pjax="true" title="Add a couple of legacy attributes to the relaxed config.">Add a couple of legacy attributes to the relaxed config.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-20T12:45:52-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-20 12:45:52 -0700">May 20, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-directory"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/tree/dev-3.0.0/test" class="js-directory-link" id="098f6bcd4621d373cade4e832627b4f6-a01581020167c9550f0d5a9f9ecef904184a3ef9" title="test">test</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/5f2809e5e13341ff163d90f78981d729bfb00a58" class="message" data-pjax="true" title="Workaround for libxml2 forcibly adding a content-type meta tag.
+
+The version of libxml2 used by Nokogiri forcibly adds a content-type meta
+tag to all documents with a &lt;head&gt; element during serialization, which is
+stupid.
+
+See also: sparklemotion/nokogiri#1008">Workaround for libxml2 forcibly adding a content-type meta tag.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-20T12:45:00-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-20 12:45:00 -0700">May 20, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-text"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/blob/dev-3.0.0/.gitignore" class="js-directory-link" id="a084b794bc0759e7a6b77810e01874f2-cb3dddb63c369ba2982d52fe9e28ef45f3d803b8" title=".gitignore">.gitignore</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/21cece27a377d40b405fc54bdf942f8eecfb5008" class="message" data-pjax="true" title="Add .yardopts, and use yard to generate docs.">Add .yardopts, and use yard to generate docs.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2013-09-18T17:09:07-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2013-09-18 17:09:07 -0700">September 18, 2013</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-text"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/blob/dev-3.0.0/.travis.yml" class="js-directory-link" id="354f30a63fb0907d4ad57269548329e3-506f40c8582b2e3c0243bf2ebbbdc2220937cdc7" title=".travis.yml">.travis.yml</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/2ca27b786f5acbd48d7905204ff9a5410997eded" class="message" data-pjax="true" title="Travis: Test against Ruby 2.1.2.">Travis: Test against Ruby 2.1.2.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-18T16:12:39-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-18 16:12:39 -0700">May 18, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-text"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/blob/dev-3.0.0/.yardopts" class="js-directory-link" id="5808b886486adcc2f1820a316cd5652d-88c462fdff6253794381fc4e452bc34d9b2b3233" title=".yardopts">.yardopts</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/e28fc3ec6ea1db83de0c8dbaf55c08e7f72b4183" class="message" data-pjax="true" title="Include HISTORY.md in the docs.">Include HISTORY.md in the docs.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-19T17:20:29-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-19 17:20:29 -0700">May 19, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-text"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/blob/dev-3.0.0/Gemfile" class="js-directory-link" id="8b7db4d5cc4b8f6dc8feb7030baa2478-3be9c3cd812e6cb2d9d029ec79a88bf4662aa68b" title="Gemfile">Gemfile</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/8646dc2fb688cdd035daa35b32b7b873f3feceeb" class="message" data-pjax="true" title="Use https://rubygems.org.">Use</a> <a href="https://rubygems.org">https://rubygems.org</a><a href="/rgrove/sanitize/commit/8646dc2fb688cdd035daa35b32b7b873f3feceeb" class="message" data-pjax="true" title="Use https://rubygems.org.">.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-20T10:29:27-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-20 10:29:27 -0700">May 20, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-text"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/blob/dev-3.0.0/HISTORY.md" class="js-directory-link" id="88dc7475eedf918122374be6d7c2c151-41baeafc07a544dd990d21902ecfdcbbb1dbbdad" title="HISTORY.md">HISTORY.md</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/5f2809e5e13341ff163d90f78981d729bfb00a58" class="message" data-pjax="true" title="Workaround for libxml2 forcibly adding a content-type meta tag.
+
+The version of libxml2 used by Nokogiri forcibly adds a content-type meta
+tag to all documents with a &lt;head&gt; element during serialization, which is
+stupid.
+
+See also: sparklemotion/nokogiri#1008">Workaround for libxml2 forcibly adding a content-type meta tag.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-20T12:45:00-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-20 12:45:00 -0700">May 20, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-text"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/blob/dev-3.0.0/LICENSE" class="js-directory-link" id="9879d6db96fd29134fc802214163b95a-05549118f3b1bde9a88ac7c642ccb4590915b944" title="LICENSE">LICENSE</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/76ee6e448b5480c49a79ed1f7ed6f212069f272b" class="message" data-pjax="true" title="Release 2.1.0.">Release 2.1.0.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-01-13T15:27:16-08:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-01-13 15:27:16 -0800">January 13, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-text"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/blob/dev-3.0.0/README.md" class="js-directory-link" id="04c6e90faac2675aa89e2176d2eec7d8-356a35f993ab9b85d0fb9213e73a1feb92bfb4dd" title="README.md">README.md</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/301eda5ae733f650fe3e2d4498f306c3eddf4ac5" class="message" data-pjax="true" title="Deep freeze the built-in configs.
+
+Based on PR #75 from @pda.
+
+This also adds Sanitize::Config.merge(), which can be used to safely
+deep-merge two configs (details in the readme).">Deep freeze the built-in configs.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-19T17:20:15-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-19 17:20:15 -0700">May 19, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-text"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/blob/dev-3.0.0/Rakefile" class="js-directory-link" id="52c976fc38ed2b4e3b1192f8a8e24cff-fd0ea81d9c35ecde722be2005a2b408df03c7fd9" title="Rakefile">Rakefile</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/eb618ad624798a22389b05a095d4c1f946a7e0ec" class="message" data-pjax="true" title="Remove redundant licenses.
+
+These things are so 90s.">Remove redundant licenses.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-17T20:51:02-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-17 20:51:02 -0700">May 17, 2014</time></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="icon">
+        <span class="octicon octicon-file-text"></span>
+        <img alt="" class="spinner" height="16" src="https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif" width="16" />
+      </td>
+      <td class="content">
+        <span class="css-truncate css-truncate-target"><a href="/rgrove/sanitize/blob/dev-3.0.0/sanitize.gemspec" class="js-directory-link" id="b54405cb6293bf0eed12ec79eee871c8-f8b56a2a688848f3cea0e8e4155ede4f0c524753" title="sanitize.gemspec">sanitize.gemspec</a></span>
+      </td>
+      <td class="message">
+        <span class="css-truncate css-truncate-target ">
+          <a href="/rgrove/sanitize/commit/8c29d8480a3d2db7279ccf9c336b6498230e1bd5" class="message" data-pjax="true" title="Require Minitest ~&gt; 5.3.4.">Require Minitest ~&gt; 5.3.4.</a>
+        </span>
+      </td>
+      <td class="age">
+        <span class="css-truncate css-truncate-target"><time datetime="2014-05-17T15:36:08-07:00" is="relative-time" title-format="%Y-%m-%d %H:%M:%S %z" title="2014-05-17 15:36:08 -0700">May 17, 2014</time></span>
+      </td>
+    </tr>
+</tbody>
+
+    </table>
+  </div>
+
+
+  <div id="readme" class="clearfix announce instapaper_body md">
+    <span class="name">
+      <span class="octicon octicon-book"></span>
+      README.md
+    </span>
+
+    <article class="markdown-body entry-content" itemprop="mainContentOfPage"><h1>
+<a name="user-content-sanitize" class="anchor" href="#sanitize"><span class="octicon octicon-link"></span></a>Sanitize</h1>
+
+<p>Sanitize is a whitelist-based HTML sanitizer. Given a list of acceptable
+elements and attributes, Sanitize will remove all unacceptable HTML from a
+string.</p>
+
+<p>Using a simple configuration syntax, you can tell Sanitize to allow certain
+elements, certain attributes within those elements, and even certain URL
+protocols within attributes that contain URLs. Any HTML elements or attributes
+that you don't explicitly allow will be removed.</p>
+
+<p>Sanitize is based on <a href="https://github.com/google/gumbo-parser">Google's Gumbo HTML5 parser</a>, which parses HTML
+exactly the same way modern browsers do. As long as your whitelist config only
+allows safe markup, even the most malformed or malicious input will be
+transformed into safe output.</p>
+
+<p><a href="https://travis-ci.org/rgrove/sanitize"><img src="https://camo.githubusercontent.com/8cbb6b37206c06dca9aad142aeabdb2db8a5614b/68747470733a2f2f7472617669732d63692e6f72672f7267726f76652f73616e6974697a652e7376673f6272616e63683d6d6173746572" alt="Build Status" data-canonical-src="https://travis-ci.org/rgrove/sanitize.svg?branch=master" style="max-width:100%;"></a>
+<a href="http://badge.fury.io/rb/sanitize"><img src="https://camo.githubusercontent.com/f74d6ba1eba40a388a496b343275302bdb4260d5/68747470733a2f2f62616467652e667572792e696f2f72622f73616e6974697a652e737667" alt="Gem Version" data-canonical-src="https://badge.fury.io/rb/sanitize.svg" style="max-width:100%;"></a></p>
+
+<h2>
+<a name="user-content-links" class="anchor" href="#links"><span class="octicon octicon-link"></span></a>Links</h2>
+
+<ul class="task-list">
+<li><a href="https://github.com/rgrove/sanitize/">Home</a></li>
+<li><a href="http://rubydoc.info/github/rgrove/sanitize/master">API Docs</a></li>
+<li><a href="https://github.com/rgrove/sanitize/issues">Issues</a></li>
+</ul><h2>
+<a name="user-content-installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<pre><code>gem install sanitize
+</code></pre>
+
+<h2>
+<a name="user-content-usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Sanitize can sanitize both HTML fragments and fully qualified documents.</p>
+
+<h3>
+<a name="user-content-fragments" class="anchor" href="#fragments"><span class="octicon octicon-link"></span></a>Fragments</h3>
+
+<p>A fragment is a snippet of HTML that doesn't contain a root-level <code>&lt;html&gt;</code>
+element.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">html</span> <span class="o">=</span> <span class="s1">'&lt;b&gt;&lt;a href="http://foo.com/"&gt;foo&lt;/a&gt;&lt;/b&gt;&lt;img src="bar.jpg"&gt;'</span>
+
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+<span class="c1"># =&gt; 'foo'</span>
+</pre></div>
+
+<p>If you don't specify any configuration options, Sanitize will use its strictest
+settings by default, which means it will strip all HTML and leave only safe text
+behind.</p>
+
+<p>To keep certain elements, add them to the element whitelist.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="ss">:elements</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'b'</span><span class="o">]</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;b&gt;foo&lt;/b&gt;'</span>
+</pre></div>
+
+<h3>
+<a name="user-content-documents" class="anchor" href="#documents"><span class="octicon octicon-link"></span></a>Documents</h3>
+
+<p>When sanitizing a document, the <code>&lt;html&gt;</code> element must be whitelisted. You can
+also set <code>:allow_doctype</code> to <code>true</code> to allow well-formed document type
+definitions.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">html</span> <span class="o">=</span> <span class="sx">%[</span>
+<span class="sx">  &lt;!DOCTYPE html&gt;</span>
+<span class="sx">  &lt;html&gt;</span>
+<span class="sx">    &lt;b&gt;&lt;a href="http://foo.com/"&gt;foo&lt;/a&gt;&lt;/b&gt;&lt;img src="bar.jpg"&gt;</span>
+<span class="sx">  &lt;/html&gt;</span>
+<span class="sx">]</span>
+
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">document</span><span class="p">(</span><span class="n">html</span><span class="p">,</span>
+  <span class="ss">:allow_doctype</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+  <span class="ss">:elements</span>      <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'html'</span><span class="o">]</span>
+<span class="p">)</span>
+<span class="c1"># =&gt; "&lt;!DOCTYPE html&gt;\n&lt;html&gt;foo\n  \n&lt;/html&gt;\n"</span>
+</pre></div>
+
+<h2>
+<a name="user-content-configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<p>In addition to the ultra-safe default settings, Sanitize comes with three other
+built-in configurations that you can use out of the box or adapt to meet your
+needs.</p>
+
+<h3>
+<a name="user-content-sanitizeconfigrestricted" class="anchor" href="#sanitizeconfigrestricted"><span class="octicon octicon-link"></span></a>Sanitize::Config::RESTRICTED</h3>
+
+<p>Allows only very simple inline markup. No links, images, or block elements.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">RESTRICTED</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;b&gt;foo&lt;/b&gt;'</span>
+</pre></div>
+
+<h3>
+<a name="user-content-sanitizeconfigbasic" class="anchor" href="#sanitizeconfigbasic"><span class="octicon octicon-link"></span></a>Sanitize::Config::BASIC</h3>
+
+<p>Allows a variety of markup including formatting elements, links, and lists.</p>
+
+<p>Images and tables are not allowed, links are limited to FTP, HTTP, HTTPS, and
+mailto protocols, and a <code>rel="nofollow"</code> attribute is added to all links to
+mitigate SEO spam.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">BASIC</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;b&gt;&lt;a href="http://foo.com/" rel="nofollow"&gt;foo&lt;/a&gt;&lt;/b&gt;'</span>
+</pre></div>
+
+<h3>
+<a name="user-content-sanitizeconfigrelaxed" class="anchor" href="#sanitizeconfigrelaxed"><span class="octicon octicon-link"></span></a>Sanitize::Config::RELAXED</h3>
+
+<p>Allows an even wider variety of markup, including images and tables. Links are
+still limited to FTP, HTTP, HTTPS, and mailto protocols, while images are
+limited to HTTP and HTTPS. In this mode, <code>rel="nofollow"</code> is not added to links.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">RELAXED</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;b&gt;&lt;a href="http://foo.com/"&gt;foo&lt;/a&gt;&lt;/b&gt;&lt;img src="bar.jpg"&gt;'</span>
+</pre></div>
+
+<h3>
+<a name="user-content-custom-configuration" class="anchor" href="#custom-configuration"><span class="octicon octicon-link"></span></a>Custom Configuration</h3>
+
+<p>If the built-in modes don't meet your needs, you can easily specify a custom
+configuration:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span>
+  <span class="ss">:elements</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'span'</span><span class="o">]</span><span class="p">,</span>
+
+  <span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="s1">'a'</span>    <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'href'</span><span class="p">,</span> <span class="s1">'title'</span><span class="o">]</span><span class="p">,</span>
+    <span class="s1">'span'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'class'</span><span class="o">]</span>
+  <span class="p">},</span>
+
+  <span class="ss">:protocols</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="s1">'a'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'href'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'http'</span><span class="p">,</span> <span class="s1">'https'</span><span class="p">,</span> <span class="s1">'mailto'</span><span class="o">]</span><span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+
+<p>You can also start with one of Sanitize's built-in configurations and then
+customize it to meet your needs.</p>
+
+<p>The built-in configs are deeply frozen to prevent people from modifying them
+(either accidentally or maliciously). To customize a built-in config, create a
+new copy using <code>Sanitize::Config.merge()</code>, like so:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># Create a customized copy of the Basic config, adding &lt;div&gt; and &lt;table&gt; to the</span>
+<span class="c1"># existing whitelisted elements.</span>
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">BASIC</span><span class="p">,</span>
+  <span class="ss">:elements</span>        <span class="o">=&gt;</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">BASIC</span><span class="o">[</span><span class="ss">:elements</span><span class="o">]</span> <span class="o">+</span> <span class="o">[</span><span class="s1">'div'</span><span class="p">,</span> <span class="s1">'table'</span><span class="o">]</span><span class="p">,</span>
+  <span class="ss">:remove_contents</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+<span class="p">))</span>
+</pre></div>
+
+<p>The example above adds the <code>&lt;div&gt;</code> and <code>&lt;table&gt;</code> elements to a copy of the
+existing list of elements in <code>Sanitize::Config::BASIC</code>. If you instead want to
+completely overwrite the elements array with your own, you can omit the <code>+</code>
+operation:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># Overwrite :elements instead of creating a copy with new entries.</span>
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="no">Sanitize</span><span class="o">::</span><span class="no">Config</span><span class="o">::</span><span class="no">BASIC</span><span class="p">,</span>
+  <span class="ss">:elements</span>        <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'div'</span><span class="p">,</span> <span class="s1">'table'</span><span class="o">]</span><span class="p">,</span>
+  <span class="ss">:remove_contents</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+<span class="p">))</span>
+</pre></div>
+
+<h3>
+<a name="user-content-config-settings" class="anchor" href="#config-settings"><span class="octicon octicon-link"></span></a>Config Settings</h3>
+
+<h4>
+<a name="user-content-add_attributes-hash" class="anchor" href="#add_attributes-hash"><span class="octicon octicon-link"></span></a>:add_attributes (Hash)</h4>
+
+<p>Attributes to add to specific elements. If the attribute already exists, it will
+be replaced with the value specified here. Specify all element names and
+attributes in lowercase.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:add_attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'a'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'rel'</span> <span class="o">=&gt;</span> <span class="s1">'nofollow'</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
+<a name="user-content-allow_comments-boolean" class="anchor" href="#allow_comments-boolean"><span class="octicon octicon-link"></span></a>:allow_comments (boolean)</h4>
+
+<p>Whether or not to allow HTML comments. Allowing comments is strongly
+discouraged, since IE allows script execution within conditional comments. The
+default value is <code>false</code>.</p>
+
+<h4>
+<a name="user-content-allow_doctype-boolean" class="anchor" href="#allow_doctype-boolean"><span class="octicon octicon-link"></span></a>:allow_doctype (boolean)</h4>
+
+<p>Whether or not to allow well-formed HTML doctype declarations such as "&lt;!DOCTYPE
+html&gt;" when sanitizing a document. This setting is ignored when sanitizing
+fragments. The default value is <code>false</code>.</p>
+
+<h4>
+<a name="user-content-attributes-hash" class="anchor" href="#attributes-hash"><span class="octicon octicon-link"></span></a>:attributes (Hash)</h4>
+
+<p>Attributes to allow on specific elements. Specify all element names and
+attributes in lowercase.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'a'</span>          <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'href'</span><span class="p">,</span> <span class="s1">'title'</span><span class="o">]</span><span class="p">,</span>
+  <span class="s1">'blockquote'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'cite'</span><span class="o">]</span><span class="p">,</span>
+  <span class="s1">'img'</span>        <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'alt'</span><span class="p">,</span> <span class="s1">'src'</span><span class="p">,</span> <span class="s1">'title'</span><span class="o">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>If you'd like to allow certain attributes on all elements, use the symbol <code>:all</code>
+instead of an element name.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># Allow the class attribute on all elements.</span>
+<span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="ss">:all</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'class'</span><span class="o">]</span><span class="p">,</span>
+  <span class="s1">'a'</span>  <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'href'</span><span class="p">,</span> <span class="s1">'title'</span><span class="o">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>To allow arbitrary HTML5 <code>data-*</code> attributes, use the symbol <code>:data</code> in place of
+an attribute name.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># Allow arbitrary HTML5 data-* attributes on &lt;div&gt; elements.</span>
+<span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'div'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:data</span><span class="o">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
+<a name="user-content-elements-array" class="anchor" href="#elements-array"><span class="octicon octicon-link"></span></a>:elements (Array)</h4>
+
+<p>Array of HTML element names to allow. Specify all names in lowercase. Any
+elements not in this array will be removed.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:elements</span> <span class="o">=&gt;</span> <span class="sx">%w[</span>
+<span class="sx">  a abbr b blockquote br cite code dd dfn dl dt em i kbd li mark ol p pre</span>
+<span class="sx">  q s samp small strike strong sub sup time u ul var</span>
+<span class="sx">]</span>
+</pre></div>
+
+<h4>
+<a name="user-content-protocols-hash" class="anchor" href="#protocols-hash"><span class="octicon octicon-link"></span></a>:protocols (Hash)</h4>
+
+<p>URL protocols to allow in specific attributes. If an attribute is listed here
+and contains a protocol other than those specified (or if it contains no
+protocol at all), it will be removed.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:protocols</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'a'</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'href'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'ftp'</span><span class="p">,</span> <span class="s1">'http'</span><span class="p">,</span> <span class="s1">'https'</span><span class="p">,</span> <span class="s1">'mailto'</span><span class="o">]</span><span class="p">},</span>
+  <span class="s1">'img'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'src'</span>  <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'http'</span><span class="p">,</span> <span class="s1">'https'</span><span class="o">]</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>If you'd like to allow the use of relative URLs which don't have a protocol,
+include the symbol <code>:relative</code> in the protocol array:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:protocols</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'a'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="s1">'href'</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="s1">'http'</span><span class="p">,</span> <span class="s1">'https'</span><span class="p">,</span> <span class="ss">:relative</span><span class="o">]</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
+<a name="user-content-remove_contents-boolean-or-array" class="anchor" href="#remove_contents-boolean-or-array"><span class="octicon octicon-link"></span></a>:remove_contents (boolean or Array)</h4>
+
+<p>If set to <code>true</code>, Sanitize will remove the contents of any non-whitelisted
+elements in addition to the elements themselves. By default, Sanitize leaves the
+safe parts of an element's contents behind when the element is removed.</p>
+
+<p>If set to an array of element names, then only the contents of the specified
+elements (when filtered) will be removed, and the contents of all other filtered
+elements will be left behind.</p>
+
+<p>The default value is <code>false</code>.</p>
+
+<h4>
+<a name="user-content-transformers" class="anchor" href="#transformers"><span class="octicon octicon-link"></span></a>:transformers</h4>
+
+<p>Custom transformer or array of custom transformers. See the Transformers section
+below for details.</p>
+
+<h4>
+<a name="user-content-whitespace_elements-hash" class="anchor" href="#whitespace_elements-hash"><span class="octicon octicon-link"></span></a>:whitespace_elements (Hash)</h4>
+
+<p>Hash of element names which, when removed, should have their contents surrounded
+by whitespace to preserve readability.</p>
+
+<p>Each element name is a key pointing to another Hash, which provides the specific
+whitespace that should be inserted <code>:before</code> and <code>:after</code> the removed element's
+position. The <code>:after</code> value will only be inserted if the removed element has
+children, in which case it will be inserted after those children.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="ss">:whitespace_elements</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="s1">'br'</span>  <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">:before</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="ss">:after</span> <span class="o">=&gt;</span> <span class="s2">""</span> <span class="p">},</span>
+  <span class="s1">'div'</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">:before</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="ss">:after</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="p">},</span>
+  <span class="s1">'p'</span>   <span class="o">=&gt;</span> <span class="p">{</span> <span class="ss">:before</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="ss">:after</span> <span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="user-content-transformers-1" class="anchor" href="#transformers-1"><span class="octicon octicon-link"></span></a>Transformers</h2>
+
+<p>Transformers allow you to filter and modify nodes using your own custom logic,
+on top of (or instead of) Sanitize's core filter. A transformer is any object
+that responds to <code>call()</code> (such as a lambda or proc).</p>
+
+<p>To use one or more transformers, pass them to the <code>:transformers</code> config
+setting. You may pass a single transformer or an array of transformers.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="ss">:transformers</span> <span class="o">=&gt;</span> <span class="o">[</span>
+  <span class="n">transformer_one</span><span class="p">,</span>
+  <span class="n">transformer_two</span>
+<span class="o">]</span><span class="p">)</span>
+</pre></div>
+
+<h3>
+<a name="user-content-input" class="anchor" href="#input"><span class="octicon octicon-link"></span></a>Input</h3>
+
+<p>Each transformer's <code>call()</code> method will be called once for each node in the HTML
+(including elements, text nodes, comments, etc.), and will receive as an
+argument a Hash that contains the following items:</p>
+
+<ul class="task-list">
+<li><p><strong>:config</strong> - The current Sanitize configuration Hash.</p></li>
+<li><p><strong>:is_whitelisted</strong> - <code>true</code> if the current node has been whitelisted by a
+previous transformer, <code>false</code> otherwise. It's generally bad form to remove
+a node that a previous transformer has whitelisted.</p></li>
+<li><p><strong>:node</strong> - A <code>Nokogiri::XML::Node</code> object representing an HTML node. The
+node may be an element, a text node, a comment, a CDATA node, or a document
+fragment. Use Nokogiri's inspection methods (<code>element?</code>, <code>text?</code>, etc.) to
+selectively ignore node types you aren't interested in.</p></li>
+<li><p><strong>:node_name</strong> - The name of the current HTML node, always lowercase (e.g.
+"div" or "span"). For non-element nodes, the name will be something like
+"text", "comment", "#cdata-section", "#document-fragment", etc.</p></li>
+<li><p><strong>:node_whitelist</strong> - Set of <code>Nokogiri::XML::Node</code> objects in the current
+document that have been whitelisted by previous transformers, if any. It's
+generally bad form to remove a node that a previous transformer has
+whitelisted.</p></li>
+</ul><h3>
+<a name="user-content-output" class="anchor" href="#output"><span class="octicon octicon-link"></span></a>Output</h3>
+
+<p>A transformer doesn't have to return anything, but may optionally return a Hash,
+which may contain the following items:</p>
+
+<ul class="task-list">
+<li>
+<strong>:node_whitelist</strong> -  Array or Set of specific Nokogiri::XML::Node objects
+to add to the document's whitelist, bypassing the current Sanitize config.
+These specific nodes and all their attributes will be whitelisted, but
+their children will not be.</li>
+</ul><p>If a transformer returns anything other than a Hash, the return value will be
+ignored.</p>
+
+<h3>
+<a name="user-content-processing" class="anchor" href="#processing"><span class="octicon octicon-link"></span></a>Processing</h3>
+
+<p>Each transformer has full access to the <code>Nokogiri::XML::Node</code> that's passed into
+it and to the rest of the document via the node's <code>document()</code> method. Any
+changes made to the current node or to the document will be reflected instantly
+in the document and passed on to subsequently called transformers and to
+Sanitize itself. A transformer may even call Sanitize internally to perform
+custom sanitization if needed.</p>
+
+<p>Nodes are passed into transformers in the order in which they're traversed.
+Sanitize performs top-down traversal, meaning that nodes are traversed in the
+same order you'd read them in the HTML, starting at the top node, then its first
+child, and so on.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">html</span> <span class="o">=</span> <span class="sx">%[</span>
+<span class="sx">  &lt;header&gt;</span>
+<span class="sx">    &lt;span&gt;</span>
+<span class="sx">      &lt;strong&gt;foo&lt;/strong&gt;</span>
+<span class="sx">    &lt;/span&gt;</span>
+<span class="sx">    &lt;p&gt;bar&lt;/p&gt;</span>
+<span class="sx">  &lt;/header&gt;</span>
+
+<span class="sx">  &lt;footer&gt;&lt;/footer&gt;</span>
+<span class="sx">]</span>
+
+<span class="n">transformer</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="n">env</span><span class="o">[</span><span class="ss">:node_name</span><span class="o">]</span> <span class="k">if</span> <span class="n">env</span><span class="o">[</span><span class="ss">:node</span><span class="o">].</span><span class="n">element?</span>
+<span class="k">end</span>
+
+<span class="c1"># Prints "header", "span", "strong", "p", "footer".</span>
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="ss">:transformers</span> <span class="o">=&gt;</span> <span class="n">transformer</span><span class="p">)</span>
+</pre></div>
+
+<p>Transformers have a tremendous amount of power, including the power to
+completely bypass Sanitize's built-in filtering. Be careful! Your safety is in
+your own hands.</p>
+
+<h3>
+<a name="user-content-example-transformer-to-whitelist-youtube-video-embeds" class="anchor" href="#example-transformer-to-whitelist-youtube-video-embeds"><span class="octicon octicon-link"></span></a>Example: Transformer to whitelist YouTube video embeds</h3>
+
+<p>The following example demonstrates how to create a transformer that will safely
+whitelist valid YouTube video embeds without having to blindly allow other kinds
+of embedded content, which would be the case if you tried to do this by just
+whitelisting all <code>&lt;iframe&gt;</code> elements:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">youtube_transformer</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="n">node</span>      <span class="o">=</span> <span class="n">env</span><span class="o">[</span><span class="ss">:node</span><span class="o">]</span>
+  <span class="n">node_name</span> <span class="o">=</span> <span class="n">env</span><span class="o">[</span><span class="ss">:node_name</span><span class="o">]</span>
+
+  <span class="c1"># Don't continue if this node is already whitelisted or is not an element.</span>
+  <span class="k">return</span> <span class="k">if</span> <span class="n">env</span><span class="o">[</span><span class="ss">:is_whitelisted</span><span class="o">]</span> <span class="o">||</span> <span class="o">!</span><span class="n">node</span><span class="o">.</span><span class="n">element?</span>
+
+  <span class="c1"># Don't continue unless the node is an iframe.</span>
+  <span class="k">return</span> <span class="k">unless</span> <span class="n">node_name</span> <span class="o">==</span> <span class="s1">'iframe'</span>
+
+  <span class="c1"># Verify that the video URL is actually a valid YouTube video URL.</span>
+  <span class="k">return</span> <span class="k">unless</span> <span class="n">node</span><span class="o">[</span><span class="s1">'src'</span><span class="o">]</span> <span class="o">=~</span> <span class="sr">%r|\A(?:https?:)?//(?:www\.)?youtube(?:-nocookie)?\.com/|</span>
+
+  <span class="c1"># We're now certain that this is a YouTube embed, but we still need to run</span>
+  <span class="c1"># it through a special Sanitize step to ensure that no unwanted elements or</span>
+  <span class="c1"># attributes that don't belong in a YouTube embed can sneak in.</span>
+  <span class="no">Sanitize</span><span class="o">.</span><span class="n">node!</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">{</span>
+    <span class="ss">:elements</span> <span class="o">=&gt;</span> <span class="sx">%w[iframe]</span><span class="p">,</span>
+
+    <span class="ss">:attributes</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="s1">'iframe'</span>  <span class="o">=&gt;</span> <span class="sx">%w[allowfullscreen frameborder height src width]</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+
+  <span class="c1"># Now that we're sure that this is a valid YouTube embed and that there are</span>
+  <span class="c1"># no unwanted elements or attributes hidden inside it, we can tell Sanitize</span>
+  <span class="c1"># to whitelist the current node.</span>
+  <span class="p">{</span><span class="ss">:node_whitelist</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="n">node</span><span class="o">]</span><span class="p">}</span>
+<span class="k">end</span>
+
+<span class="n">html</span> <span class="o">=</span> <span class="sx">%[</span>
+<span class="sx">&lt;iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ"</span>
+<span class="sx">    frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;</span>
+<span class="sx">]</span>
+
+<span class="no">Sanitize</span><span class="o">.</span><span class="n">fragment</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="ss">:transformers</span> <span class="o">=&gt;</span> <span class="n">youtube_transformer</span><span class="p">)</span>
+<span class="c1"># =&gt; '&lt;iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen=""&gt;&lt;/iframe&gt;'</span>
+</pre></div>
+
+<h2>
+<a name="user-content-license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright (c) 2014 Ryan Grove (<a href="mailto:ryan@wonko.com">ryan@wonko.com</a>)</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the 'Software'), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p></article>
+  </div>
+
+
+        </div>
+
+      </div><!-- /.repo-container -->
+      <div class="modal-backdrop"></div>
+    </div><!-- /.container -->
+  </div><!-- /.site -->
+
+
+    </div><!-- /.wrapper -->
+
+      <div class="container">
+  <div class="site-footer">
+    <ul class="site-footer-links right">
+      <li><a href="https://status.github.com/">Status</a></li>
+      <li><a href="http://developer.github.com">API</a></li>
+      <li><a href="http://training.github.com">Training</a></li>
+      <li><a href="http://shop.github.com">Shop</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/about">About</a></li>
+
+    </ul>
+
+    <a href="/">
+      <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+    </a>
+
+    <ul class="site-footer-links">
+      <li>&copy; 2014 <span title="0.08040s from github-fe124-cp1-prd.iad.github.net">GitHub</span>, Inc.</li>
+        <li><a href="/site/terms">Terms</a></li>
+        <li><a href="/site/privacy">Privacy</a></li>
+        <li><a href="/security">Security</a></li>
+        <li><a href="/contact">Contact</a></li>
+    </ul>
+  </div><!-- /.site-footer -->
+</div><!-- /.container -->
+
+
+    <div class="fullscreen-overlay js-fullscreen-overlay" id="fullscreen_overlay">
+  <div class="fullscreen-container js-fullscreen-container">
+    <div class="textarea-wrap">
+      <textarea name="fullscreen-contents" id="fullscreen-contents" class="fullscreen-contents js-fullscreen-contents" placeholder="" data-suggester="fullscreen_suggester"></textarea>
+    </div>
+  </div>
+  <div class="fullscreen-sidebar">
+    <a href="#" class="exit-fullscreen js-exit-fullscreen tooltipped tooltipped-w" aria-label="Exit Zen Mode">
+      <span class="mega-octicon octicon-screen-normal"></span>
+    </a>
+    <a href="#" class="theme-switcher js-theme-switcher tooltipped tooltipped-w"
+      aria-label="Switch themes">
+      <span class="octicon octicon-color-mode"></span>
+    </a>
+  </div>
+</div>
+
+
+
+    <div id="ajax-error-message" class="flash flash-error">
+      <span class="octicon octicon-alert"></span>
+      <a href="#" class="octicon octicon-remove-close close js-ajax-error-dismiss"></a>
+      Something went wrong with that request. Please try again.
+    </div>
+
+
+      <script crossorigin="anonymous" src="https://assets-cdn.github.com/assets/frameworks-9027ad6a9d00434697fea4d0143670c6fb7b2471.js" type="text/javascript"></script>
+      <script async="async" crossorigin="anonymous" src="https://assets-cdn.github.com/assets/github-cb8ceb101dbfeeab8bc4a2ee07ea2e5bdd668289.js" type="text/javascript"></script>
+
+
+  </body>
+</html>
