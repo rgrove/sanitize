@@ -60,7 +60,8 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
   allowed in fragments, regardless of this setting.
 
 * Added the following elements to the relaxed config: `article`, `aside`,
-  `data`, `div`, `footer`, `header`, `main`, `nav`, `section`, `span`.
+  `body`, `data`, `div`, `footer`, `head`, `header`, `html`, `main`, `nav`,
+  `section`, `span`, `title`.
 
 * Fixed: Non-tag brackets in input like `"1 > 2 and 2 < 1"` are now parsed and
   escaped correctly in accordance with the HTML5 spec, becoming
