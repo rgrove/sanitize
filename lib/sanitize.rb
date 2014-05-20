@@ -4,6 +4,7 @@ require 'nokogumbo'
 require 'set'
 
 require_relative 'sanitize/version'
+require_relative 'sanitize/config'
 require_relative 'sanitize/config/default'
 require_relative 'sanitize/config/restricted'
 require_relative 'sanitize/config/basic'
@@ -59,7 +60,7 @@ class Sanitize
 
   # Returns a new Sanitize object initialized with the settings in _config_.
   def initialize(config = {})
-    @config = Config::DEFAULT.merge(config)
+    @config = Config.merge(Config::DEFAULT, config)
 
     @transformers = Array(@config[:transformers].dup)
 

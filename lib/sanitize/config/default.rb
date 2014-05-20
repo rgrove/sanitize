@@ -2,7 +2,7 @@
 
 class Sanitize
   module Config
-    DEFAULT = {
+    DEFAULT = freeze_config(
       # HTML attributes to add to specific elements. By default, no attributes
       # are added.
       :add_attributes => {},
@@ -77,6 +77,6 @@ class Sanitize
         'section'    => { :before => ' ', :after => ' ' },
         'ul'         => { :before => ' ', :after => ' ' }
       }
-    }
+    )
   end
 end

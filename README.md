@@ -143,6 +143,37 @@ Sanitize.fragment(html,
 )
 ```
 
+You can also start with one of Sanitize's built-in configurations and then
+customize it to meet your needs.
+
+The built-in configs are deeply frozen to prevent people from modifying them
+(either accidentally or maliciously). To customize a built-in config, create a
+new copy using `Sanitize::Config.merge()`, like so:
+
+```ruby
+# Create a customized copy of the Basic config, adding <div> and <table> to the
+# existing whitelisted elements.
+Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
+  :elements        => Sanitize::Config::BASIC[:elements] + ['div', 'table'],
+  :remove_contents => true
+))
+```
+
+The example above adds the `<div>` and `<table>` elements to a copy of the
+existing list of elements in `Sanitize::Config::BASIC`. If you instead want to
+completely overwrite the elements array with your own, you can omit the `+`
+operation:
+
+```ruby
+# Overwrite :elements instead of creating a copy with new entries.
+Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
+  :elements        => ['div', 'table'],
+  :remove_contents => true
+))
+```
+
+### Config Settings
+
 #### :add_attributes (Hash)
 
 Attributes to add to specific elements. If the attribute already exists, it will
@@ -270,7 +301,7 @@ children, in which case it will be inserted after those children.
 }
 ```
 
-### Transformers
+## Transformers
 
 Transformers allow you to filter and modify nodes using your own custom logic,
 on top of (or instead of) Sanitize's core filter. A transformer is any object
@@ -286,7 +317,7 @@ Sanitize.fragment(html, :transformers => [
 ])
 ```
 
-#### Input
+### Input
 
 Each transformer's `call()` method will be called once for each node in the HTML
 (including elements, text nodes, comments, etc.), and will receive as an
@@ -312,7 +343,7 @@ argument a Hash that contains the following items:
     generally bad form to remove a node that a previous transformer has
     whitelisted.
 
-#### Output
+### Output
 
 A transformer doesn't have to return anything, but may optionally return a Hash,
 which may contain the following items:
@@ -325,7 +356,7 @@ which may contain the following items:
 If a transformer returns anything other than a Hash, the return value will be
 ignored.
 
-#### Processing
+### Processing
 
 Each transformer has full access to the `Nokogiri::XML::Node` that's passed into
 it and to the rest of the document via the node's `document()` method. Any
@@ -363,7 +394,7 @@ Transformers have a tremendous amount of power, including the power to
 completely bypass Sanitize's built-in filtering. Be careful! Your safety is in
 your own hands.
 
-#### Example: Transformer to whitelist YouTube video embeds
+### Example: Transformer to whitelist YouTube video embeds
 
 The following example demonstrates how to create a transformer that will safely
 whitelist valid YouTube video embeds without having to blindly allow other kinds

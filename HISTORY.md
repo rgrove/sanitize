@@ -23,6 +23,17 @@ increment.
   config has been removed, and old bottom-up transformers (the previous default)
   may need to be rewritten.
 
+* Sanitize's built-in configs are now deeply frozen to prevent people from
+  modifying them (either accidentally or maliciously). To customize a built-in
+  config, create a new copy using `Sanitize::Config.merge()`, like so:
+
+```ruby
+Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
+  :elements        => Sanitize::Config::BASIC[:elements] + ['div', 'table'],
+  :remove_contents => true
+))
+```
+
 * The `clean!` and `clean_document!` methods were removed, since they weren't
   useful and tended to confuse people.
 
