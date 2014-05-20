@@ -3,18 +3,18 @@
 class Sanitize
   module Config
     BASIC = freeze_config(
-      :elements => %w[
-        a abbr b blockquote br cite code dd dfn dl dt em i kbd li mark ol p pre
-        q s samp small strike strong sub sup time u ul var
+      :elements => RESTRICTED[:elements] + %w[
+        a abbr blockquote br cite code dd dfn dl dt kbd li mark ol p pre q s
+        samp small strike sub sup time ul var
       ],
 
       :attributes => {
-        'a'          => ['href'],
-        'abbr'       => ['title'],
-        'blockquote' => ['cite'],
-        'dfn'        => ['title'],
-        'q'          => ['cite'],
-        'time'       => ['datetime', 'pubdate']
+        'a'          => %w[href],
+        'abbr'       => %w[title],
+        'blockquote' => %w[cite],
+        'dfn'        => %w[title],
+        'q'          => %w[cite],
+        'time'       => %w[datetime pubdate]
       },
 
       :add_attributes => {
