@@ -13,7 +13,7 @@ class Sanitize
       :allow_doctype => true,
 
       :attributes => merge(BASIC[:attributes],
-        :all       => %w[class dir id lang title translate],
+        :all       => %w[class dir hidden id lang tabindex title translate],
         'a'        => %w[href hreflang name rel],
         'col'      => %w[span width],
         'colgroup' => %w[span width],
