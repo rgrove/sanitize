@@ -10,7 +10,7 @@ describe 'Config' do
 
     if Hash === config
       config.each_value {|v| verify_deeply_frozen(v) }
-    elsif Array === config
+    elsif Set === config || Array === config
       config.each {|v| verify_deeply_frozen(v) }
     end
   end
@@ -24,7 +24,7 @@ describe 'Config' do
 
   describe '.freeze_config' do
     it 'should deeply freeze and return a configuration Hash' do
-      a = {:one => {:one_one => [0, '1', :a], :one_two => false}}
+      a = {:one => {:one_one => [0, '1', :a], :one_two => false, :one_three => Set.new([:a, :b, :c])}}
       b = Sanitize::Config.freeze_config(a)
 
       b.must_be_same_as a
@@ -35,7 +35,7 @@ describe 'Config' do
   describe '.merge' do
     it 'should deeply merge a configuration Hash' do
       # Freeze to ensure that we get an error if either Hash is modified.
-      a = Sanitize::Config.freeze_config({:one => {:one_one => [0, '1', :a], :one_two => false}})
+      a = Sanitize::Config.freeze_config({:one => {:one_one => [0, '1', :a], :one_two => false, :one_three => Set.new([:a, :b, :c])}})
       b = Sanitize::Config.freeze_config({:one => {:one_two => true, :one_three => 3}, :two => 2})
 
       c = Sanitize::Config.merge(a, b)

@@ -22,6 +22,27 @@ class Sanitize
       # data-* attributes should be allowed.
       :attributes => {},
 
+      # CSS sanitization settings.
+      :css => {
+        # Whether or not to allow CSS comments.
+        :allow_comments => false,
+
+        # Whether or not to allow browser compatibility hacks such as the IE *
+        # and _ hacks. These are generally harmless, but technically result in
+        # invalid CSS.
+        :allow_hacks => false,
+
+        # CSS @ rules to allow.
+        # https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule
+        :at_rules => Set.new,
+
+        # CSS style properties to allow.
+        :properties => Set.new,
+
+        # URL protocols to allow in CSS URLs.
+        :protocols => Set.new
+      },
+
       # HTML elements to allow. By default, no elements are allowed (which means
       # that all HTML will be stripped).
       :elements => [],
@@ -42,7 +63,7 @@ class Sanitize
       :remove_contents => false,
 
       # Transformers allow you to filter or alter nodes using custom logic. See
-      # README.rdoc for details and examples.
+      # README.md for details and examples.
       :transformers => [],
 
       # Elements which, when removed, should have their contents surrounded by

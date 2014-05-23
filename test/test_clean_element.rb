@@ -7,12 +7,12 @@ describe 'Sanitize::Transformers::CleanElement' do
 
   strings = {
     :basic => {
-      :html       => '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>',
+      :html       => '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo" style="text-decoration: underline;">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <style>.foo { color: #fff; }</style> <script>alert("hello world");</script>',
 
-      :default    => 'Lorem ipsum dolor sit amet alert("hello world");',
-      :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sit amet alert("hello world");',
-      :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet alert("hello world");',
-      :relaxed    => '<b>Lorem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet alert("hello world");'
+      :default    => 'Lorem ipsum dolor sit amet .foo { color: #fff; } alert("hello world");',
+      :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sit amet .foo { color: #fff; } alert("hello world");',
+      :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet .foo { color: #fff; } alert("hello world");',
+      :relaxed    => '<b>Lorem</b> <a href="pants" title="foo" style="text-decoration: underline;">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet <style>.foo { color: #fff; }</style> alert("hello world");'
     },
 
     :malformed => {

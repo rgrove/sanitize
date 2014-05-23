@@ -9,7 +9,7 @@ class Sanitize
     def self.freeze_config(config)
       if Hash === config
         config.each_value {|c| freeze_config(c) }
-      elsif Array === config
+      elsif Set === config || Array === config
         config.each {|c| freeze_config(c) }
       end
 

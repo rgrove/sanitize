@@ -3,7 +3,7 @@ require './lib/sanitize/version'
 
 Gem::Specification.new do |s|
   s.name     = 'sanitize'
-  s.summary  = 'Whitelist-based HTML sanitizer.'
+  s.summary  = 'Whitelist-based HTML and CSS sanitizer.'
   s.version  = Sanitize::VERSION
   s.authors  = ['Ryan Grove']
   s.email    = 'ryan@wonko.com'
@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new('>= 1.2.0')
 
   # Runtime dependencies.
+  s.add_dependency('crass',     '~> 0.2.0')
   s.add_dependency('nokogiri',  '>= 1.4.4')
   s.add_dependency('nokogumbo', '~> 1.1.5')
 

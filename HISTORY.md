@@ -54,6 +54,12 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 
 ### Other changes
 
+* Added advanced CSS sanitization support using [Crass][crass], which is fully
+  compliant with the CSS Syntax Module Level 3 parsing spec. The contents of
+  whitelisted `<style>` elements and `style` attributes in HTML will be
+  sanitized as CSS, or you can use the `Sanitize::CSS` class to manually
+  sanitize CSS stylesheets or properties.
+
 * Added an `:allow_doctype` setting. When `true`, well-formed doctype
   definitions will be allowed in documents. When `false` (the default), doctype
   definitions will be removed from documents. Doctype definitions are never
@@ -61,7 +67,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 
 * Added the following elements to the relaxed config, in addition to various
   attributes: `article`, `aside`, `body`, `data`, `div`, `footer`, `head`,
-  `header`, `html`, `main`, `nav`, `section`, `span`, `title`.
+  `header`, `html`, `main`, `nav`, `section`, `span`, `style`, `title`.
 
 * Fixed: Non-tag brackets in input like `"1 > 2 and 2 < 1"` are now parsed and
   escaped correctly in accordance with the HTML5 spec, becoming
@@ -78,6 +84,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
   content-type meta tag to be added to all documents with `<head>` elements.
   [Nokogiri #1008][n1008]
 
+[crass]:https://github.com/rgrove/crass
 [83]:https://github.com/rgrove/sanitize/issues/83
 [91]:https://github.com/rgrove/sanitize/issues/91
 [103]:https://github.com/rgrove/sanitize/issues/103

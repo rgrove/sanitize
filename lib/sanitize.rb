@@ -9,13 +9,22 @@ require_relative 'sanitize/config/default'
 require_relative 'sanitize/config/restricted'
 require_relative 'sanitize/config/basic'
 require_relative 'sanitize/config/relaxed'
+require_relative 'sanitize/css'
 require_relative 'sanitize/transformers/clean_cdata'
 require_relative 'sanitize/transformers/clean_comment'
+require_relative 'sanitize/transformers/clean_css'
 require_relative 'sanitize/transformers/clean_doctype'
 require_relative 'sanitize/transformers/clean_element'
 
 class Sanitize
   attr_reader :config
+
+  # Matches an attribute value that could be treated by a browser as a URL
+  # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
+  # or more characters followed by a colon is considered a match, even if the
+  # colon is encoded as an entity and even if it's an incomplete entity (which
+  # IE6 and Opera will still parse).
+  REGEX_PROTOCOL = /\A([^\/#]*?)(?:\:|&#0*58|&#x0*3a)/i
 
   #--
   # Class Methods
@@ -68,6 +77,14 @@ class Sanitize
     # transformers.
     @transformers << Transformers::CleanComment unless @config[:allow_comments]
     @transformers << Transformers::CleanDoctype unless @config[:allow_doctype]
+
+    if @config[:elements].include?('style')
+      @transformers << Transformers::CSS::CleanElement.new(@config)
+    end
+
+    if @config[:attributes].any? {|attr| attr.include?('style') }
+      @transformers << Transformers::CSS::CleanAttribute.new(@config)
+    end
 
     @transformers <<
         Transformers::CleanCDATA <<

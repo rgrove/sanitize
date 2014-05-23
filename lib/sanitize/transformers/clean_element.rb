@@ -18,13 +18,6 @@ class Sanitize; module Transformers; class CleanElement
   # http://www.whatwg.org/specs/web-apps/current-work/multipage/elements.html#embedding-custom-non-visible-data-with-the-data-*-attributes
   REGEX_DATA_ATTR = /\Adata-(?!xml)[a-z_][\w.\u00E0-\u00F6\u00F8-\u017F\u01DD-\u02AF-]*\z/u
 
-  # Matches an attribute value that could be treated by a browser as a URL
-  # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
-  # or more characters followed by a colon is considered a match, even if the
-  # colon is encoded as an entity and even if it's an incomplete entity (which
-  # IE6 and Opera will still parse).
-  REGEX_PROTOCOL = /\A([^\/#]*?)(?:\:|&#0*58|&#x0*3a)/i
-
   def initialize(config)
     @add_attributes          = config[:add_attributes]
     @attributes              = config[:attributes].dup
