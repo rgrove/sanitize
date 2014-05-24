@@ -175,24 +175,34 @@ class Sanitize; class CSS
 
     return nil unless @config[:properties].include?(name)
 
-    nodes = prop[:children].dup
+    nodes          = prop[:children].dup
+    combined_value = ''
 
     nodes.each do |child|
+      value = child[:value]
+
       case child[:node]
+      when :ident
+        combined_value << value if String === value
+
       when :function
         if child.key?(:name)
           return nil if child[:name].downcase == 'expression'
         end
 
-        if child[:value].is_a?(Array)
-          nodes.concat(child[:value])
-        else
-          return nil if child[:value].downcase == 'expression'
+        if Array === value
+          nodes.concat(value)
+        elsif String === value
+          combined_value << value
+
+          if value.downcase == 'expression' || combined_value.downcase == 'expression'
+            return nil
+          end
         end
 
       when :url
-        if child[:value].downcase =~ Sanitize::REGEX_PROTOCOL
-          return nil unless @config[:protocols].include?($1)
+        if value =~ Sanitize::REGEX_PROTOCOL
+          return nil unless @config[:protocols].include?($1.downcase)
         else
           return nil unless @config[:protocols].include?(:relative)
         end
