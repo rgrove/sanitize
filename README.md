@@ -1,23 +1,27 @@
 Sanitize
 ========
 
-Sanitize is a whitelist-based HTML sanitizer. Given a list of acceptable
-elements and attributes, Sanitize will remove all unacceptable HTML from a
-string.
+Sanitize is a whitelist-based HTML and CSS sanitizer. Given a list of acceptable
+elements, attributes, and CSS properties, Sanitize will remove all unacceptable
+HTML and/or CSS from a string.
 
-Using a simple configuration syntax, you can tell Sanitize to allow certain
+Using a simple configuration syntax, you can tell Sanitize to allow certain HTML
 elements, certain attributes within those elements, and even certain URL
-protocols within attributes that contain URLs. Any HTML elements or attributes
-that you don't explicitly allow will be removed.
+protocols within attributes that contain URLs. You can also whitelist CSS
+properties, @ rules, and URL protocols you wish to allow in elements or
+attributes containing CSS. Any HTML or CSS that you don't explicitly allow will
+be removed.
 
 Sanitize is based on [Google's Gumbo HTML5 parser][gumbo], which parses HTML
+exactly the same way modern browsers do, and [Crass][crass], which parses CSS
 exactly the same way modern browsers do. As long as your whitelist config only
-allows safe markup, even the most malformed or malicious input will be
+allows safe markup and CSS, even the most malformed or malicious input will be
 transformed into safe output.
 
 [![Build Status](https://travis-ci.org/rgrove/sanitize.svg?branch=master)](https://travis-ci.org/rgrove/sanitize)
 [![Gem Version](https://badge.fury.io/rb/sanitize.svg)](http://badge.fury.io/rb/sanitize)
 
+[crass]:https://github.com/rgrove/crass
 [gumbo]:https://github.com/google/gumbo-parser
 
 Links
@@ -35,26 +39,52 @@ Installation
 gem install sanitize
 ```
 
+Quick Start
+-----------
+
+```ruby
+require 'sanitize'
+
+# Clean up an HTML fragment using Sanitize's permissive but safe Relaxed config.
+# This also sanitizes any CSS in `<style>` elements or `style` attributes.
+Sanitize.fragment(html, Sanitize::Config::RELAXED)
+
+# Clean up an HTML document using the Relaxed config.
+Sanitize.document(html, Sanitize::Config::RELAXED)
+
+# Clean up a standalone CSS stylesheet using the Relaxed config.
+Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
+
+# Clean up some CSS properties using the Relaxed config.
+Sanitize::CSS.properties(css, Sanitize::Config::RELAXED)
+```
+
 Usage
 -----
 
-Sanitize can sanitize both HTML fragments and fully qualified documents.
+Sanitize can sanitize the following types of input:
 
-### Fragments
+* HTML fragments
+* HTML documents
+* CSS stylesheets inside HTML `<style>` elements
+* CSS properties inside HTML `style` attributes
+* Standalone CSS stylesheets
+* Standalone CSS properties
+
+### HTML Fragments
 
 A fragment is a snippet of HTML that doesn't contain a root-level `<html>`
 element.
 
-```ruby
-html = '<b><a href="http://foo.com/">foo</a></b><img src="bar.jpg">'
-
-Sanitize.fragment(html)
-# => 'foo'
-```
-
 If you don't specify any configuration options, Sanitize will use its strictest
 settings by default, which means it will strip all HTML and leave only safe text
 behind.
+
+```ruby
+html = '<b><a href="http://foo.com/">foo</a></b><img src="bar.jpg">'
+Sanitize.fragment(html)
+# => 'foo'
+```
 
 To keep certain elements, add them to the element whitelist.
 
@@ -63,7 +93,7 @@ Sanitize.fragment(html, :elements => ['b'])
 # => '<b>foo</b>'
 ```
 
-### Documents
+### HTML Documents
 
 When sanitizing a document, the `<html>` element must be whitelisted. You can
 also set `:allow_doctype` to `true` to allow well-formed document type
@@ -81,7 +111,88 @@ Sanitize.document(html,
   :allow_doctype => true,
   :elements      => ['html']
 )
-# => "<!DOCTYPE html>\n<html>foo\n  \n</html>\n"
+# => %[
+#   <!DOCTYPE html>
+#   <html>foo
+#
+#   </html>
+# ]
+```
+
+### CSS in HTML
+
+To sanitize CSS in an HTML fragment or document, first whitelist the `<style>`
+element and/or the `style` attribute. Then whitelist the CSS properties,
+@ rules, and URL protocols you wish to allow. You can also choose whether to
+allow CSS comments or browser compatibility hacks.
+
+```ruby
+html = %[
+  <style>
+    div { color: green; width: 1024px; }
+  </style>
+
+  <div style="height: 100px; width: 100px;"></div>
+  <p>hello!</p>
+]
+
+Sanitize.fragment(html,
+  :elements   => ['div', 'style'],
+  :attributes => {'div' => ['style']},
+
+  :css => {
+    :properties => ['width']
+  }
+)
+#=> %[
+#   <style>
+#     div {  width: 1024px; }
+#   </style>
+#
+#   <div style=" width: 100px;"></div>
+#   hello!
+# ]
+```
+
+### Standalone CSS
+
+Sanitize will happily clean up a standalone CSS stylesheet or property string
+without needing to invoke the HTML parser.
+
+```ruby
+css = %[
+  @import url(evil.css);
+
+  a { text-decoration: none; }
+
+  a:hover {
+    left: expression(alert('xss!'));
+    text-decoration: underline;
+  }
+]
+
+Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
+# => %[
+#
+#
+#
+#   a { text-decoration: none; }
+#
+#   a:hover {
+#
+#     text-decoration: underline;
+#   }
+# ]
+
+Sanitize::CSS.properties(%[
+  left: expression(alert('xss!'));
+  text-decoration: underline;
+], Sanitize::Config::RELAXED)
+# => %[
+#
+#   text-decoration: underline;
+# ]
+
 ```
 
 Configuration
@@ -233,7 +344,41 @@ an attribute name.
 }
 ```
 
-#### :elements (Array)
+#### :css (Hash)
+
+Hash of the following CSS config settings to be used when sanitizing CSS (either
+standalone or embedded in HTML).
+
+##### :css => :allow_comments (boolean)
+
+Whether or not to allow CSS comments. The default value is `false`.
+
+##### :css => :allow_hacks (boolean)
+
+Whether or not to allow browser compatibility hacks such as the IE `*` and `_`
+hacks. These are generally harmless, but technically result in invalid CSS. The
+default is `false`.
+
+##### :css => :at_rules (Array or Set)
+
+Names of CSS [@ rules][at-rules] to allow. Names should be specified in
+lowercase.
+
+[at-rules]:https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule
+
+##### :css => :properties (Array or Set)
+
+Whitelist of CSS property names to allow. Names should be specified in
+lowercase.
+
+##### :css => :protocols (Array or Set)
+
+URL protocols to allow in CSS URLs. Should be specified in lowercase.
+
+If you'd like to allow the use of relative URLs which don't have a protocol,
+include the symbol `:relative` in the protocol array.
+
+#### :elements (Array or Set)
 
 Array of HTML element names to allow. Specify all names in lowercase. Any
 elements not in this array will be removed.
@@ -267,7 +412,7 @@ include the symbol `:relative` in the protocol array:
 }
 ```
 
-#### :remove_contents (boolean or Array)
+#### :remove_contents (boolean or Array or Set)
 
 If set to `true`, Sanitize will remove the contents of any non-whitelisted
 elements in addition to the elements themselves. By default, Sanitize leaves the
@@ -279,10 +424,10 @@ elements will be left behind.
 
 The default value is `false`.
 
-#### :transformers
+#### :transformers (Array or callable)
 
-Custom transformer or array of custom transformers. See the Transformers section
-below for details.
+Custom HTML transformer or array of custom transformers. See the Transformers
+section below for details.
 
 #### :whitespace_elements (Hash)
 
@@ -304,9 +449,9 @@ children, in which case it will be inserted after those children.
 
 ## Transformers
 
-Transformers allow you to filter and modify nodes using your own custom logic,
-on top of (or instead of) Sanitize's core filter. A transformer is any object
-that responds to `call()` (such as a lambda or proc).
+Transformers allow you to filter and modify HTML nodes using your own custom
+logic, on top of (or instead of) Sanitize's core filter. A transformer is any
+object that responds to `call()` (such as a lambda or proc).
 
 To use one or more transformers, pass them to the `:transformers` config
 setting. You may pass a single transformer or an array of transformers.

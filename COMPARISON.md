@@ -30,7 +30,9 @@ Optionally escapes unsafe HTML instead of removing it |                         
 Allows custom HTML manipulation (transformers)        | ✓                          | ✓                      |                                |
 Built-in MathML support                               |                            | always enabled         |                                |
 Built-in SVG support                                  |                            | always enabled         |                                |
-Basic CSS sanitization                                |                            | regex-based            | regex-based                    |
+Basic CSS sanitization                                | ✓                          | regex-based            | regex-based                    |
+Advanced whitelist-based CSS sanitization             | ✓                          |                        |                                |
+Can sanitize standalone CSS (not embedded in HTML)    | ✓                          |                        |                                |
 
 ### Notes
 
@@ -71,11 +73,17 @@ Basic CSS sanitization                                |                         
   sanitizing MathML or SVG, but it would be fairly trivial to add MathML and
   SVG elements and attributes to a custom whitelist config.
 
-* Loofah and HTMLFilter both perform very rudimentary regex-based CSS
-  sanitization, but I wouldn't trust either of them to actually sanitize
-  maliciously crafted CSS. Sanitize does not currently offer any form of
-  built-in CSS sanitization.
+* Sanitize performs advanced whitelist-based CSS sanitization using
+  [Crass][crass], a full-fledged CSS parser compliant with the CSS Syntax Module
+  Level 3 parsing spec. Loofah and HTMLFilter both perform rudimentary
+  regex-based CSS sanitization, but I wouldn't trust either of them to actually
+  sanitize maliciously crafted CSS.
 
+* Sanitize will happily run its CSS sanitizer on standalone CSS strings or
+  Crass parse trees. Loofah and HTMLFilter can only sanitize CSS embedded in
+  HTML.
+
+[crass]:https://github.com/rgrove/crass
 [gumbo]:https://github.com/google/gumbo-parser
 [nokogiri]:http://nokogiri.org/
 
