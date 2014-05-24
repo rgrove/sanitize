@@ -40,10 +40,10 @@ class Sanitize
         :allow_comments => true,
         :allow_hacks    => true,
 
-        :at_rules  => Set.new(%w[font-face keyframes media page supports]),
-        :protocols => Set.new(['http', 'https', :relative]),
+        :at_rules  => %w[font-face keyframes media page supports],
+        :protocols => ['http', 'https', :relative],
 
-        :properties => Set.new(%w[
+        :properties => %w[
           -moz-appearance
           -moz-background-inline-policy
           -moz-box-sizing
@@ -519,7 +519,7 @@ class Sanitize
           word-wrap
           writing-mode
           z-index
-        ])
+        ]
       }
     )
   end

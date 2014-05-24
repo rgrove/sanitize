@@ -21,15 +21,11 @@ class Sanitize; module Transformers; class CleanElement
   def initialize(config)
     @add_attributes          = config[:add_attributes]
     @attributes              = config[:attributes].dup
-    @elements                = Set.new(config[:elements])
+    @elements                = config[:elements]
     @protocols               = config[:protocols]
     @remove_all_contents     = false
     @remove_element_contents = Set.new
     @whitespace_elements     = {}
-
-    if @attributes.include?(:all)
-      @attributes[:all] = Set.new(@attributes[:all])
-    end
 
     @attributes.each do |element_name, attrs|
       unless element_name == :all
@@ -37,8 +33,8 @@ class Sanitize; module Transformers; class CleanElement
       end
     end
 
-    # Backcompat: if :whitespace_elements is an array, convert it to a hash.
-    if config[:whitespace_elements].is_a?(Array)
+    # Backcompat: if :whitespace_elements is a Set, convert it to a hash.
+    if config[:whitespace_elements].is_a?(Set)
       config[:whitespace_elements].each do |element|
         @whitespace_elements[element] = {:before => ' ', :after => ' '}
       end
@@ -46,7 +42,7 @@ class Sanitize; module Transformers; class CleanElement
       @whitespace_elements = config[:whitespace_elements]
     end
 
-    if config[:remove_contents].is_a?(Array)
+    if config[:remove_contents].is_a?(Set)
       @remove_element_contents.merge(config[:remove_contents].map(&:to_s))
     else
       @remove_all_contents = !!config[:remove_contents]

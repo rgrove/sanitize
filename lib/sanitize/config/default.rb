@@ -34,13 +34,13 @@ class Sanitize
 
         # CSS @ rules to allow.
         # https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule
-        :at_rules => Set.new,
+        :at_rules => [],
 
         # CSS style properties to allow.
-        :properties => Set.new,
+        :properties => [],
 
         # URL protocols to allow in CSS URLs.
-        :protocols => Set.new
+        :protocols => []
       },
 
       # HTML elements to allow. By default, no elements are allowed (which means

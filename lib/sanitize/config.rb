@@ -9,7 +9,7 @@ class Sanitize
     def self.freeze_config(config)
       if Hash === config
         config.each_value {|c| freeze_config(c) }
-      elsif Set === config || Array === config
+      elsif Array === config || Set === config
         config.each {|c| freeze_config(c) }
       end
 
@@ -36,6 +36,8 @@ class Sanitize
 
           if Hash === oldval && Hash === newval
             merged[key] = merge(oldval, newval)
+          elsif Array === newval && key != :transformers
+            merged[key] = Set.new(newval)
           else
             merged[key] = can_dupe?(newval) ? newval.dup : newval
           end
