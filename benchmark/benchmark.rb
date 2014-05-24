@@ -50,6 +50,14 @@ class Benchmark < Measure
       :remove_contents => true
     )
 
+    # A far more efficient way to run Sanitize hundreds of times using the same
+    # config would be to create a Sanitize instance and reuse it.
+    #
+    # However, since we're comparing Sanitize with Loofah and HTMLFilter and
+    # they don't support this style of usage, I've chosen to use Sanitize's
+    # class methods for "fairness". This means Sanitize is actually doing more
+    # work than necessary on each iteration.
+
     # Sanitize
     if is_fragment
       measure('Sanitize.fragment (strip)', times) do
