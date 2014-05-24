@@ -2,8 +2,12 @@ class Sanitize; module Transformers; module CSS
 
 # Enforces a CSS whitelist on the contents of `style` attributes.
 class CleanAttribute
-  def initialize(config)
-    @scss = Sanitize::CSS.new(config)
+  def initialize(sanitizer_or_config)
+    if Sanitize::CSS === sanitizer_or_config
+      @scss = sanitizer_or_config
+    else
+      @scss = Sanitize::CSS.new(sanitizer_or_config)
+    end
   end
 
   def call(env)
@@ -25,8 +29,12 @@ end
 
 # Enforces a CSS whitelist on the contents of `<style>` elements.
 class CleanElement
-  def initialize(config)
-    @scss = Sanitize::CSS.new(config)
+  def initialize(sanitizer_or_config)
+    if Sanitize::CSS === sanitizer_or_config
+      @scss = sanitizer_or_config
+    else
+      @scss = Sanitize::CSS.new(sanitizer_or_config)
+    end
   end
 
   def call(env)

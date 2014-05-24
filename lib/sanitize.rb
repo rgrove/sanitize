@@ -79,11 +79,13 @@ class Sanitize
     @transformers << Transformers::CleanDoctype unless @config[:allow_doctype]
 
     if @config[:elements].include?('style')
-      @transformers << Transformers::CSS::CleanElement.new(@config)
+      scss = Sanitize::CSS.new(config)
+      @transformers << Transformers::CSS::CleanElement.new(scss)
     end
 
     if @config[:attributes].values.any? {|attr| attr.include?('style') }
-      @transformers << Transformers::CSS::CleanAttribute.new(@config)
+      scss ||= Sanitize::CSS.new(config)
+      @transformers << Transformers::CSS::CleanAttribute.new(scss)
     end
 
     @transformers <<
@@ -160,15 +162,16 @@ class Sanitize
   private
 
   def to_html(node)
+    replace_meta = false
+
     # Hacky workaround for a libxml2 bug that adds an undesired Content-Type
-    # meta tag to all serialized HTML.
+    # meta tag to all serialized HTML documents.
     #
     # https://github.com/sparklemotion/nokogiri/issues/1008
-    regex_meta   = %r|(<html[^>]*>\s*<head[^>]*>\s*)<meta http-equiv="Content-Type" content="text/html; charset=utf-8">|i
-    replace_meta = true
-
     if node.type == Nokogiri::XML::Node::DOCUMENT_NODE ||
         node.type == Nokogiri::XML::Node::HTML_DOCUMENT_NODE
+
+      regex_meta   = %r|(<html[^>]*>\s*<head[^>]*>\s*)<meta http-equiv="Content-Type" content="text/html; charset=utf-8">|i
 
       # Only replace the content-type meta tag if <meta> isn't whitelisted or
       # the original document didn't actually include a content-type meta tag.
@@ -199,7 +202,7 @@ class Sanitize
         :is_whitelisted => node_whitelist.include?(node),
         :node           => node,
         :node_name      => node.name.downcase,
-        :node_whitelist => node_whitelist,
+        :node_whitelist => node_whitelist
       )
 
       if result.is_a?(Hash) && result[:node_whitelist].respond_to?(:each)

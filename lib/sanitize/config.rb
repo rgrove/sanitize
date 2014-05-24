@@ -35,7 +35,7 @@ class Sanitize
           newval = other_config[key]
 
           if Hash === oldval && Hash === newval
-            merged[key] = merge(oldval, newval)
+            merged[key] = oldval.empty? ? newval.dup : merge(oldval, newval)
           elsif Array === newval && key != :transformers
             merged[key] = Set.new(newval)
           else
