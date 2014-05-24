@@ -24,7 +24,7 @@ describe 'Malicious HTML' do
 
   describe '<body>' do
     it 'should not be possible to inject JS via a malformed event attribute' do
-      @s.document(%[<html><head></head><body onload!#$%&()*~+-_.,:;?@[/|\\]^`=alert("XSS")></body></html>]).
+      @s.document('<html><head></head><body onload!#$%&()*~+-_.,:;?@[/|\\]^`=alert("XSS")></body></html>').
         must_equal "<html><head></head><body></body></html>\n"
     end
   end
