@@ -82,7 +82,7 @@ class Sanitize
       @transformers << Transformers::CSS::CleanElement.new(@config)
     end
 
-    if @config[:attributes].any? {|attr| attr.include?('style') }
+    if @config[:attributes].values.any? {|attr| attr.include?('style') }
       @transformers << Transformers::CSS::CleanAttribute.new(@config)
     end
 
