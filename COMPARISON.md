@@ -21,18 +21,17 @@ Feature                                               | [Sanitize 3.0.0][sanitiz
 Actually parses HTML (not with regexes)               | ✓                          | ✓                      |                                |
 HTML5-compliant parser                                | ✓                          |                        |                                |
 Fixes up badly broken/malicious markup                | ✓                          | ✓                      |                                |
-Fully configurable whitelists                         | ✓                          | hard-coded only        | ✓                              |
-Global attribute whitelist                            | ✓                          | ✓                      |                                |
+Fully configurable whitelists                         | ✓                          |                        | ✓                              |
+Global attribute whitelist                            | ✓                          | ✓ (hard-coded)         |                                |
 Element-specific attribute whitelist                  | ✓                          |                        | ✓                              |
 Attribute-specific protocol whitelist                 | ✓                          |                        | ✓                              |
-Supports HTML5 `data-` attributes                     | ✓                          | ✓                      |                                |
+Supports HTML5 `data-` attributes                     | ✓                          | ✓ (hard-coded)         |                                |
 Optionally escapes unsafe HTML instead of removing it |                            | ✓                      |                                |
 Allows custom HTML manipulation (transformers)        | ✓                          | ✓                      |                                |
 Built-in MathML support                               |                            | always enabled         |                                |
 Built-in SVG support                                  |                            | always enabled         |                                |
 Basic CSS sanitization                                | ✓                          | regex-based            | regex-based                    |
 Advanced whitelist-based CSS sanitization             | ✓                          |                        |                                |
-Can sanitize standalone CSS (not embedded in HTML)    | ✓                          |                        |                                |
 
 ### Notes
 
@@ -79,15 +78,15 @@ Can sanitize standalone CSS (not embedded in HTML)    | ✓                     
   regex-based CSS sanitization, but I wouldn't trust either of them to actually
   sanitize maliciously crafted CSS.
 
-* Sanitize will happily run its CSS sanitizer on standalone CSS strings or
-  Crass parse trees. Loofah and HTMLFilter can only sanitize CSS embedded in
-  HTML.
-
 [crass]:https://github.com/rgrove/crass
 [gumbo]:https://github.com/google/gumbo-parser
 [nokogiri]:http://nokogiri.org/
 
 ## Performance comparison
+
+**Note:** Sanitize 3.0.0 is currently under active development, so its numbers
+may change as the code changes. I'll re-run these benchmarks once 3.0.0 is ready
+for release to get final numbers.
 
 Based on [this synthetic benchmark][benchmark]. Smaller numbers are better (they
 indicate faster completion).
