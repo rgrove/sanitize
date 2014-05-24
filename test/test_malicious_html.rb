@@ -22,6 +22,24 @@ describe 'Malicious HTML' do
     end
   end
 
+  describe 'interpolation (ERB, PHP, etc.)' do
+    it 'should escape ERB-style tags' do
+      @s.fragment('<% naughty_ruby_code %>').
+        must_equal '&lt;% naughty_ruby_code %&gt;'
+
+      @s.fragment('<%= naughty_ruby_code %>').
+        must_equal '&lt;%= naughty_ruby_code %&gt;'
+    end
+
+    it 'should remove PHP-style tags' do
+      @s.fragment('<? naughtyPHPCode(); ?>').
+        must_equal ''
+
+      @s.fragment('<?= naughtyPHPCode(); ?>').
+        must_equal ''
+    end
+  end
+
   describe '<body>' do
     it 'should not be possible to inject JS via a malformed event attribute' do
       @s.document('<html><head></head><body onload!#$%&()*~+-_.,:;?@[/|\\]^`=alert("XSS")></body></html>').
