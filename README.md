@@ -226,9 +226,10 @@ Sanitize.fragment(html, Sanitize::Config::BASIC)
 
 ### Sanitize::Config::RELAXED
 
-Allows an even wider variety of markup, including images and tables. Links are
-still limited to FTP, HTTP, HTTPS, and mailto protocols, while images are
-limited to HTTP and HTTPS. In this mode, `rel="nofollow"` is not added to links.
+Allows an even wider variety of markup, including images and tables, as well as
+safe CSS. Links are still limited to FTP, HTTP, HTTPS, and mailto protocols,
+while images are limited to HTTP and HTTPS. In this mode, `rel="nofollow"` is
+not added to links.
 
 ```ruby
 Sanitize.fragment(html, Sanitize::Config::RELAXED)
