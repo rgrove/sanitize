@@ -69,6 +69,11 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
   attributes: `article`, `aside`, `body`, `data`, `div`, `footer`, `head`,
   `header`, `html`, `main`, `nav`, `section`, `span`, `style`, `title`.
 
+* The `:whitespace_elements` config is now a Hash, and allows you to specify the
+  text that should be inserted before and after these elements when they're
+  removed. The old-style Array-based config value is still supported for
+  backwards compatibility. [@alperkokmen - #94][94]
+
 * Fixed: Non-tag brackets in input like `"1 > 2 and 2 < 1"` are now parsed and
   escaped correctly in accordance with the HTML5 spec, becoming
   `"1 &gt; 2 and 2 &lt; 1"`. [#83][83]
@@ -87,19 +92,9 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 [crass]:https://github.com/rgrove/crass
 [83]:https://github.com/rgrove/sanitize/issues/83
 [91]:https://github.com/rgrove/sanitize/issues/91
+[94]:https://github.com/rgrove/sanitize/pull/94/
 [103]:https://github.com/rgrove/sanitize/issues/103
 [n1008]:https://github.com/sparklemotion/nokogiri/issues/1008
-
-
-Version 2.2.0 (git)
--------------------
-
-* The `:whitespace_elements` config is now a Hash, and allows you to specify the
-  text that should be inserted before and after these elements when they're
-  removed. The old-style Array-based config value is still supported for
-  backwards compatibility. [@alperkokmen - #94][94]
-
-[94]:https://github.com/rgrove/sanitize/pull/94/
 
 
 Version 2.1.0 (2014-01-13)
