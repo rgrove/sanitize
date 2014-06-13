@@ -74,6 +74,9 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
   removed. The old-style Array-based config value is still supported for
   backwards compatibility. [@alperkokmen - #94][94]
 
+* Unsuitable Unicode characters are now removed from HTML before it's parsed.
+  [#106][106]
+
 * Fixed: Non-tag brackets in input like `"1 > 2 and 2 < 1"` are now parsed and
   escaped correctly in accordance with the HTML5 spec, becoming
   `"1 &gt; 2 and 2 &lt; 1"`. [#83][83]
@@ -94,6 +97,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 [91]:https://github.com/rgrove/sanitize/issues/91
 [94]:https://github.com/rgrove/sanitize/pull/94/
 [103]:https://github.com/rgrove/sanitize/issues/103
+[106]:https://github.com/rgrove/sanitize/issues/106
 [n1008]:https://github.com/sparklemotion/nokogiri/issues/1008
 
 
