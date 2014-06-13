@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# To run benchmark.rb, you'll need the "hitimes", "htmlfilter", and loofah"
+# To run benchmark.rb, you'll need the "hitimes", "htmlfilter", and "loofah"
 # gems.
 #
 # The benchmarks and much of the code here are patterned after the benchmarks in
