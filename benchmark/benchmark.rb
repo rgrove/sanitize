@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+# encoding: utf-8
+#
 # To run benchmark.rb, you'll need the "hitimes", "htmlfilter", and "loofah"
 # gems.
 #
@@ -29,12 +31,12 @@
 
 DIR = File.expand_path(File.dirname(__FILE__))
 
-DOCUMENT_HUGE   = File.read("#{DIR}/html/document-huge.html")
-DOCUMENT_MEDIUM = File.read("#{DIR}/html/document-medium.html")
-DOCUMENT_SMALL  = File.read("#{DIR}/html/document-small.html")
+DOCUMENT_HUGE   = File.read("#{DIR}/html/document-huge.html").encode('UTF-8', :invalid => :replace, :undef => :replace)
+DOCUMENT_MEDIUM = File.read("#{DIR}/html/document-medium.html").encode('UTF-8', :invalid => :replace, :undef => :replace)
+DOCUMENT_SMALL  = File.read("#{DIR}/html/document-small.html").encode('UTF-8', :invalid => :replace, :undef => :replace)
 
-FRAGMENT_LARGE = File.read("#{DIR}/html/fragment-large.html")
-FRAGMENT_SMALL = File.read("#{DIR}/html/fragment-small.html")
+FRAGMENT_LARGE = File.read("#{DIR}/html/fragment-large.html").encode('UTF-8', :invalid => :replace, :undef => :replace)
+FRAGMENT_SMALL = File.read("#{DIR}/html/fragment-small.html").encode('UTF-8', :invalid => :replace, :undef => :replace)
 
 require "#{DIR}/helpers"
 
@@ -44,61 +46,49 @@ class Benchmark < Measure
   def bench(html, times, is_fragment)
     clear
 
-    @sanitize_config = Sanitize::Config::RELAXED
+    sanitize_config = Sanitize::Config::RELAXED
 
-    @sanitize_config_prune = Sanitize::Config.merge(@sanitize_config,
-      :remove_contents => true
-    )
-
-    # A far more efficient way to run Sanitize hundreds of times using the same
-    # config would be to create a Sanitize instance and reuse it.
-    #
-    # However, since we're comparing Sanitize with Loofah and HTMLFilter and
-    # they don't support this style of usage, I've chosen to use Sanitize's
-    # class methods for "fairness". This means Sanitize is actually doing more
-    # work than necessary on each iteration.
+    h = HTMLFilter.new(HTMLFilter::RELAXED)
+    s = Sanitize.new(sanitize_config)
 
     # Sanitize
     if is_fragment
-      measure('Sanitize.fragment (strip)', times) do
-        Sanitize.fragment(html, @sanitize_config)
+      measure('Sanitize#fragment', times) do
+        s.fragment(html)
       end
 
-      measure('Sanitize.fragment (prune)', times) do
-        Sanitize.fragment(html, @sanitize_config_prune)
+      measure('Sanitize.fragment', times) do
+        Sanitize.fragment(html, sanitize_config)
       end
     else
-      measure('Sanitize.document (strip)', times) do
-        Sanitize.document(html, @sanitize_config)
+      measure('Sanitize#document', times) do
+        s.document(html)
       end
 
-      measure('Sanitize.document (prune)', times) do
-        Sanitize.document(html, @sanitize_config_prune)
+      measure('Sanitize.document', times) do
+        Sanitize.document(html, sanitize_config)
       end
     end
 
     # Loofah
+
+    # I'm only testing Loofah's :strip mode here since it's analagous to
+    # Sanitize's default behavior and there's very little difference between
+    # the performance of the :strip and :prune modes anyway.
+
     if is_fragment
-      measure('Loofah :strip', times) do
+      measure('Loofah.scrub_fragment (strip)', times) do
         Loofah.scrub_fragment(html, :strip).to_s
       end
-
-      measure('Loofah :prune', times) do
-        Loofah.scrub_fragment(html, :prune).to_s
-      end
     else
-      measure('Loofah :strip', times) do
+      measure('Loofah.scrub_document (strip)', times) do
         Loofah.scrub_document(html, :strip).to_s
-      end
-
-      measure('Loofah :prune', times) do
-        Loofah.scrub_document(html, :prune).to_s
       end
     end
 
     # HTMLFilter
-    measure('HTMLFilter', times) do
-      HTMLFilter.new(HTMLFilter::RELAXED).filter(html)
+    measure('HTMLFilter#filter', times) do
+      h.filter(html)
     end
   end
 end
