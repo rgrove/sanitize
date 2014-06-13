@@ -26,6 +26,12 @@ class Sanitize
   # IE6 and Opera will still parse).
   REGEX_PROTOCOL = /\A([^\/#]*?)(?:\:|&#0*58|&#x0*3a)/i
 
+  # Matches Unicode characters that should be stripped from HTML before passing
+  # it to the parser.
+  #
+  # http://www.w3.org/TR/unicode-xml/#Charlist
+  REGEX_UNSUITABLE_CHARS = /[\u0340\u0341\u17a3\u17d3\u2028\u2029\u202a-\u202e\u206a-\u206f\ufff9-\ufffb\ufeff\ufffc\u{1d173}-\u{1d17a}\u{e0000}-\u{e007f}]/u
+
   #--
   # Class Methods
   #++
@@ -101,7 +107,7 @@ class Sanitize
   def document(html)
     return '' unless html
 
-    doc = Nokogiri::HTML5.parse(html)
+    doc = Nokogiri::HTML5.parse(preprocess(html))
     node!(doc)
     to_html(doc)
   end
@@ -113,7 +119,8 @@ class Sanitize
   def fragment(html)
     return '' unless html
 
-    doc = Nokogiri::HTML5.parse("<html><body>#{html}")
+    html = preprocess(html)
+    doc  = Nokogiri::HTML5.parse("<html><body>#{html}")
 
     # Hack to allow fragments containing <body>. Borrowed from
     # Nokogiri::HTML::DocumentFragment.
@@ -160,6 +167,20 @@ class Sanitize
   alias_method :clean_node!, :node!
 
   private
+
+  # Preprocesses HTML before parsing to remove undesirable Unicode chars.
+  def preprocess(html)
+    html.to_s.dup
+
+    unless html.encoding.name == 'UTF-8'
+      html.encode!('UTF-8',
+        :invalid => :replace,
+        :undef   => :replace)
+    end
+
+    html.gsub!(REGEX_UNSUITABLE_CHARS, '')
+    html
+  end
 
   def to_html(node)
     replace_meta = false
