@@ -1,8 +1,8 @@
 Sanitize History
 ================================================================================
 
-Version 3.0.0 (git)
--------------------
+Version 3.0.0 (2014-06-21)
+--------------------------
 
 As of this version, Sanitize adheres strictly to the [SemVer 2.0.0][semver]
 versioning standard. This release contains API and output changes that are
