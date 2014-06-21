@@ -8,6 +8,9 @@ Gem::Specification.new do |s|
   s.authors  = ['Ryan Grove']
   s.email    = 'ryan@wonko.com'
   s.homepage = 'https://github.com/rgrove/sanitize/'
+  s.licenses = ['MIT']
+
+  s.description = 'Sanitize is a whitelist-based HTML and CSS sanitizer. Given a list of acceptable elements, attributes, and CSS properties, Sanitize will remove all unacceptable HTML and/or CSS from a string.'
 
   s.platform = Gem::Platform::RUBY
   s.required_ruby_version = Gem::Requirement.new('>= 1.9.2')
