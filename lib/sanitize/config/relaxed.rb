@@ -24,9 +24,9 @@ class Sanitize
         'li'       => %w[value],
         'ol'       => %w[reversed start type],
         'style'    => %w[media scoped type],
-        'table'    => %w[sortable summary width],
-        'td'       => %w[abbr axis colspan headers rowspan width],
-        'th'       => %w[abbr axis colspan headers rowspan scope sorted width],
+        'table'    => %w[align bgcolor border cellpadding cellspacing frame rules sortable summary width],
+        'td'       => %w[abbr align axis colspan headers rowspan valign width],
+        'th'       => %w[abbr align axis colspan headers rowspan scope sorted valign width],
         'ul'       => %w[type]
       ),
 
