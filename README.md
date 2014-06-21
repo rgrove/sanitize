@@ -30,7 +30,7 @@ Links
 * [Home](https://github.com/rgrove/sanitize/)
 * [API Docs](http://rubydoc.info/github/rgrove/sanitize/master)
 * [Issues](https://github.com/rgrove/sanitize/issues)
-* [Biased comparison of Ruby HTML sanitization libraries](https://github.com/rgrove/sanitize/blob/dev-3.0.0/COMPARISON.md)
+* [Biased comparison of Ruby HTML sanitization libraries](https://github.com/rgrove/sanitize/blob/master/COMPARISON.md)
 
 Installation
 -------------

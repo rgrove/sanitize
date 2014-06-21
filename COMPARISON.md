@@ -84,42 +84,30 @@ Advanced whitelist-based CSS sanitization             | ✓                     
 
 ## Performance comparison
 
-**Note:** Sanitize 3.0.0 is currently under active development, so its numbers
-may change as the code changes. I'll re-run these benchmarks once 3.0.0 is ready
-for release to get final numbers.
-
 Based on [this synthetic benchmark][benchmark]. Smaller numbers are better (they
 indicate faster completion).
 
-[benchmark]:https://github.com/rgrove/sanitize/tree/dev-3.0.0/benchmark
+[benchmark]:https://github.com/rgrove/sanitize/tree/master/benchmark
 
 Benchmark                                  | [Sanitize 3.0.0][sanitize]             | [Loofah 2.0.0][loofah]               | [HTMLFilter 1.3.0][htmlfilter]
 ------------------------------------------ |:--------------------------------------:|:------------------------------------:|:------------------------------:
-Small HTML fragment (757 bytes) x 1000     | <br>1.077s strip / 1.077s prune        | **✓<br>0.524s strip / 0.522s prune** | 0.876s
-Large HTML fragment (33,531 bytes) x 100   | **✓<br>3.281s strip / 3.316s prune**   | <br>3.950s strip / 4.050s prune      | 7.437s
-Small HTML document (25,286 bytes) x 100   | **✓<br>1.648s strip / 1.639s prune**   | <br>1.855s strip / 1.841s prune      | _ERROR_
-Medium HTML document (86,685 bytes) x 100  | **✓<br>5.911s strip / 5.876s prune**   | <br>7.598s strip / 7.479s prune      | _ERROR_
-Huge HTML document (7,172,510 bytes) x 5   | **✓<br>30.324s strip / 32.929s prune** | <br>44.056s strip / 40.845s prune    | 73.933s
+Small HTML fragment (757 bytes) x 1000     | **0.457s**                             | 0.569s                               | 0.975s
+Large HTML fragment (33,531 bytes) x 100   | **3.708s**                             | 4.582s                               | 8.226s
+Small HTML document (25,286 bytes) x 100   | **1.764s**                             | 2.026s                               | _ERROR_
+Medium HTML document (86,685 bytes) x 100  | **6.714s**                             | 8.981s                               | _ERROR_
+Huge HTML document (7,172,510 bytes) x 5   | **34.765s**                            | 41.162s                              | 75.168s
 
 To run this benchmark yourself:
 
 ```
 git clone https://github.com/rgrove/sanitize.git
 cd sanitize
-git checkout dev-3.0.0
 bundle install
 gem install loofah hitimes htmlfilter
 ruby benchmark/benchmark.rb
 ```
 
 ### Notes
-
-* Sanitize's performance can be improved significantly on multiple runs by
-  reusing a single configured instance. However, since neither Loofah nor
-  HTMLFilter support a similar usage style, I chose not to take advantage of
-  this in these benchmarks for the sake of fairness. This is why Sanitize loses
-  the small fragment benchmark: its instantiation overhead outweighs its faster
-  parsing and sanitization speed.
 
 * During the small and medium document benchmarks, HTMLFilter raised an
   `Encoding::CompatibilityError` exception. Both documents are UTF-8 encoded,
@@ -141,43 +129,38 @@ These values are time measurements. Lower is faster!
 -- Benchmark --
   Small HTML fragment (757 bytes) x 1000
                                    total    single    rel
-       Sanitize.fragment (strip)   1.077 (0.001077)     -
-       Sanitize.fragment (prune)   1.077 (0.001077)  1.00x
-                   Loofah :strip   0.524 (0.000524)  0.49x
-                   Loofah :prune   0.522 (0.000522)  0.48x
-                      HTMLFilter   0.876 (0.000876)  0.81x
+               Sanitize#fragment   0.457 (0.000457)     -
+               Sanitize.fragment   1.127 (0.001127)  2.47x
+   Loofah.scrub_fragment (strip)   0.569 (0.000569)  1.25x
+               HTMLFilter#filter   0.975 (0.000975)  2.13x
 
   Large HTML fragment (33531 bytes) x 100
                                    total    single    rel
-       Sanitize.fragment (strip)   3.281 (0.032813)     -
-       Sanitize.fragment (prune)   3.316 (0.033160)  1.01x
-                   Loofah :strip   3.950 (0.039502)  1.20x
-                   Loofah :prune   4.050 (0.040504)  1.23x
-                      HTMLFilter   7.437 (0.074365)  2.27x
+               Sanitize#fragment   3.708 (0.037075)     -
+               Sanitize.fragment   3.720 (0.037201)  1.00x
+   Loofah.scrub_fragment (strip)   4.582 (0.045825)  1.24x
+               HTMLFilter#filter   8.226 (0.082255)  2.22x
 
   Small HTML document (25286 bytes) x 100
                                    total    single    rel
-       Sanitize.document (strip)   1.648 (0.016479)     -
-       Sanitize.document (prune)   1.639 (0.016390)  0.99x
-                   Loofah :strip   1.855 (0.018551)  1.13x
-                   Loofah :prune   1.841 (0.018407)  1.12x
-               HTMLFilter ERROR!
+               Sanitize#document   1.764 (0.017638)     -
+               Sanitize.document   1.838 (0.018382)  1.04x
+   Loofah.scrub_document (strip)   2.026 (0.020263)  1.15x
+        HTMLFilter#filter ERROR!
 
   Medium HTML document (86685 bytes) x 100
                                    total    single    rel
-       Sanitize.document (strip)   5.911 (0.059112)     -
-       Sanitize.document (prune)   5.876 (0.058761)  0.99x
-                   Loofah :strip   7.598 (0.075984)  1.29x
-                   Loofah :prune   7.479 (0.074787)  1.27x
-               HTMLFilter ERROR!
+               Sanitize#document   6.714 (0.067136)     -
+               Sanitize.document   6.804 (0.068041)  1.01x
+   Loofah.scrub_document (strip)   8.981 (0.089805)  1.34x
+        HTMLFilter#filter ERROR!
 
   Huge HTML document (7172510 bytes) x 5
                                    total    single    rel
-       Sanitize.document (strip)  30.324 (6.064872)     -
-       Sanitize.document (prune)  32.929 (6.585790)  1.09x
-                   Loofah :strip  44.056 (8.811160)  1.45x
-                   Loofah :prune  40.845 (8.168941)  1.35x
-                      HTMLFilter  73.933 (14.786560)  2.44x
+               Sanitize#document  34.765 (6.953046)     -
+               Sanitize.document  33.363 (6.672691)  0.96x
+   Loofah.scrub_document (strip)  41.162 (8.232313)  1.18x
+               HTMLFilter#filter  75.168 (15.033509)  2.16x
 ```
 
 [htmlfilter]:https://github.com/rubyworks/htmlfilter
