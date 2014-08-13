@@ -543,6 +543,25 @@ Transformers have a tremendous amount of power, including the power to
 completely bypass Sanitize's built-in filtering. Be careful! Your safety is in
 your own hands.
 
+### Example: Removing nodes on custom criteria
+
+The following example demonstrates how to remove an image which isn't either on
+a relative path or hosted on a specific domain:
+
+```ruby
+require 'URI'
+
+images_from_whitelisted_source_transformer = lambda do |env|
+  return unless env[:node_name] == "img"
+
+  node = env[:node]
+  image_uri = URI.parse(node['src'])
+  unless image_uri.relative? || image_uri.host == "example.com"
+    node.unlink # Nokogiri::XML::Node#unlink removes a node from the document
+  end
+end
+```
+
 ### Example: Transformer to whitelist YouTube video embeds
 
 The following example demonstrates how to create a transformer that will safely
