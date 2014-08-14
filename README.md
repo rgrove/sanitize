@@ -543,21 +543,27 @@ Transformers have a tremendous amount of power, including the power to
 completely bypass Sanitize's built-in filtering. Be careful! Your safety is in
 your own hands.
 
-### Example: Removing nodes on custom criteria
+### Example: Transformer to whitelist image URLs by domain
 
-The following example demonstrates how to remove an image which isn't either on
-a relative path or hosted on a specific domain:
+The following example demonstrates how to remove image elements unless they use
+a relative URL or are hosted on a specific domain. It assumes that the `<img>`
+element and its `src` attribute are already whitelisted.
 
 ```ruby
-require 'URI'
+require 'uri'
 
-images_from_whitelisted_source_transformer = lambda do |env|
-  return unless env[:node_name] == "img"
+image_whitelist_transformer = lambda do |env|
+  # Ignore everything except <img> elements.
+  return unless env[:node_name] == 'img'
 
-  node = env[:node]
+  node      = env[:node]
   image_uri = URI.parse(node['src'])
-  unless image_uri.relative? || image_uri.host == "example.com"
-    node.unlink # Nokogiri::XML::Node#unlink removes a node from the document
+
+  # Only allow relative URLs or URLs with the example.com domain. The
+  # image_uri.host.nil? check ensures that protocol-relative URLs like
+  # "//evil.com/foo.jpg".
+  unless image_uri.host == 'example.com' || (image_uri.host.nil? && image_uri.relative?)
+    node.unlink # `Nokogiri::XML::Node#unlink` removes a node from the document
   end
 end
 ```
