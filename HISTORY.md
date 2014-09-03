@@ -1,6 +1,14 @@
 Sanitize History
 ================================================================================
 
+Version 3.0.2 (2014-09-02)
+--------------------------
+
+* Updated Nokogumbo to 1.1.12, because 1.1.11 silently reverted the change we
+  were trying to pick up in the last release. Now issue [#114][114] is
+  _actually_ fixed.
+
+
 Version 3.0.1 (2014-09-02)
 --------------------------
 
