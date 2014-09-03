@@ -1,6 +1,16 @@
 Sanitize History
 ================================================================================
 
+Version 3.0.1 (2014-09-02)
+--------------------------
+
+* Updated Nokogumbo to 1.1.11 to pick up a fix for a Gumbo bug in which certain
+  HTML character entities, such as `&Ouml;`, were parsed incorrectly, leaving
+  the semicolon behind in the output. [#114][114]
+
+[114]:https://github.com/rgrove/sanitize/issues/114
+
+
 Version 3.0.0 (2014-06-21)
 --------------------------
 
