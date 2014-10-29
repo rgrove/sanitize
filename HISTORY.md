@@ -1,8 +1,8 @@
 Sanitize History
 ================================================================================
 
-Version 3.0.3 (git)
--------------------
+Version 3.0.3 (2014-10-29)
+--------------------------
 
 * Fixed: Some CSS selectors weren't parsed correctly inside the body of a
   `@media` block, causing them to be removed even when whitelist rules should
