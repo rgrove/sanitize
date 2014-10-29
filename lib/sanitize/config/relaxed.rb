@@ -498,6 +498,7 @@ class Sanitize
           text-overflow
           text-rendering
           text-shadow
+          text-size-adjust
           text-transform
           text-underline-position
           top

@@ -1,6 +1,18 @@
 Sanitize History
 ================================================================================
 
+Version 3.1.0 (git)
+-------------------
+
+* Added the following CSS properties to the relaxed config. [@ehudc - #120][120]
+
+    - `-moz-text-size-adjust`
+    - `-ms-text-size-adjust`
+    - `-webkit-text-size-adjust`
+    - `text-size-adjust`
+
+[120]:https://github.com/rgrove/sanitize/pull/120
+
 Version 3.0.3 (git)
 -------------------
 
