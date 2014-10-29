@@ -62,6 +62,7 @@ class Sanitize
           -moz-text-decoration-color
           -moz-text-decoration-line
           -moz-text-decoration-style
+          -moz-text-size-adjust
           -ms-background-position-x
           -ms-background-position-y
           -ms-block-progression
@@ -132,6 +133,7 @@ class Sanitize
           -ms-text-justify
           -ms-text-kashida-space
           -ms-text-overflow
+          -ms-text-size-adjust
           -ms-text-underline-position
           -ms-touch-action
           -ms-user-select
@@ -300,6 +302,7 @@ class Sanitize
           -webkit-text-decoration-color
           -webkit-text-decoration-line
           -webkit-text-decoration-style
+          -webkit-text-size-adjust
           -webkit-touch-callout
           -webkit-transform
           -webkit-transform-origin
