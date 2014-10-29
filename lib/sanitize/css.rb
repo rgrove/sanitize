@@ -143,7 +143,10 @@ class Sanitize; class CSS
     return nil unless @config[:at_rules].include?(name)
 
     if AT_RULES_WITH_STYLES.include?(name)
-      styles = Crass::Parser.parse_rules(rule[:block][:value],
+      # Remove the { and } tokens surrounding the @media block.
+      tokens = rule[:block][:tokens][1...-1]
+
+      styles = Crass::Parser.parse_rules(tokens,
         :preserve_comments => @config[:allow_comments],
         :preserve_hacks    => @config[:allow_hacks])
 

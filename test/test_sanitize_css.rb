@@ -219,4 +219,31 @@ describe 'Sanitize::CSS' do
       end
     end
   end
+
+  describe 'bugs' do
+    before do
+      @default = Sanitize::CSS.new
+      @relaxed = Sanitize::CSS.new(Sanitize::Config::RELAXED[:css])
+    end
+
+    # https://github.com/rgrove/sanitize/issues/121
+    it 'should parse the contents of @media rules properly' do
+      css = '@media { p[class="center"] { text-align: center; }}'
+      @relaxed.stylesheet(css).must_equal css
+
+      css = %[
+        @media (max-width: 720px) {
+          p.foo > .bar { float: right; width: expression(body.scrollLeft + 50 + 'px'); }
+          #baz { color: green; }
+        }
+      ].strip
+
+      @relaxed.stylesheet(css).must_equal %[
+        @media (max-width: 720px) {
+          p.foo > .bar { float: right;  }
+          #baz { color: green; }
+        }
+      ].strip
+    end
+  end
 end
