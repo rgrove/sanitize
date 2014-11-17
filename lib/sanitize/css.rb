@@ -106,20 +106,34 @@ class Sanitize; class CSS
   #
   # @return [Array] Sanitized Crass CSS parse tree.
   def tree!(tree)
+    preceded_by_property = false
+
     tree.map! do |node|
       next nil if node.nil?
 
       case node[:node]
       when :at_rule
+        preceded_by_property = false
         next at_rule!(node)
 
       when :comment
         next node if @config[:allow_comments]
 
       when :property
-        next property!(node)
+        prop = property!(node)
+        preceded_by_property = !prop.nil?
+        next prop
+
+      when :semicolon
+        # Only preserve the semicolon if it was preceded by a whitelisted
+        # property. Otherwise, omit it in order to prevent redundant semicolons.
+        if preceded_by_property
+          preceded_by_property = false
+          next node
+        end
 
       when :style_rule
+        preceded_by_property = false
         tree!(node[:children])
         next node
 
@@ -143,21 +157,18 @@ class Sanitize; class CSS
     return nil unless @config[:at_rules].include?(name)
 
     if AT_RULES_WITH_STYLES.include?(name)
-      # Remove the { and } tokens surrounding the @media block.
-      tokens = rule[:block][:tokens][1...-1]
-
-      styles = Crass::Parser.parse_rules(tokens,
+      styles = Crass::Parser.parse_rules(rule[:block],
         :preserve_comments => @config[:allow_comments],
         :preserve_hacks    => @config[:allow_hacks])
 
-      rule[:block][:value] = tree!(styles)
+      rule[:block] = tree!(styles)
 
     elsif AT_RULES_WITH_PROPERTIES.include?(name)
-      props = Crass::Parser.parse_properties(rule[:block][:value],
+      props = Crass::Parser.parse_properties(rule[:block],
         :preserve_comments => @config[:allow_comments],
         :preserve_hacks    => @config[:allow_hacks])
 
-      rule[:block][:value] = tree!(props)
+      rule[:block] = tree!(props)
 
     else
       rule.delete(:block)
@@ -186,29 +197,30 @@ class Sanitize; class CSS
 
       case child[:node]
       when :ident
-        combined_value << value if String === value
+        combined_value << value.downcase if String === value
 
       when :function
         if child.key?(:name)
-          return nil if child[:name].downcase == 'expression'
+          name = child[:name].downcase
+
+          if name == 'url'
+            return nil unless valid_url?(child)
+          end
+
+          combined_value << name
+          return nil if name == 'expression' || combined_value == 'expression'
         end
 
         if Array === value
           nodes.concat(value)
         elsif String === value
-          combined_value << value
-
-          if value.downcase == 'expression' || combined_value.downcase == 'expression'
-            return nil
-          end
+          lowercase_value = value.downcase
+          combined_value << lowercase_value
+          return nil if lowercase_value == 'expression' || combined_value == 'expression'
         end
 
       when :url
-        if value =~ Sanitize::REGEX_PROTOCOL
-          return nil unless @config[:protocols].include?($1.downcase)
-        else
-          return nil unless @config[:protocols].include?(:relative)
-        end
+        return nil unless valid_url?(child)
 
       when :bad_url
         return nil
@@ -216,6 +228,56 @@ class Sanitize; class CSS
     end
 
     prop
+  end
+
+  # Returns `true` if the given node (which may be of type `:url` or
+  # `:function`, since the CSS syntax can produce both) uses a whitelisted
+  # protocol.
+  def valid_url?(node)
+    type = node[:node]
+
+    if type == :function
+      return false unless node.key?(:name) && node[:name].downcase == 'url'
+      return false unless Array === node[:value]
+
+      # A URL function's `:value` should be an array containing no more than one
+      # `:string` node and any number of `:whitespace` nodes.
+      #
+      # If it contains more than one `:string` node, or if it contains any other
+      # nodes except `:whitespace` nodes, it's not valid.
+      url_string_node = nil
+
+      node[:value].each do |token|
+        return false unless Hash === token
+
+        case token[:node]
+          when :string
+            return false unless url_string_node.nil?
+            url_string_node = token
+
+          when :whitespace
+            next
+
+          else
+            return false
+        end
+      end
+
+      return false if url_string_node.nil?
+      url = url_string_node[:value]
+    elsif type == :url
+      url = node[:value]
+    else
+      return false
+    end
+
+    if url =~ Sanitize::REGEX_PROTOCOL
+      return @config[:protocols].include?($1.downcase)
+    else
+      return @config[:protocols].include?(:relative)
+    end
+
+    false
   end
 
 end; end
