@@ -14,6 +14,16 @@ Version 3.1.0 (git)
 [120]:https://github.com/rgrove/sanitize/pull/120
 
 
+Version 3.0.4 (2014-12-12)
+--------------------------
+
+* Fixed: Harmless whitespace preceding a URL protocol (such as " http://")
+  caused the URL to be removed even when the protocol was whitelisted.
+  [@benubois - #126][126]
+
+[126]:https://github.com/rgrove/sanitize/pull/126
+
+
 Version 3.0.3 (2014-10-29)
 --------------------------
 

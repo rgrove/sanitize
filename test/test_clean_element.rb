@@ -154,6 +154,14 @@ describe 'Sanitize::Transformers::CleanElement' do
       :restricted => '',
       :basic      => '',
       :relaxed    => '<img>'
+    },
+
+    'protocol whitespace' => {
+      :html       => '<a href=" http://example.com/"></a>',
+      :default    => '',
+      :restricted => '',
+      :basic      => '<a href="http://example.com/" rel="nofollow"></a>',
+      :relaxed    => '<a href="http://example.com/"></a>'
     }
   }
 
