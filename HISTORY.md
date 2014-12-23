@@ -1,8 +1,8 @@
 Sanitize History
 ================================================================================
 
-Version 3.1.0 (git)
--------------------
+Version 3.1.0 (2013-12-22)
+--------------------------
 
 * Added the following CSS properties to the relaxed config. [@ehudc - #120][120]
 
@@ -11,6 +11,11 @@ Version 3.1.0 (git)
     - `-webkit-text-size-adjust`
     - `text-size-adjust`
 
+* Updated Nokogumbo to 1.2.0 to pick up a fix for a Gumbo bug where the
+  entity `&AElig;` left its semicolon behind when it was converted to a
+  character during parsing. [#119][119]
+
+[119]:https://github.com/rgrove/sanitize/issues/119
 [120]:https://github.com/rgrove/sanitize/pull/120
 
 
