@@ -1,7 +1,7 @@
 Sanitize History
 ================================================================================
 
-Version 3.1.0 (2013-12-22)
+Version 3.1.0 (2014-12-22)
 --------------------------
 
 * Added the following CSS properties to the relaxed config. [@ehudc - #120][120]
