@@ -52,6 +52,12 @@ class Sanitize
     Sanitize.new(config).fragment(html)
   end
 
+  # Returns a sanitized copy of the given hash fragment, using the settings in
+  # _config_ if specified.
+  def self.fragment_hash(hash, config = {})
+    Sanitize.new(config).fragment_hash(hash)
+  end
+
   # Sanitizes the given `Nokogiri::XML::Node` instance and all its children.
   def self.node!(node, config = {})
     Sanitize.new(config).node!(node)
@@ -135,6 +141,19 @@ class Sanitize
 
     node!(frag)
     to_html(frag)
+  end
+
+  def fragment_hash(hash)
+    return {} if hash.nil?
+    return {} if hash.empty?
+
+    fragmented_hash = hash.clone
+    hash.keys.each do |key|
+      if hash[key].class == String
+        fragmented_hash[key] = self.fragment(hash[key])
+      end
+    end
+    fragmented_hash
   end
 
   # @deprecated Use {#fragment} instead.
