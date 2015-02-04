@@ -42,6 +42,10 @@ describe 'Sanitize' do
         @s.fragment('<html><body><b>foo</b></body></html>').must_equal 'foo'
         @s.fragment('<!DOCTYPE html><html><body><b>foo</b></body></html>').must_equal 'foo'
       end
+
+      it 'should not choke on fragments which are frozen' do
+        @s.fragment('<b>foo</b>'.freeze).must_equal 'foo'
+      end
     end
 
     describe '#node!' do

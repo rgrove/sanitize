@@ -170,7 +170,7 @@ class Sanitize
 
   # Preprocesses HTML before parsing to remove undesirable Unicode chars.
   def preprocess(html)
-    html.to_s.dup
+    html = html.to_s.dup
 
     unless html.encoding.name == 'UTF-8'
       html.encode!('UTF-8',
