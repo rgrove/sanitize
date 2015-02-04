@@ -1,6 +1,17 @@
 Sanitize History
 ================================================================================
 
+Version 3.1.1 (2015-02-04)
+--------------------------
+
+* Fixed: `#document` and `#fragment` failed on frozen strings, and could
+  unintentionally modify unfrozen strings if they used an encoding other than
+  UTF-8 or if they contained characters not allowed in HTML.
+  [@AnchorCat - #128][128]
+
+[128]:https://github.com/rgrove/sanitize/pull/128
+
+
 Version 3.1.0 (2014-12-22)
 --------------------------
 
