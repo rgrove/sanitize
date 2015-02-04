@@ -11,6 +11,17 @@ describe 'Unicode' do
       @s = Sanitize.new(Sanitize::Config::RELAXED)
     end
 
+    it 'should not modify the input string' do
+      fragment = "a\u0340b\u0341c"
+      document = "a\u0340b\u0341c"
+
+      @s.document(document)
+      @s.fragment(fragment)
+
+      fragment.must_equal "a\u0340b\u0341c"
+      document.must_equal "a\u0340b\u0341c"
+    end
+
     it 'should strip deprecated grave and acute clones' do
       @s.document("a\u0340b\u0341c").must_equal "<html><head></head><body>abc</body></html>\n"
       @s.fragment("a\u0340b\u0341c").must_equal 'abc'

@@ -22,6 +22,10 @@ describe 'Sanitize' do
         @s.document(input)
         input.must_equal('<!DOCTYPE html><b>foo</b>')
       end
+
+      it 'should not choke on frozen documents' do
+        @s.document('<!doctype html><html><b>foo</b>'.freeze).must_equal "<html>foo</html>\n"
+      end
     end
 
     describe '#fragment' do
@@ -43,7 +47,7 @@ describe 'Sanitize' do
         @s.fragment('<!DOCTYPE html><html><body><b>foo</b></body></html>').must_equal 'foo'
       end
 
-      it 'should not choke on fragments which are frozen' do
+      it 'should not choke on frozen fragments' do
         @s.fragment('<b>foo</b>'.freeze).must_equal 'foo'
       end
     end
