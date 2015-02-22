@@ -1,6 +1,17 @@
 Sanitize History
 ================================================================================
 
+Version 3.1.2 (git)
+-------------------
+
+* Fixed: Deleting a node in a custom transformer could trigger a memory leak
+  in Nokogiri if that node's children were later reparented, which the built-in
+  CleanElement transformer did by default. The CleanElement transformer is now
+  careful not to reparent the children of deleted nodes. [#129]
+
+[129]:https://github.com/rgrove/sanitize/issues/129
+
+
 Version 3.1.1 (2015-02-04)
 --------------------------
 

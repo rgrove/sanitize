@@ -55,8 +55,13 @@ class Sanitize; module Transformers; class CleanElement
 
     name = env[:node_name]
 
-    # Delete any element that isn't in the config whitelist.
-    unless @elements.include?(name)
+    # Delete any element that isn't in the config whitelist, unless the node has
+    # already been deleted from the document.
+    #
+    # It's important that we not try to reparent the children of a node that has
+    # already been deleted, since that seems to trigger a memory leak in
+    # Nokogiri.
+    unless @elements.include?(name) || node.parent.nil?
       # Elements like br, div, p, etc. need to be replaced with whitespace in
       # order to preserve readability.
       if @whitespace_elements.include?(name)
