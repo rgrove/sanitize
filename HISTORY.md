@@ -1,8 +1,8 @@
 Sanitize History
 ================================================================================
 
-Version 3.1.2 (git)
--------------------
+Version 3.1.2 (2015-02-22)
+--------------------------
 
 * Fixed: Deleting a node in a custom transformer could trigger a memory leak
   in Nokogiri if that node's children were later reparented, which the built-in
