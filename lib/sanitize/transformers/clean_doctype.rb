@@ -6,7 +6,7 @@ class Sanitize; module Transformers
     node = env[:node]
 
     if node.type == Nokogiri::XML::Node::DTD_NODE
-        node.unlink unless env[:is_whitelisted]
+      node.unlink unless env[:is_whitelisted]
     end
   end
 

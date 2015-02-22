@@ -245,13 +245,13 @@ class Sanitize
       prev = child.previous_sibling
       traverse(child, &block)
 
-      if child.parent != node
+      if child.parent == node
+        child = child.next_sibling
+      else
         # The child was unlinked or reparented, so traverse the previous node's
         # next sibling, or the parent's first child if there is no previous
         # node.
         child = prev ? prev.next_sibling : node.child
-      else
-        child = child.next_sibling
       end
     end
   end
