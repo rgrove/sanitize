@@ -131,7 +131,7 @@ class Sanitize
     end
 
     frag = doc.fragment
-    doc.xpath(path).each {|node| frag << node }
+    frag << doc.xpath(path)
 
     node!(frag)
     to_html(frag)
@@ -237,7 +237,7 @@ class Sanitize
   # Performs top-down traversal of the given node, operating first on the node
   # itself, then traversing each child (if any) in order.
   def traverse(node, &block)
-    block.call(node)
+    yield node
 
     child = node.child
 
