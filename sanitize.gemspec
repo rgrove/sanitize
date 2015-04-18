@@ -22,9 +22,9 @@ Gem::Specification.new do |s|
   s.add_dependency('nokogumbo', '1.4.1')
 
   # Development dependencies.
-  s.add_development_dependency('minitest',  '~> 5.3.4')
-  s.add_development_dependency('rake',      '~> 10.1')
-  s.add_development_dependency('redcarpet', '~> 3.0.0')
+  s.add_development_dependency('minitest',  '~> 5.6.0')
+  s.add_development_dependency('rake',      '~> 10.4.2')
+  s.add_development_dependency('redcarpet', '~> 3.2.3')
   s.add_development_dependency('yard',      '~> 0.8.7')
 
   s.require_paths = ['lib']
