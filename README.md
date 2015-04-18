@@ -364,10 +364,22 @@ default is `false`.
 
 ##### :css => :at_rules (Array or Set)
 
-Names of CSS [@ rules][at-rules] to allow. Names should be specified in
-lowercase.
+Names of CSS [at-rules][at-rules] to allow that may not have associated blocks,
+such as `import` or `charset`. Names should be specified in lowercase.
 
 [at-rules]:https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule
+
+##### :css => :at_rules_with_properties (Array or Set)
+
+Names of CSS [at-rules][at-rules] to allow that may have associated blocks
+containing CSS properties. At-rules like `font-face` and `page` fall into this
+category. Names should be specified in lowercase.
+
+##### :css => :at_rules_with_styles (Array or Set)
+
+Names of CSS [at-rules][at-rules] to allow that may have associated blocks
+containing style rules. At-rules like `media` and `keyframes` fall into this
+category. Names should be specified in lowercase.
 
 ##### :css => :properties (Array or Set)
 
