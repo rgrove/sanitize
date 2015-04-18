@@ -6,12 +6,6 @@ require 'set'
 class Sanitize; class CSS
   attr_reader :config
 
-  # Names of CSS at-rules whose blocks may contain properties.
-  AT_RULES_WITH_PROPERTIES = Set.new(%w[font-face page])
-
-  # Names of CSS at-rules whose blocks may contain style rules.
-  AT_RULES_WITH_STYLES = Set.new(%w[document media supports])
-
   # -- Class Methods -----------------------------------------------------------
 
   # Sanitizes inline CSS style properties.
@@ -42,6 +36,11 @@ class Sanitize; class CSS
   # _config_.
   def initialize(config = {})
     @config = Config.merge(Config::DEFAULT[:css], config[:css] || config)
+
+    @at_rules_with_properties = Set.new(@config[:at_rules_with_properties])
+    @at_rules_with_styles     = Set.new(@config[:at_rules_with_styles])
+
+    @at_rules = @at_rules_with_properties + @at_rules_with_styles + @config[:at_rules]
   end
 
   # Sanitizes inline CSS style properties.
@@ -154,16 +153,16 @@ class Sanitize; class CSS
   # current config doesn't allow this at-rule.
   def at_rule!(rule)
     name = rule[:name].downcase
-    return nil unless @config[:at_rules].include?(name)
+    return nil unless @at_rules.include?(name)
 
-    if AT_RULES_WITH_STYLES.include?(name)
+    if @at_rules_with_styles.include?(name)
       styles = Crass::Parser.parse_rules(rule[:block],
         :preserve_comments => @config[:allow_comments],
         :preserve_hacks    => @config[:allow_hacks])
 
       rule[:block] = tree!(styles)
 
-    elsif AT_RULES_WITH_PROPERTIES.include?(name)
+    elsif @at_rules_with_properties.include?(name)
       props = Crass::Parser.parse_properties(rule[:block],
         :preserve_comments => @config[:allow_comments],
         :preserve_hacks    => @config[:allow_hacks])

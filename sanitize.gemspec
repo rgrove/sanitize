@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new('>= 1.2.0')
 
   # Runtime dependencies.
-  s.add_dependency('crass',     '~> 1.0.1')
+  s.add_dependency('crass',     '~> 1.0.2')
   s.add_dependency('nokogiri',  '>= 1.4.4')
   s.add_dependency('nokogumbo', '1.2.0')
 

@@ -1,5 +1,5 @@
 # encoding: utf-8
 
 class Sanitize
-  VERSION = '3.2.0'
+  VERSION = '4.0.0'
 end

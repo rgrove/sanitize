@@ -32,11 +32,20 @@ class Sanitize
         # invalid CSS.
         :allow_hacks => false,
 
-        # CSS @ rules to allow.
+        # CSS at-rules to allow that may not have associated blocks (e.g.
+        # "import").
+        #
         # https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule
         :at_rules => [],
 
-        # CSS style properties to allow.
+        # CSS at-rules to allow whose blocks may contain properties (e.g.
+        # "font-face").
+        :at_rules_with_properties => [],
+
+        # CSS at-rules to allow whose blocks may contain styles (e.g. "media").
+        :at_rules_with_styles => [],
+
+        # CSS properties to allow.
         :properties => [],
 
         # URL protocols to allow in CSS URLs.

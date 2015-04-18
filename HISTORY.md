@@ -1,10 +1,44 @@
 Sanitize History
 ================================================================================
 
-Version 3.2.0 (git)
+Version 4.0.0 (git)
 -------------------
 
+### Potentially breaking changes
+
+* Added two new CSS config settings, `:at_rules_with_properties` and
+  `:at_rules_with_styles`. These allow you to define which at-rules should be
+  allowed to contain properties and which should be allowed to contain style
+  rules. Previously this was hard-coded internally. [#111][111]
+
+  The previous `:at_rules` setting still exists, and defines at-rules that may
+  not have associated blocks, such as `@import`. If you have a custom config
+  that contains an `:at_rules` setting, you may need to move rules can have
+  blocks to either `:at_rules_with_properties` or `:at_rules_with_styles`.
+
+  See Sanitize's relaxed config for an example.
+
+### Other changes
+
+* Added full support for CSS `@page` rules in the relaxed config, including
+  support for all page-margin box rules (such as `@top-left`, `@bottom-center`,
+  etc.)
+
+* Added the following CSS at-rules to the relaxed config:
+
+    - `@-moz-keyframes`
+    - `@-o-keyframes`
+    - `@-webkit-keyframes`
+    - `@document`
+
+* Added the `size` CSS property to the relaxed config.
+
 * Small performance improvements.
+
+* Fixed: Upgraded Crass to 1.0.2 to pick up a fix that affected the parsing of
+  CSS `@page` rules.
+
+[111]:https://github.com/rgrove/sanitize/issues/111
 
 
 Version 3.1.2 (2015-02-22)

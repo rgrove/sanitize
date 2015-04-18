@@ -40,7 +40,37 @@ class Sanitize
         :allow_comments => true,
         :allow_hacks    => true,
 
-        :at_rules  => %w[font-face keyframes media page supports],
+        :at_rules_with_properties => %w[
+          bottom-center
+          bottom-left
+          bottom-left-corner
+          bottom-right
+          bottom-right-corner
+          font-face
+          left-bottom
+          left-middle
+          left-top
+          page
+          right-bottom
+          right-middle
+          right-top
+          top-center
+          top-left
+          top-left-corner
+          top-right
+          top-right-corner
+        ],
+
+        :at_rules_with_styles => %w[
+          -moz-keyframes
+          -o-keyframes
+          -webkit-keyframes
+          document
+          keyframes
+          media
+          supports
+        ],
+
         :protocols => ['http', 'https', :relative],
 
         :properties => %w[
@@ -484,6 +514,7 @@ class Sanitize
           quotes
           resize
           right
+          size
           tab-size
           table-layout
           text-align

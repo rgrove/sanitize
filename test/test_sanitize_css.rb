@@ -245,5 +245,30 @@ describe 'Sanitize::CSS' do
         }
       ].strip
     end
+
+    it 'should parse @page rules properly' do
+      css = %[
+        @page { margin: 2cm } /* All margins set to 2cm */
+
+        @page :right {
+          @top-center { content: "Preliminary edition" }
+          @bottom-center { content: counter(page) }
+        }
+
+        @page {
+          size: 8.5in 11in;
+          margin: 10%;
+
+          @top-left {
+            content: "Hamlet";
+          }
+          @top-right {
+            content: "Page " counter(page);
+          }
+        }
+      ].strip
+
+      @relaxed.stylesheet(css).must_equal css
+    end
   end
 end
