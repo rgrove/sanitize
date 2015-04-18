@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   # Runtime dependencies.
   s.add_dependency('crass',     '~> 1.0.2')
   s.add_dependency('nokogiri',  '>= 1.4.4')
-  s.add_dependency('nokogumbo', '1.2.0')
+  s.add_dependency('nokogumbo', '1.4.1')
 
   # Development dependencies.
   s.add_development_dependency('minitest',  '~> 5.3.4')
