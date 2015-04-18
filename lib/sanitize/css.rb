@@ -22,10 +22,50 @@ class Sanitize; class CSS
     self.new(config).properties(css)
   end
 
+  # Sanitizes a full CSS stylesheet.
+  #
+  # A stylesheet may include selectors, at-rules, and comments. To sanitize only
+  # inline style properties such as the contents of an HTML `style` attribute,
+  # use {.properties}.
+  #
+  # @example
+  #   css = %[
+  #     .foo {
+  #       background: url(foo.png);
+  #       color: #fff;
+  #     }
+  #
+  #     #bar {
+  #       font: 42pt 'Comic Sans MS';
+  #     }
+  #   ]
+  #
+  #   Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
+  #
+  # @return [String] Sanitized CSS stylesheet.
   def self.stylesheet(css, config = {})
     self.new(config).stylesheet(css)
   end
 
+  # Sanitizes the given Crass CSS parse tree and all its children, modifying it
+  # in place.
+  #
+  # @example
+  #   css = %[
+  #     .foo {
+  #       background: url(foo.png);
+  #       color: #fff;
+  #     }
+  #
+  #     #bar {
+  #       font: 42pt 'Comic Sans MS';
+  #     }
+  #   ]
+  #
+  #   tree = Crass.parse(css)
+  #   Sanitize::CSS.tree!(tree, Sanitize::Config::RELAXED)
+  #
+  # @return [Array] Sanitized Crass CSS parse tree.
   def self.tree!(tree, config = {})
     self.new(config).tree!(tree)
   end
@@ -65,7 +105,7 @@ class Sanitize; class CSS
 
   # Sanitizes a full CSS stylesheet.
   #
-  # A stylesheet may include selectors, @ rules, and comments. To sanitize only
+  # A stylesheet may include selectors, at-rules, and comments. To sanitize only
   # inline style properties such as the contents of an HTML `style` attribute,
   # use {#properties}.
   #
@@ -98,6 +138,17 @@ class Sanitize; class CSS
   # in place.
   #
   # @example
+  #   css = %[
+  #     .foo {
+  #       background: url(foo.png);
+  #       color: #fff;
+  #     }
+  #
+  #     #bar {
+  #       font: 42pt 'Comic Sans MS';
+  #     }
+  #   ]
+  #
   #   scss = Sanitize::CSS.new(Sanitize::Config::RELAXED)
   #   tree = Crass.parse(css)
   #
