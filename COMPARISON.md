@@ -1,6 +1,6 @@
 # Biased comparison of Ruby HTML sanitization libraries
 
-This is a feature comparison of several widely used Ruby HTML sanitization
+This is a feature comparison of three widely used Ruby HTML sanitization
 libraries. It's heavily biased because I'm the author of Sanitize, and I've
 chosen to list the features that are important to me.
 
@@ -16,7 +16,7 @@ know!
 
 ## Feature comparison
 
-Feature                                               | [Sanitize 3.0.0][sanitize] | [Loofah 2.0.0][loofah] | [HTMLFilter 1.3.0][htmlfilter] |
+Feature                                               | [Sanitize 4.0.0][sanitize] | [Loofah 2.0.1][loofah] | [HTMLFilter 1.3.0][htmlfilter] |
 ----------------------------------------------------- |:--------------------------:|:----------------------:|:------------------------------:|
 Actually parses HTML (not with regexes)               | ✓                          | ✓                      |                                |
 HTML5-compliant parser                                | ✓                          |                        |                                |
@@ -89,13 +89,13 @@ indicate faster completion).
 
 [benchmark]:https://github.com/rgrove/sanitize/tree/master/benchmark
 
-Benchmark                                  | [Sanitize 3.0.0][sanitize]             | [Loofah 2.0.0][loofah]               | [HTMLFilter 1.3.0][htmlfilter]
+Benchmark                                  | [Sanitize 4.0.0][sanitize]             | [Loofah 2.0.1][loofah]               | [HTMLFilter 1.3.0][htmlfilter]
 ------------------------------------------ |:--------------------------------------:|:------------------------------------:|:------------------------------:
-Small HTML fragment (757 bytes) x 1000     | **0.457s**                             | 0.569s                               | 0.975s
-Large HTML fragment (33,531 bytes) x 100   | **3.708s**                             | 4.582s                               | 8.226s
-Small HTML document (25,286 bytes) x 100   | **1.764s**                             | 2.026s                               | _ERROR_
-Medium HTML document (86,685 bytes) x 100  | **6.714s**                             | 8.981s                               | _ERROR_
-Huge HTML document (7,172,510 bytes) x 5   | **34.765s**                            | 41.162s                              | 75.168s
+Small HTML fragment (757 bytes) x 1000     | 0.461s                                 | 0.595s                               | **0.413s**
+Large HTML fragment (33,531 bytes) x 100   | **2.966s**                             | 4.618s                               | 3.054s
+Small HTML document (25,286 bytes) x 100   | **1.629s**                             | 2.099s                               | _ERROR_
+Medium HTML document (86,685 bytes) x 100  | **5.938s**                             | 8.531s                               | _ERROR_
+Huge HTML document (7,172,510 bytes) x 5   | **28.682s**                            | 48.375s                              | 31.930s
 
 To run this benchmark yourself:
 
@@ -117,50 +117,50 @@ ruby benchmark/benchmark.rb
 ### Raw benchmark results
 
 ```
-Ruby version      : 2.1.2
-Sanitize version  : 3.0.0
-Loofah version    : 2.0.0
+Ruby version      : 2.2.2
+Sanitize version  : 4.0.0
+Loofah version    : 2.0.1
 HTMLFilter version: 1.3.0
 
-Nokogiri version: {"warnings"=>[], "nokogiri"=>"1.6.2.1", "ruby"=>{"version"=>"2.1.2", "platform"=>"x86_64-darwin13.0", "description"=>"ruby 2.1.2p95 (2014-05-08 revision 45877) [x86_64-darwin13.0]", "engine"=>"ruby"}, "libxml"=>{"binding"=>"extension", "source"=>"packaged", "libxml2_path"=>"/Users/rgrove/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/nokogiri-1.6.2.1/ports/x86_64-apple-darwin13.2.0/libxml2/2.8.0", "libxslt_path"=>"/Users/rgrove/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/nokogiri-1.6.2.1/ports/x86_64-apple-darwin13.2.0/libxslt/1.1.28", "compiled"=>"2.8.0", "loaded"=>"2.8.0"}}
+Nokogiri version: {"warnings"=>[], "nokogiri"=>"1.6.6.2", "ruby"=>{"version"=>"2.2.2", "platform"=>"x86_64-darwin14", "description"=>"ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-darwin14]", "engine"=>"ruby"}, "libxml"=>{"binding"=>"extension", "source"=>"packaged", "libxml2_path"=>"/Users/rgrove/.rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/nokogiri-1.6.6.2/ports/x86_64-apple-darwin14.3.0/libxml2/2.9.2", "libxslt_path"=>"/Users/rgrove/.rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/nokogiri-1.6.6.2/ports/x86_64-apple-darwin14.3.0/libxslt/1.1.28", "libxml2_patches"=>["0001-Revert-Missing-initialization-for-the-catalog-module.patch", "0002-Fix-missing-entities-after-CVE-2014-3660-fix.patch"], "libxslt_patches"=>["0001-Adding-doc-update-related-to-1.1.28.patch", "0002-Fix-a-couple-of-places-where-f-printf-parameters-wer.patch", "0003-Initialize-pseudo-random-number-generator-with-curre.patch", "0004-EXSLT-function-str-replace-is-broken-as-is.patch", "0006-Fix-str-padding-to-work-with-UTF-8-strings.patch", "0007-Separate-function-for-predicate-matching-in-patterns.patch", "0008-Fix-direct-pattern-matching.patch", "0009-Fix-certain-patterns-with-predicates.patch", "0010-Fix-handling-of-UTF-8-strings-in-EXSLT-crypto-module.patch", "0013-Memory-leak-in-xsltCompileIdKeyPattern-error-path.patch", "0014-Fix-for-bug-436589.patch", "0015-Fix-mkdir-for-mingw.patch"], "compiled"=>"2.9.2", "loaded"=>"2.9.2"}}
 
 These values are time measurements. Lower is faster!
 
 -- Benchmark --
   Small HTML fragment (757 bytes) x 1000
                                    total    single    rel
-               Sanitize#fragment   0.457 (0.000457)     -
-               Sanitize.fragment   1.127 (0.001127)  2.47x
-   Loofah.scrub_fragment (strip)   0.569 (0.000569)  1.25x
-               HTMLFilter#filter   0.975 (0.000975)  2.13x
+               Sanitize#fragment   0.461 (0.000461)     -
+               Sanitize.fragment   1.221 (0.001221)  2.65x
+   Loofah.scrub_fragment (strip)   0.595 (0.000595)  1.29x
+               HTMLFilter#filter   0.413 (0.000413)  0.90x
 
   Large HTML fragment (33531 bytes) x 100
                                    total    single    rel
-               Sanitize#fragment   3.708 (0.037075)     -
-               Sanitize.fragment   3.720 (0.037201)  1.00x
-   Loofah.scrub_fragment (strip)   4.582 (0.045825)  1.24x
-               HTMLFilter#filter   8.226 (0.082255)  2.22x
+               Sanitize#fragment   2.966 (0.029664)     -
+               Sanitize.fragment   3.006 (0.030057)  1.01x
+   Loofah.scrub_fragment (strip)   4.618 (0.046183)  1.56x
+               HTMLFilter#filter   3.054 (0.030538)  1.03x
 
   Small HTML document (25286 bytes) x 100
                                    total    single    rel
-               Sanitize#document   1.764 (0.017638)     -
-               Sanitize.document   1.838 (0.018382)  1.04x
-   Loofah.scrub_document (strip)   2.026 (0.020263)  1.15x
+               Sanitize#document   1.629 (0.016286)     -
+               Sanitize.document   1.683 (0.016829)  1.03x
+   Loofah.scrub_document (strip)   2.099 (0.020991)  1.29x
         HTMLFilter#filter ERROR!
 
   Medium HTML document (86685 bytes) x 100
                                    total    single    rel
-               Sanitize#document   6.714 (0.067136)     -
-               Sanitize.document   6.804 (0.068041)  1.01x
-   Loofah.scrub_document (strip)   8.981 (0.089805)  1.34x
+               Sanitize#document   5.938 (0.059375)     -
+               Sanitize.document   6.010 (0.060097)  1.01x
+   Loofah.scrub_document (strip)   8.531 (0.085315)  1.44x
         HTMLFilter#filter ERROR!
 
   Huge HTML document (7172510 bytes) x 5
                                    total    single    rel
-               Sanitize#document  34.765 (6.953046)     -
-               Sanitize.document  33.363 (6.672691)  0.96x
-   Loofah.scrub_document (strip)  41.162 (8.232313)  1.18x
-               HTMLFilter#filter  75.168 (15.033509)  2.16x
+               Sanitize#document  28.682 (5.736398)     -
+               Sanitize.document  29.550 (5.910002)  1.03x
+   Loofah.scrub_document (strip)  48.375 (9.674925)  1.69x
+               HTMLFilter#filter  31.930 (6.386075)  1.11x
 ```
 
 [htmlfilter]:https://github.com/rubyworks/htmlfilter
