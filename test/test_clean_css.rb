@@ -62,5 +62,6 @@ describe 'Sanitize::Transformers::CSS::CleanElement' do
   end
 
   it 'should remove the <style> element if the sanitized CSS is empty' do
+    @s.fragment('<style></style>').must_equal ''
   end
 end
