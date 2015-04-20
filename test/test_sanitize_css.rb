@@ -220,7 +220,7 @@ describe 'Sanitize::CSS' do
     end
   end
 
-  describe 'bugs' do
+  describe 'functionality' do
     before do
       @default = Sanitize::CSS.new
       @relaxed = Sanitize::CSS.new(Sanitize::Config::RELAXED[:css])
@@ -235,6 +235,10 @@ describe 'Sanitize::CSS' do
         @media (max-width: 720px) {
           p.foo > .bar { float: right; width: expression(body.scrollLeft + 50 + 'px'); }
           #baz { color: green; }
+
+          @media (orientation: portrait) {
+            #baz { color: red; }
+          }
         }
       ].strip
 
@@ -242,6 +246,10 @@ describe 'Sanitize::CSS' do
         @media (max-width: 720px) {
           p.foo > .bar { float: right;  }
           #baz { color: green; }
+
+          @media (orientation: portrait) {
+            #baz { color: red; }
+          }
         }
       ].strip
     end
@@ -269,6 +277,54 @@ describe 'Sanitize::CSS' do
       ].strip
 
       @relaxed.stylesheet(css).must_equal css
+    end
+
+    describe ":at_rules" do
+      it "should remove blockless at-rules that aren't whitelisted" do
+        css = %[
+          @charset 'utf-8';
+          @import url('foo.css');
+          .foo { color: green; }
+        ].strip
+
+        @relaxed.stylesheet(css).strip.must_equal %[
+          .foo { color: green; }
+        ].strip
+      end
+
+      describe "when blockless at-rules are whitelisted" do
+        before do
+          @scss = Sanitize::CSS.new(Sanitize::Config.merge(Sanitize::Config::RELAXED[:css], {
+            :at_rules => ['charset', 'import']
+          }))
+        end
+
+        it "should not remove them" do
+          css = %[
+            @charset 'utf-8';
+            @import url('foo.css');
+            .foo { color: green; }
+          ].strip
+
+          @scss.stylesheet(css).must_equal %[
+            @charset 'utf-8';
+            @import url('foo.css');
+            .foo { color: green; }
+          ].strip
+        end
+
+        it "should remove them if they have invalid blocks" do
+          css = %[
+            @charset { color: green }
+            @import { color: green }
+            .foo { color: green; }
+          ].strip
+
+          @scss.stylesheet(css).strip.must_equal %[
+            .foo { color: green; }
+          ].strip
+        end
+      end
     end
   end
 end

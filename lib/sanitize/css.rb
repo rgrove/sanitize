@@ -77,10 +77,9 @@ class Sanitize; class CSS
   def initialize(config = {})
     @config = Config.merge(Config::DEFAULT[:css], config[:css] || config)
 
+    @at_rules                 = Set.new(@config[:at_rules])
     @at_rules_with_properties = Set.new(@config[:at_rules_with_properties])
     @at_rules_with_styles     = Set.new(@config[:at_rules_with_styles])
-
-    @at_rules = @at_rules_with_properties + @at_rules_with_styles + @config[:at_rules]
   end
 
   # Sanitizes inline CSS style properties.
@@ -204,7 +203,6 @@ class Sanitize; class CSS
   # current config doesn't allow this at-rule.
   def at_rule!(rule)
     name = rule[:name].downcase
-    return nil unless @at_rules.include?(name)
 
     if @at_rules_with_styles.include?(name)
       styles = Crass::Parser.parse_rules(rule[:block],
@@ -220,8 +218,10 @@ class Sanitize; class CSS
 
       rule[:block] = tree!(props)
 
+    elsif @at_rules.include?(name)
+      return nil if rule.has_key?(:block)
     else
-      rule.delete(:block)
+      return nil
     end
 
     rule
