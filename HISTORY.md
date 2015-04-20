@@ -31,7 +31,8 @@ Version 4.0.0 (git)
     - `@-webkit-keyframes`
     - `@document`
 
-* Added the `size` CSS property to the relaxed config.
+* Added a whole bunch of CSS properties to the relaxed config. View the complete
+  list [here](https://gist.github.com/rgrove/044cc7e9a5b44f583c05).
 
 * Small performance improvements.
 
