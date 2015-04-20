@@ -351,6 +351,10 @@ class Sanitize
           align-content
           align-items
           align-self
+          alignment-adjust
+          alignment-baseline
+          all
+          anchor-point
           animation
           animation-delay
           animation-direction
@@ -360,6 +364,7 @@ class Sanitize
           animation-name
           animation-play-state
           animation-timing-function
+          azimuth
           backface-visibility
           background
           background-attachment
@@ -370,6 +375,12 @@ class Sanitize
           background-position
           background-repeat
           background-size
+          baseline-shift
+          binding
+          bleed
+          bookmark-label
+          bookmark-level
+          bookmark-state
           border
           border-bottom
           border-bottom-color
@@ -407,14 +418,19 @@ class Sanitize
           box-decoration-break
           box-shadow
           box-sizing
+          box-snap
+          box-suppress
           break-after
           break-before
           break-inside
           caption-side
+          chains
           clear
           clip
           clip-path
+          clip-rule
           color
+          color-interpolation-filters
           column-count
           column-fill
           column-gap
@@ -425,12 +441,23 @@ class Sanitize
           column-span
           column-width
           columns
+          contain
           content
           counter-increment
           counter-reset
+          counter-set
+          crop
+          cue
+          cue-after
+          cue-before
           cursor
           direction
           display
+          display-inside
+          display-list
+          display-outside
+          dominant-baseline
+          elevation
           empty-cells
           filter
           flex
@@ -441,6 +468,11 @@ class Sanitize
           flex-shrink
           flex-wrap
           float
+          float-offset
+          flood-color
+          flood-opacity
+          flow-from
+          flow-into
           font
           font-family
           font-feature-settings
@@ -459,6 +491,22 @@ class Sanitize
           font-variant-numeric
           font-variant-position
           font-weight
+          grid
+          grid-area
+          grid-auto-columns
+          grid-auto-flow
+          grid-auto-rows
+          grid-column
+          grid-column-end
+          grid-column-start
+          grid-row
+          grid-row-end
+          grid-row-start
+          grid-template
+          grid-template-areas
+          grid-template-columns
+          grid-template-rows
+          hanging-punctuation
           height
           hyphens
           icon
@@ -466,10 +514,23 @@ class Sanitize
           image-rendering
           image-resolution
           ime-mode
+          initial-letters
+          inline-box-align
           justify-content
+          justify-items
+          justify-self
           left
           letter-spacing
+          lighting-color
+          line-box-contain
+          line-break
+          line-grid
           line-height
+          line-snap
+          line-stacking
+          line-stacking-ruby
+          line-stacking-shift
+          line-stacking-strategy
           list-style
           list-style-image
           list-style-position
@@ -479,13 +540,35 @@ class Sanitize
           margin-left
           margin-right
           margin-top
+          marker-offset
+          marker-side
           marks
           mask
+          mask-box
+          mask-box-outset
+          mask-box-repeat
+          mask-box-slice
+          mask-box-source
+          mask-box-width
+          mask-clip
+          mask-image
+          mask-origin
+          mask-position
+          mask-repeat
+          mask-size
+          mask-source-type
           mask-type
           max-height
+          max-lines
           max-width
           min-height
           min-width
+          move-to
+          nav-down
+          nav-index
+          nav-left
+          nav-right
+          nav-up
           object-fit
           object-position
           opacity
@@ -505,33 +588,73 @@ class Sanitize
           padding-left
           padding-right
           padding-top
+          page
           page-break-after
           page-break-before
           page-break-inside
+          page-policy
+          pause
+          pause-after
+          pause-before
           perspective
           perspective-origin
+          pitch
+          pitch-range
+          play-during
           position
+          presentation-level
           quotes
+          region-fragment
           resize
+          rest
+          rest-after
+          rest-before
+          richness
           right
+          rotation
+          rotation-point
+          ruby-align
+          ruby-merge
+          ruby-position
+          shape-image-threshold
+          shape-margin
+          shape-outside
           size
+          speak
+          speak-as
+          speak-header
+          speak-numeral
+          speak-punctuation
+          speech-rate
+          stress
+          string-set
           tab-size
           table-layout
           text-align
           text-align-last
           text-combine-horizontal
+          text-combine-upright
           text-decoration
           text-decoration-color
           text-decoration-line
+          text-decoration-skip
           text-decoration-style
+          text-emphasis
+          text-emphasis-color
+          text-emphasis-position
+          text-emphasis-style
+          text-height
           text-indent
+          text-justify
           text-orientation
           text-overflow
           text-rendering
           text-shadow
           text-size-adjust
+          text-space-collapse
           text-transform
           text-underline-position
+          text-wrap
           top
           touch-action
           transform
@@ -546,12 +669,24 @@ class Sanitize
           unicode-range
           vertical-align
           visibility
+          voice-balance
+          voice-duration
+          voice-family
+          voice-pitch
+          voice-range
+          voice-rate
+          voice-stress
+          voice-volume
+          volume
           white-space
           widows
           width
+          will-change
           word-break
           word-spacing
           word-wrap
+          wrap-flow
+          wrap-through
           writing-mode
           z-index
         ]
