@@ -1,6 +1,14 @@
 Sanitize History
 ================================================================================
 
+Version 4.0.1 (git)
+-------------------
+
+* Unpinned the Nokogumbo dependency. [@rubys - #141][141]
+
+[141]:https://github.com/rgrove/sanitize/pull/141
+
+
 Version 4.0.0 (2015-04-20)
 --------------------------
 
