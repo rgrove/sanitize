@@ -381,6 +381,18 @@ Names of CSS [at-rules][at-rules] to allow that may have associated blocks
 containing style rules. At-rules like `media` and `keyframes` fall into this
 category. Names should be specified in lowercase.
 
+##### :css => :import_url_validator
+
+This is a `Proc` (or other callable object) that will be called and passed
+the URL specified for any `@import` [at-rules][at-rules].
+
+You can use this to limit what can be imported, for example something
+like the following to limit `@import` to Google Fonts URLs:
+
+```ruby
+Proc.new { |url| url.start_with?("https://fonts.googleapis.com") }
+```
+
 ##### :css => :properties (Array or Set)
 
 Whitelist of CSS property names to allow. Names should be specified in

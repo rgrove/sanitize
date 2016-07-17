@@ -80,6 +80,7 @@ class Sanitize; class CSS
     @at_rules                 = Set.new(@config[:at_rules])
     @at_rules_with_properties = Set.new(@config[:at_rules_with_properties])
     @at_rules_with_styles     = Set.new(@config[:at_rules_with_styles])
+    @import_url_validator     = @config[:import_url_validator]
   end
 
   # Sanitizes inline CSS style properties.
@@ -219,12 +220,26 @@ class Sanitize; class CSS
       rule[:block] = tree!(props)
 
     elsif @at_rules.include?(name)
+      return nil if name == "import" && !import_url_allowed?(rule)
       return nil if rule.has_key?(:block)
     else
       return nil
     end
 
     rule
+  end
+
+  # Passes the URL value of an @import rule to a block to ensure
+  # it's an allowed URL
+  def import_url_allowed?(rule)
+    return true unless @import_url_validator
+
+    url_token = rule[:tokens].detect { |t| t[:node] == :url || t[:node] == :string }
+
+    # don't allow @imports with no URL value
+    return false unless url_token && (import_url = url_token[:value])
+
+    @import_url_validator.call(import_url)
   end
 
   # Sanitizes a CSS property node. Returns the sanitized node, or `nil` if the
