@@ -1,7 +1,12 @@
 language: ruby
+
+# Workaround for a Travis bug that breaks Bundler in Ruby 1.9.3.
+# https://github.com/travis-ci/travis-ci/issues/5239
+before_install:
+  - gem install bundler
+
 rvm:
   - 1.9.3
   - 2.0.0
-  - 2.1.6
-  - 2.2.2
+  - 2.3.1
   - ruby-head
