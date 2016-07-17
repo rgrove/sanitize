@@ -381,7 +381,7 @@ Names of CSS [at-rules][at-rules] to allow that may have associated blocks
 containing style rules. At-rules like `media` and `keyframes` fall into this
 category. Names should be specified in lowercase.
 
-##### :css => :at_import_url_validator
+##### :css => :import_url_validator
 
 This is a `Proc` (or other callable object) that will be called and passed
 the URL specified for any `@import` [at-rules][at-rules].

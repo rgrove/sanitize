@@ -351,7 +351,7 @@ describe 'Sanitize::CSS' do
             google_font_validator = Proc.new { |url| url.start_with?("https://fonts.googleapis.com") }
 
             @scss = Sanitize::CSS.new(Sanitize::Config.merge(Sanitize::Config::RELAXED[:css], {
-              :at_rules => ['import'], :at_import_url_validator => google_font_validator
+              :at_rules => ['import'], :import_url_validator => google_font_validator
             }))
           end
 
