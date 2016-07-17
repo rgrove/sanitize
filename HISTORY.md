@@ -1,16 +1,22 @@
-Sanitize History
-================================================================================
+# Sanitize History
 
-Version 4.0.1 (2015-12-09)
---------------------------
+## 4.1.0 (2016-06-17)
+
+* Added a new CSS config setting, `:import_url_validator`. This is a Proc or
+  other callable object that will be called with each `@import` URL, and should
+  return `true` to allow the URL or `false` to remove it. [@nikz - #153][153]
+
+[153]:https://github.com/rgrove/sanitize/pull/153/
+
+
+## 4.0.1 (2015-12-09)
 
 * Unpinned the Nokogumbo dependency. [@rubys - #141][141]
 
 [141]:https://github.com/rgrove/sanitize/pull/141
 
 
-Version 4.0.0 (2015-04-20)
---------------------------
+## 4.0.0 (2015-04-20)
 
 ### Potentially breaking changes
 
@@ -50,8 +56,7 @@ Version 4.0.0 (2015-04-20)
 [111]:https://github.com/rgrove/sanitize/issues/111
 
 
-Version 3.1.2 (2015-02-22)
---------------------------
+## 3.1.2 (2015-02-22)
 
 * Fixed: Deleting a node in a custom transformer could trigger a memory leak
   in Nokogiri if that node's children were later reparented, which the built-in
@@ -61,8 +66,7 @@ Version 3.1.2 (2015-02-22)
 [129]:https://github.com/rgrove/sanitize/issues/129
 
 
-Version 3.1.1 (2015-02-04)
---------------------------
+## 3.1.1 (2015-02-04)
 
 * Fixed: `#document` and `#fragment` failed on frozen strings, and could
   unintentionally modify unfrozen strings if they used an encoding other than
@@ -72,8 +76,7 @@ Version 3.1.1 (2015-02-04)
 [128]:https://github.com/rgrove/sanitize/pull/128
 
 
-Version 3.1.0 (2014-12-22)
---------------------------
+## 3.1.0 (2014-12-22)
 
 * Added the following CSS properties to the relaxed config. [@ehudc - #120][120]
 
@@ -90,8 +93,7 @@ Version 3.1.0 (2014-12-22)
 [120]:https://github.com/rgrove/sanitize/pull/120
 
 
-Version 3.0.4 (2014-12-12)
---------------------------
+## 3.0.4 (2014-12-12)
 
 * Fixed: Harmless whitespace preceding a URL protocol (such as " http://")
   caused the URL to be removed even when the protocol was whitelisted.
@@ -100,8 +102,7 @@ Version 3.0.4 (2014-12-12)
 [126]:https://github.com/rgrove/sanitize/pull/126
 
 
-Version 3.0.3 (2014-10-29)
---------------------------
+## 3.0.3 (2014-10-29)
 
 * Fixed: Some CSS selectors weren't parsed correctly inside the body of a
   `@media` block, causing them to be removed even when whitelist rules should
@@ -110,16 +111,14 @@ Version 3.0.3 (2014-10-29)
 [121]:https://github.com/rgrove/sanitize/issues/121
 
 
-Version 3.0.2 (2014-09-02)
---------------------------
+## 3.0.2 (2014-09-02)
 
 * Updated Nokogumbo to 1.1.12, because 1.1.11 silently reverted the change we
   were trying to pick up in the last release. Now issue [#114][114] is
   _actually_ fixed.
 
 
-Version 3.0.1 (2014-09-02)
---------------------------
+## 3.0.1 (2014-09-02)
 
 * Updated Nokogumbo to 1.1.11 to pick up a fix for a Gumbo bug in which certain
   HTML character entities, such as `&Ouml;`, were parsed incorrectly, leaving
@@ -128,8 +127,7 @@ Version 3.0.1 (2014-09-02)
 [114]:https://github.com/rgrove/sanitize/issues/114
 
 
-Version 3.0.0 (2014-06-21)
---------------------------
+## 3.0.0 (2014-06-21)
 
 As of this version, Sanitize adheres strictly to the [SemVer 2.0.0][semver]
 versioning standard. This release contains API and output changes that are
@@ -228,8 +226,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 [n1008]:https://github.com/sparklemotion/nokogiri/issues/1008
 
 
-Version 2.1.0 (2014-01-13)
---------------------------
+## 2.1.0 (2014-01-13)
 
 * Added support for whitelisting arbitrary HTML5 `data-*` attributes. Use the
   symbol `:data` instead of an attribute name in the `:attributes` config to
@@ -244,16 +241,14 @@ Version 2.1.0 (2014-01-13)
 [87]:https://github.com/rgrove/sanitize/pull/87
 
 
-Version 2.0.6 (2013-07-10)
---------------------------
+## 2.0.6 (2013-07-10)
 
 * Fixed: Version 2.0.5 inadvertently included some work-in-progress changes that
   shouldn't have made their way into the master branch. This is what happens
   when I release before coffee instead of after.
 
 
-Version 2.0.5 (2013-07-10)
---------------------------
+## 2.0.5 (2013-07-10)
 
 * Loosened the Nokogiri dependency back to >= 1.4.4 to allow Sanitize to coexist
   in newer Rubies with other libraries that restrict Nokogiri to 1.5.x for 1.8.7
@@ -261,8 +256,7 @@ Version 2.0.5 (2013-07-10)
   life easier for people who need those other libs.
 
 
-Version 2.0.4 (2013-06-12)
---------------------------
+## 2.0.4 (2013-06-12)
 
 * Added `Sanitize.clean_document`, which sanitizes a full HTML document rather
   than just a fragment. [Ben Anderson]
@@ -272,14 +266,12 @@ Version 2.0.4 (2013-06-12)
 * Dropped support for Ruby versions older than 1.9.2.
 
 
-Version 2.0.3 (2011-07-01)
---------------------------
+## 2.0.3 (2011-07-01)
 
 * Loosened the Nokogiri dependency to allow Nokogiri 1.5.x.
 
 
-Version 2.0.2 (2011-05-21)
---------------------------
+## 2.0.2 (2011-05-21)
 
 * Fixed a bug in which a protocol like "java\script:" would be translated to
   "java%5Cscript:" and allowed through the filter when relative URLs were
@@ -287,44 +279,50 @@ Version 2.0.2 (2011-05-21)
   undesired behavior.
 
 
-Version 2.0.1 (2011-03-16)
---------------------------
+## 2.0.1 (2011-03-16)
 
 * Updated the protocol regex to anchor at the beginning of the string rather
   than the beginning of a line. [Eaden McKee]
 
 
-Version 2.0.0 (2011-01-15)
---------------------------
+## 2.0.0 (2011-01-15)
 
 * The environment data passed into transformers and the return values expected
   from transformers have changed. Old transformers will need to be updated.
   See the README for details.
+
 * Transformers now receive nodes of all types, not just element nodes.
+
 * Sanitize's own core filtering logic is now implemented as a set of always-on
   transformers.
+
 * The default value for the `:output` config is now `:html`. Previously it was
   `:xhtml`.
+
 * Added a `:whitespace_elements` config, which specifies elements (such as
   `<br>` and `<p>`) that should be replaced with whitespace when removed in
   order to preserve readability. See the README for the default list of
   elements that will be replaced with whitespace when removed.
+
 * Added a `:transformers_breadth` config, which may be used to specify
   transformers that should traverse nodes in a breadth-first mode rather than
   the default depth-first mode.
+
 * Added the `abbr`, `dfn`, `kbd`, `mark`, `s`, `samp`, `time`, and `var`
   elements to the whitelists for the basic and relaxed configs.
+
 * Added the `bdo`, `del`, `figcaption`, `figure`, `hgroup`, `ins`, `rp`, `rt`,
   `ruby`, and `wbr` elements to the whitelist for the relaxed config.
+
 * The `dir`, `lang`, and `title` attributes are now whitelisted for all
   elements in the relaxed config.
+
 * Bumped minimum Nokogiri version to 1.4.4 to avoid a bug in 1.4.2+
   (issue #315) that caused `</body></html>` to be appended to the CDATA inside
   unterminated script and style elements.
 
 
-Version 1.2.1 (2010-04-20)
---------------------------
+## 1.2.1 (2010-04-20)
 
 * Added a `:remove_contents` config setting. If set to `true`, Sanitize will
   remove the contents of all non-whitelisted elements in addition to the
@@ -332,41 +330,46 @@ Version 1.2.1 (2010-04-20)
   remove the contents of only those elements (when filtered), and leave the
   contents of other filtered elements. [Thanks to Rafael Souza for the array
   option]
+
 * Added an `:output_encoding` config setting to allow the character encoding
   for HTML output to be specified. The default is utf-8.
+
 * The environment hash passed into transformers now includes a `:node_name`
   item containing the lowercase name of the current HTML node (e.g. "div").
+
 * Returning anything other than a Hash or nil from a transformer will now
   raise a meaningful `Sanitize::Error` exception rather than an unintended
   `NameError`.
 
 
-Version 1.2.0 (2010-01-17)
---------------------------
+## 1.2.0 (2010-01-17)
 
 * Requires Nokogiri ~> 1.4.1.
+
 * Added support for transformers, which allow you to filter and alter nodes
   using your own custom logic, on top of (or instead of) Sanitize's core
   filter. See the README for details and examples.
+
 * Added `Sanitize.clean_node!`, which sanitizes a `Nokogiri::XML::Node` and
   all its children.
+
 * Added elements `<h1>` through `<h6>` to the Relaxed whitelist. [Suggested by
   David Reese]
 
 
-Version 1.1.0 (2009-10-11)
---------------------------
+## 1.1.0 (2009-10-11)
 
 * Migrated from Hpricot to Nokogiri. Requires libxml2 >= 2.7.2 [Adam Hooper]
+
 * Added an `:output` config setting to allow the output format to be
   specified. Supported formats are `:xhtml` (the default) and `:html` (which
   outputs HTML4).
+
 * Changed protocol regex to ensure Sanitize doesn't kill URLs with colons in
   path segments. [Peter Cooper]
 
 
-Version 1.0.8 (2009-04-23)
---------------------------
+## 1.0.8 (2009-04-23)
 
 * Added a workaround for an Hpricot bug that prevents attribute names from
   being downcased in recent versions of Hpricot. This was exploitable to
@@ -374,48 +377,48 @@ Version 1.0.8 (2009-04-23)
   Wanicur]
 
 
-Version 1.0.7 (2009-04-11)
---------------------------
+## 1.0.7 (2009-04-11)
 
 * Requires Hpricot 0.8.1+, which is finally compatible with Ruby 1.9.1.
+
 * Fixed a bug that caused named character entities containing digits (like
   `&sup2;`) to be escaped when they shouldn't have been. [Reported by
   Sebastian Steinmetz]
 
 
-Version 1.0.6 (2009-02-23)
---------------------------
+## 1.0.6 (2009-02-23)
 
 * Removed htmlentities gem dependency.
+
 * Existing well-formed character entity references in the input string are now
   preserved rather than being decoded and re-encoded.
+
 * The `'` character is now encoded as `&#39;` instead of `&apos;` to prevent
   problems in IE6.
+
 * You can now specify the symbol `:all` in place of an element name in the
   attributes config hash to allow certain attributes on all elements. [Thanks
   to Mutwin Kraus]
 
 
-Version 1.0.5 (2009-02-05)
---------------------------
+## 1.0.5 (2009-02-05)
 
 * Fixed a bug introduced in version 1.0.3 that prevented non-whitelisted
   protocols from being cleaned when relative URLs were allowed. [Reported by
   Dev Purkayastha]
+
 * Fixed "undefined method `parent='" exceptions caused by parser changes in
   edge Hpricot.
 
 
-Version 1.0.4 (2009-01-16)
---------------------------
+## 1.0.4 (2009-01-16)
 
 * Fixed a bug that made it possible to sneak a non-whitelisted element through
   by repeating it several times in a row. All versions of Sanitize prior to
   1.0.4 are vulnerable. [Reported by Cristobal]
 
 
-Version 1.0.3 (2009-01-15)
---------------------------
+## 1.0.3 (2009-01-15)
 
 * Fixed a bug whereby incomplete Unicode or hex entities could be used to
   prevent non-whitelisted protocols from being cleaned. Since IE6 and Opera
@@ -424,25 +427,23 @@ Version 1.0.3 (2009-01-15)
   Sanitize prior to 1.0.3.
 
 
-Version 1.0.2 (2009-01-04)
---------------------------
+## 1.0.2 (2009-01-04)
 
 * Fixed a bug that caused an exception to be thrown when parsing a valueless
   attribute that's expected to contain a URL.
 
 
-Version 1.0.1 (2009-01-01)
---------------------------
+## 1.0.1 (2009-01-01)
 
 * You can now specify `:relative` in a protocol config array to allow
   attributes containing relative URLs with no protocol. The Basic and Relaxed
   configs have been updated to allow relative URLs.
+
 * Added a workaround for an Hpricot bug that causes HTML entities for
   non-ASCII characters to be replaced by question marks, and all other
   entities to be destructively decoded.
 
 
-Version 1.0.0 (2008-12-25)
---------------------------
+## 1.0.0 (2008-12-25)
 
 * First release.
