@@ -325,6 +325,73 @@ describe 'Sanitize::CSS' do
           ].strip
         end
       end
+
+      describe "when validating @import rules" do
+
+        describe "with no validation proc specified" do
+          before do
+            @scss = Sanitize::CSS.new(Sanitize::Config.merge(Sanitize::Config::RELAXED[:css], {
+              :at_rules => ['import']
+            }))
+          end
+
+          it "should allow any URL value" do
+            css = %[
+              @import url('https://somesite.com/something.css');
+            ].strip
+
+            @scss.stylesheet(css).strip.must_equal %[
+              @import url('https://somesite.com/something.css');
+            ].strip
+          end
+        end
+
+        describe "with a validation proc specified" do
+          before do
+            google_font_validator = Proc.new { |url| url.start_with?("https://fonts.googleapis.com") }
+
+            @scss = Sanitize::CSS.new(Sanitize::Config.merge(Sanitize::Config::RELAXED[:css], {
+              :at_rules => ['import'], :at_import_url_validator => google_font_validator
+            }))
+          end
+
+          it "should allow a google fonts url" do
+            css = %[
+              @import 'https://fonts.googleapis.com/css?family=Indie+Flower';
+              @import url('https://fonts.googleapis.com/css?family=Indie+Flower');
+            ].strip
+
+            @scss.stylesheet(css).strip.must_equal %[
+              @import 'https://fonts.googleapis.com/css?family=Indie+Flower';
+              @import url('https://fonts.googleapis.com/css?family=Indie+Flower');
+            ].strip
+          end
+
+          it "should not allow a nasty url" do
+            css = %[
+              @import 'https://fonts.googleapis.com/css?family=Indie+Flower';
+              @import 'https://nastysite.com/nasty_hax0r.css';
+              @import url('https://nastysite.com/nasty_hax0r.css');
+            ].strip
+
+            @scss.stylesheet(css).strip.must_equal %[
+              @import 'https://fonts.googleapis.com/css?family=Indie+Flower';
+            ].strip
+          end
+
+          it "should not allow a blank url" do
+            css = %[
+              @import 'https://fonts.googleapis.com/css?family=Indie+Flower';
+              @import '';
+              @import url('');
+            ].strip
+
+            @scss.stylesheet(css).strip.must_equal %[
+              @import 'https://fonts.googleapis.com/css?family=Indie+Flower';
+            ].strip
+          end
+        end
+      end
     end
   end
 end
