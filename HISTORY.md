@@ -1,11 +1,15 @@
 # Sanitize History
 
-## 4.2.0 (git)
+## 4.2.0 (2016-08-22)
+
+* Added `-webkit-font-smoothing` to the relaxed CSS config. [@louim - #154][154]
 
 * Fixed: Nokogumbo >=1.4.9 changed its behavior in a way that allowed invalid
   doctypes (like `<!DOCTYPE nonsense>`) when the `:allow_doctype` config setting
   was `true`. Invalid doctypes are now coerced to valid ones as they were prior
   to this Nokogumbo change.
+
+[154]:https://github.com/rgrove/sanitize/pull/154
 
 
 ## 4.1.0 (2016-06-17)
