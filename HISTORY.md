@@ -1,5 +1,13 @@
 # Sanitize History
 
+## 4.2.0 (git)
+
+* Fixed: Nokogumbo >=1.4.9 changed its behavior in a way that allowed invalid
+  doctypes (like `<!DOCTYPE nonsense>`) when the `:allow_doctype` config setting
+  was `true`. Invalid doctypes are now coerced to valid ones as they were prior
+  to this Nokogumbo change.
+
+
 ## 4.1.0 (2016-06-17)
 
 * Added a new CSS config setting, `:import_url_validator`. This is a Proc or

@@ -3,10 +3,16 @@
 class Sanitize; module Transformers
 
   CleanDoctype = lambda do |env|
+    return if env[:is_whitelisted]
+
     node = env[:node]
 
     if node.type == Nokogiri::XML::Node::DTD_NODE
-      node.unlink unless env[:is_whitelisted]
+      if env[:config][:allow_doctype]
+        node.name = 'html'
+      else
+        node.unlink
+      end
     end
   end
 

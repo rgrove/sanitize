@@ -82,7 +82,6 @@ class Sanitize
     # Default transformers always run at the end of the chain, after any custom
     # transformers.
     @transformers << Transformers::CleanComment unless @config[:allow_comments]
-    @transformers << Transformers::CleanDoctype unless @config[:allow_doctype]
 
     if @config[:elements].include?('style')
       scss = Sanitize::CSS.new(config)
@@ -95,6 +94,7 @@ class Sanitize
     end
 
     @transformers <<
+        Transformers::CleanDoctype <<
         Transformers::CleanCDATA <<
         Transformers::CleanElement.new(@config)
   end
