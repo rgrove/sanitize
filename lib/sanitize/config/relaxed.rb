@@ -254,6 +254,7 @@ class Sanitize
           -webkit-flow-from
           -webkit-flow-into
           -webkit-font-size-delta
+          -webkit-font-smoothing
           -webkit-grid-area
           -webkit-grid-auto-columns
           -webkit-grid-auto-flow
