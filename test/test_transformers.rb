@@ -77,6 +77,12 @@ describe 'Transformers' do
     called.must_equal true
   end
 
+  it 'should accept a method transformer' do
+    def transformer(env); end
+    Sanitize.fragment('<div>foo</div>', :transformers => method(:transformer))
+      .must_equal(' foo ')
+  end
+
   describe 'Image whitelist transformer' do
     require 'uri'
 

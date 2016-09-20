@@ -52,7 +52,7 @@ class Sanitize
     # Returns `true` if `dup` may be safely called on _value_, `false`
     # otherwise.
     def self.can_dupe?(value)
-      !(true == value || false == value || value.nil? || Numeric === value || Symbol === value)
+      !(true == value || false == value || value.nil? || Method === value || Numeric === value || Symbol === value)
     end
     private_class_method :can_dupe?
 

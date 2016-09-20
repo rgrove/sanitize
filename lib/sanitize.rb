@@ -77,7 +77,7 @@ class Sanitize
   def initialize(config = {})
     @config = Config.merge(Config::DEFAULT, config)
 
-    @transformers = Array(@config[:transformers].dup)
+    @transformers = Array(@config[:transformers])
 
     # Default transformers always run at the end of the chain, after any custom
     # transformers.
