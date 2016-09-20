@@ -1,5 +1,12 @@
 # Sanitize History
 
+## 4.3.0 (2016-09-20)
+
+* Methods can now be used as transformers. [@Skipants - #155][155]
+
+[155]:https://github.com/rgrove/sanitize/pull/155
+
+
 ## 4.2.0 (2016-08-22)
 
 * Added `-webkit-font-smoothing` to the relaxed CSS config. [@louim - #154][154]
