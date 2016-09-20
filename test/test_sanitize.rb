@@ -2,6 +2,17 @@
 require_relative 'common'
 
 describe 'Sanitize' do
+  describe 'initializer' do
+    it 'should not modify a transformers array in the given config' do
+      transformers = [
+        lambda {}
+      ]
+
+      Sanitize.new({ :transformers => transformers })
+      transformers.length.must_equal(1)
+    end
+  end
+
   describe 'instance methods' do
     before do
       @s = Sanitize.new
