@@ -19,7 +19,7 @@ class Sanitize
         'colgroup' => %w[span width],
         'data'     => %w[value],
         'del'      => %w[cite datetime],
-        'img'      => %w[align alt border height src width],
+        'img'      => %w[align alt border height src srcset width],
         'ins'      => %w[cite datetime],
         'li'       => %w[value],
         'ol'       => %w[reversed start type],
