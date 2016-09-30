@@ -1,5 +1,13 @@
 # Sanitize History
 
+## 4.4.0 (2016-09-29)
+
+* Added `srcset` to the attribute whitelist for `img` elements in the relaxed
+  config. [@ejtttje - #156][156]
+
+[156]:https://github.com/rgrove/sanitize/pull/156
+
+
 ## 4.3.0 (2016-09-20)
 
 * Methods can now be used as transformers. [@Skipants - #155][155]
