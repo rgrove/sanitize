@@ -431,7 +431,10 @@ class Sanitize
           clip-path
           clip-rule
           color
+          color-interpolation
           color-interpolation-filters
+          color-profile
+          color-rendering
           column-count
           column-fill
           column-gap
@@ -460,6 +463,10 @@ class Sanitize
           dominant-baseline
           elevation
           empty-cells
+          enable-background
+          fill
+          fill-opacity
+          fill-rule
           filter
           flex
           flex-basis
@@ -492,6 +499,8 @@ class Sanitize
           font-variant-numeric
           font-variant-position
           font-weight
+          glyph-orientation-horizontal
+          glyph-orientation-vertical
           grid
           grid-area
           grid-auto-columns
@@ -520,6 +529,7 @@ class Sanitize
           justify-content
           justify-items
           justify-self
+          kerning
           left
           letter-spacing
           lighting-color
@@ -541,8 +551,12 @@ class Sanitize
           margin-left
           margin-right
           margin-top
+          marker
+          marker-end
+          marker-mid
           marker-offset
           marker-side
+          marker-start
           marks
           mask
           mask-box
@@ -602,6 +616,7 @@ class Sanitize
           pitch
           pitch-range
           play-during
+          pointer-events
           position
           presentation-level
           quotes
@@ -620,6 +635,7 @@ class Sanitize
           shape-image-threshold
           shape-margin
           shape-outside
+          shape-rendering
           size
           speak
           speak-as
@@ -627,12 +643,23 @@ class Sanitize
           speak-numeral
           speak-punctuation
           speech-rate
+          stop-color
+          stop-opacity
           stress
           string-set
+          stroke
+          stroke-dasharray
+          stroke-dashoffset
+          stroke-linecap
+          stroke-linejoin
+          stroke-miterlimit
+          stroke-opacity
+          stroke-width
           tab-size
           table-layout
           text-align
           text-align-last
+          text-anchor
           text-combine-horizontal
           text-combine-upright
           text-decoration
