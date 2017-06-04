@@ -1,6 +1,6 @@
 # Sanitize History
 
-## 4.5.0 (git)
+## 4.5.0 (2017-06-04)
 
 * Added SVG-related CSS properties to the relaxed config. See [the diff][161]
   for the full list of added properties. [@louim - #161][161]
