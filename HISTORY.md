@@ -2,8 +2,14 @@
 
 ## 4.5.0 (git)
 
-* Strip null bytes (`\u0000`) before passing input to Nokogumbo, since it can
-  cause recent versions to crash with a failed assertion in the Gumbo parser.
+* Added SVG-related CSS properties to the relaxed config. See [the diff][161]
+  for the full list of added properties. [@louim - #161][161]
+
+* Fixed: Sanitize now strips null bytes (`\u0000`) before passing input to
+  Nokogumbo, since they can cause recent versions to crash with a failed
+  assertion in the Gumbo parser.
+
+[161]:https://github.com/rgrove/sanitize/pull/161
 
 ## 4.4.0 (2016-09-29)
 
