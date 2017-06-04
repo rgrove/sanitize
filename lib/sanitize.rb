@@ -30,7 +30,7 @@ class Sanitize
   # it to the parser.
   #
   # http://www.w3.org/TR/unicode-xml/#Charlist
-  REGEX_UNSUITABLE_CHARS = /[\u0340\u0341\u17a3\u17d3\u2028\u2029\u202a-\u202e\u206a-\u206f\ufff9-\ufffb\ufeff\ufffc\u{1d173}-\u{1d17a}\u{e0000}-\u{e007f}]/u
+  REGEX_UNSUITABLE_CHARS = /[\u0000\u0340\u0341\u17a3\u17d3\u2028\u2029\u202a-\u202e\u206a-\u206f\ufff9-\ufffb\ufeff\ufffc\u{1d173}-\u{1d17a}\u{e0000}-\u{e007f}]/u
 
   #--
   # Class Methods

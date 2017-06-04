@@ -1,5 +1,10 @@
 # Sanitize History
 
+## 4.5.0 (git)
+
+* Strip null bytes (`\u0000`) before passing input to Nokogumbo, since it can
+  cause recent versions to crash with a failed assertion in the Gumbo parser.
+
 ## 4.4.0 (2016-09-29)
 
 * Added `srcset` to the attribute whitelist for `img` elements in the relaxed
