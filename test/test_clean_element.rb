@@ -265,6 +265,11 @@ describe 'Sanitize::Transformers::CleanElement' do
         .must_equal '<a href="http://example.com" title="&lt;b&gt;éxamples&lt;/b&gt; &amp; things">foo</a>'
     end
 
+    it 'should allow data-uri protocol in image src values' do
+      @s.fragment('<img src="data:image/gif">')
+        .must_equal '<img src="data:image/gif">'
+    end
+
     strings.each do |name, data|
       it "should clean #{name} HTML" do
         @s.fragment(data[:html]).must_equal(data[:relaxed])

@@ -32,7 +32,7 @@ class Sanitize
 
       :protocols => merge(BASIC[:protocols],
         'del' => {'cite' => ['http', 'https', :relative]},
-        'img' => {'src'  => ['http', 'https', :relative]},
+        'img' => {'src'  => ['http', 'https', 'data', :relative]},
         'ins' => {'cite' => ['http', 'https', :relative]}
       ),
 
