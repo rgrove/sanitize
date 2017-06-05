@@ -63,6 +63,27 @@ describe 'Sanitize' do
       end
     end
 
+    describe '#fragment_hash' do
+      it 'should sanitize HTML fragments in a hash' do
+        @s.fragment_hash({:body => '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>', :extras => {}})
+        .must_equal({:body => 'Lorem ipsum dolor sit amet alert("hello world");', :extras => {}})
+      end
+
+      it 'should not modify the input string' do
+        input = {:body => '<b>foo</b>'}
+        @s.fragment_hash(input)
+        input.must_equal({:body => '<b>foo</b>'})
+      end
+
+      it 'should not choke on fragments containing <html> or <body>' do
+        @s.fragment_hash({:body => '<html><b>foo</b></html>'}).must_equal({:body => 'foo'})
+        @s.fragment_hash({ :body => '<body><b>foo</b></body>'}).must_equal({:body => 'foo'})
+        @s.fragment_hash({ :body => '<html><body><b>foo</b></body></html>'}).must_equal({:body => 'foo'})
+        @s.fragment_hash({ :body => '<!DOCTYPE html><html><body><b>foo</b></body></html>'}).must_equal({:body => 'foo'})
+      end
+
+    end
+
     describe '#node!' do
       it 'should sanitize a Nokogiri::XML::Node' do
         doc  = Nokogiri::HTML5.parse('<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>')
