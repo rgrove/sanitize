@@ -16,6 +16,11 @@ require_relative 'sanitize/transformers/clean_css'
 require_relative 'sanitize/transformers/clean_doctype'
 require_relative 'sanitize/transformers/clean_element'
 
+if defined?(ActiveRecord)
+  require 'sanitize/active_record/attribute_sanitizer'
+  ActiveRecord::Base.send :include, Sanitize::AttributeSanitizer
+end
+
 class Sanitize
   attr_reader :config
 
