@@ -17,15 +17,13 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new('>= 1.2.0')
 
   # Runtime dependencies.
-  s.add_dependency('crass',     '~> 1.0.2')
-  s.add_dependency('nokogiri',  '>= 1.4.4')
+  s.add_dependency('crass', '~> 1.0.2')
+  s.add_dependency('nokogiri', '>= 1.4.4')
   s.add_dependency('nokogumbo', '~> 1.4.1')
 
   # Development dependencies.
-  s.add_development_dependency('minitest',  '~> 5.10.2')
-  s.add_development_dependency('rake',      '~> 12.0.0')
-  s.add_development_dependency('redcarpet', '~> 3.2.3')
-  s.add_development_dependency('yard',      '~> 0.8.7')
+  s.add_development_dependency('minitest', '~> 5.10.2')
+  s.add_development_dependency('rake', '~> 12.0.0')
 
   s.require_paths = ['lib']
 
