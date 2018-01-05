@@ -204,8 +204,8 @@ class Sanitize; class CSS
 
     tree.compact!
 
-    tree.pop if tree.last[:node] == :whitespace
-    tree.shift if tree.first[:node] == :whitespace
+    tree.pop if tree.last && tree.last[:node] == :whitespace
+    tree.shift if tree.first && tree.first[:node] == :whitespace
 
     tree
   end
