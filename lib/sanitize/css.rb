@@ -157,6 +157,7 @@ class Sanitize; class CSS
   # @return [Array] Sanitized Crass CSS parse tree.
   def tree!(tree)
     preceded_by_property = false
+    preceded_by_whitespace = false
 
     tree.map! do |node|
       next nil if node.nil?
@@ -164,6 +165,7 @@ class Sanitize; class CSS
       case node[:node]
       when :at_rule
         preceded_by_property = false
+        preceded_by_whitespace = false
         next at_rule!(node)
 
       when :comment
@@ -172,6 +174,7 @@ class Sanitize; class CSS
       when :property
         prop = property!(node)
         preceded_by_property = !prop.nil?
+        preceded_by_whitespace = false if prop
         next prop
 
       when :semicolon
@@ -179,20 +182,30 @@ class Sanitize; class CSS
         # property. Otherwise, omit it in order to prevent redundant semicolons.
         if preceded_by_property
           preceded_by_property = false
+          preceded_by_whitespace = false
           next node
         end
 
       when :style_rule
         preceded_by_property = false
+        preceded_by_whitespace = false
         tree!(node[:children])
         next node
 
       when :whitespace
-        next node
+        unless preceded_by_whitespace
+          preceded_by_whitespace = true
+          next node
+        end
       end
 
       nil
     end
+
+    tree.compact!
+
+    tree.pop if tree.last && tree.last[:node] == :whitespace
+    tree.shift if tree.first && tree.first[:node] == :whitespace
 
     tree
   end
