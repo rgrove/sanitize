@@ -1,5 +1,12 @@
 # Sanitize History
 
+## 4.6.0 (2018-01-29)
+
+* Loosened the Nokogumbo dependency to allow installing semver-compatible
+  versions greater than or equal to v1.4. [@rafbm - #171][171]
+
+[171]:https://github.com/rgrove/sanitize/pull/171
+
 ## 4.5.0 (2017-06-04)
 
 * Added SVG-related CSS properties to the relaxed config. See [the diff][161]
