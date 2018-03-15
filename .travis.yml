@@ -5,8 +5,15 @@ language: ruby
 before_install:
   - gem install bundler
 
-rvm:
-  - 1.9.3
-  - 2.0.0
-  - 2.3.1
-  - ruby-head
+matrix:
+  include:
+    - os: linux
+      rvm: 1.9.3
+    - os: linux
+      rvm: 2.0.0
+    - os: linux
+      rvm: 2.3.0
+    - os: linux
+      rvm: ruby-head
+      env:
+        - TEST_RUBYOPT_FROZEN_STRING_LITERAL=1

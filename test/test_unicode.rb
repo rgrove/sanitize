@@ -84,7 +84,7 @@ describe 'Unicode' do
     end
 
     it 'should strip language tag code point characters' do
-      str = 'a'
+      str = String.new 'a'
       (0xE0000..0xE007F).each {|n| str << [n].pack('U') }
       str << 'b'
 
