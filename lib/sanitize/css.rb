@@ -255,7 +255,7 @@ class Sanitize; class CSS
     return nil unless @config[:properties].include?(name)
 
     nodes          = prop[:children].dup
-    combined_value = ''
+    combined_value = String.new
 
     nodes.each do |child|
       value = child[:value]

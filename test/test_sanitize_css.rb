@@ -181,13 +181,13 @@ describe 'Sanitize::CSS' do
 
     describe '#tree!' do
       it 'should sanitize a Crass CSS parse tree' do
-        tree = Crass.parse("@import url(foo.css);\n" <<
+        tree = Crass.parse(String.new("@import url(foo.css);\n") <<
           ".foo { background: #fff; font: 16pt 'Comic Sans MS'; }\n" <<
           "#bar { top: 125px; background: green; }")
 
         @custom.tree!(tree).must_be_same_as tree
 
-        Crass::Parser.stringify(tree).must_equal "\n" <<
+        Crass::Parser.stringify(tree).must_equal String.new("\n") <<
             ".foo { background: #fff;  }\n" <<
             "#bar {  background: green; }"
       end
