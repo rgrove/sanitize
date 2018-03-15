@@ -1,5 +1,12 @@
 # Sanitize History
 
+## 4.6.1 (2018-03-15)
+
+* Added support for frozen string literals in Ruby 2.4+.
+  [@flavorjones - #174][174]
+
+[174]:https://github.com/rgrove/sanitize/pull/174
+
 ## 4.6.0 (2018-01-29)
 
 * Loosened the Nokogumbo dependency to allow installing semver-compatible
