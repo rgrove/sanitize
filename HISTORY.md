@@ -1,5 +1,11 @@
 # Sanitize History
 
+## 4.6.2 (2018-03-19)
+
+* Reduced string allocations to optimize memory usage. [@janklimo - #175][175]
+
+[175]:https://github.com/rgrove/sanitize/pull/175
+
 ## 4.6.1 (2018-03-15)
 
 * Added support for frozen string literals in Ruby 2.4+.
