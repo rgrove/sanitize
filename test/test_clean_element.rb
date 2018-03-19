@@ -402,6 +402,23 @@ describe 'Sanitize::Transformers::CleanElement' do
       s.fragment('foo<div>bar</div>baz').must_equal "foo\nbar\nbaz"
       s.fragment('foo<br>bar<br>baz').must_equal "foo\nbar\nbaz"
     end
-  end
 
+    it 'handles protocols correctly regardless of case' do
+      input = '<a href="hTTpS://foo.com/">Text</a>'
+
+      Sanitize.fragment(input, {
+        :elements   => ['a'],
+        :attributes => {'a' => ['href']},
+        :protocols  => {'a' => {'href' => ['https']}}
+      }).must_equal input
+
+      input = '<a href="mailto:someone@example.com?Subject=Hello">Text</a>'
+
+      Sanitize.fragment(input, {
+        :elements   => ['a'],
+        :attributes => {'a' => ['href']},
+        :protocols  => {'a' => {'href' => ['https']}}
+      }).must_equal "<a>Text</a>"
+    end
+  end
 end

@@ -198,7 +198,7 @@ class Sanitize
       # the original document didn't actually include a content-type meta tag.
       replace_meta = !@config[:elements].include?('meta') ||
         node.xpath('/html/head/meta[@http-equiv]').none? do |meta|
-          meta['http-equiv'].downcase == 'content-type'
+          meta['http-equiv'].casecmp('content-type').zero?
         end
     end
 
@@ -217,12 +217,14 @@ class Sanitize
   end
 
   def transform_node!(node, node_whitelist)
+    node_name = node.name.downcase
+
     @transformers.each do |transformer|
       result = transformer.call(
         :config         => @config,
         :is_whitelisted => node_whitelist.include?(node),
         :node           => node,
-        :node_name      => node.name.downcase,
+        :node_name      => node_name,
         :node_whitelist => node_whitelist
       )
 

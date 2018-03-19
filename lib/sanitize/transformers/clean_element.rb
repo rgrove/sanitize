@@ -99,7 +99,7 @@ class Sanitize; module Transformers; class CleanElement
           if @protocols.include?(name) && @protocols[name].include?(attr_name)
             attr_protocols = @protocols[name][attr_name]
 
-            if attr.value.to_s.downcase =~ REGEX_PROTOCOL
+            if attr.value =~ REGEX_PROTOCOL
               attr.unlink unless attr_protocols.include?($1.downcase)
             else
               attr.unlink unless attr_protocols.include?(:relative)
