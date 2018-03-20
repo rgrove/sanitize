@@ -234,7 +234,7 @@ describe 'Sanitize::Transformers::CleanElement' do
 
     it 'should not choke on valueless attributes' do
       @s.fragment('foo <a href>foo</a> bar')
-        .must_equal 'foo <a href="" rel="nofollow">foo</a> bar'
+        .must_equal 'foo <a href rel="nofollow">foo</a> bar'
     end
 
     it 'should downcase attribute names' do
@@ -298,6 +298,16 @@ describe 'Sanitize::Transformers::CleanElement' do
         :elements   => ['p'],
         :attributes => {'p' => ['title'], :all => ['class']}
       }).must_equal input
+    end
+
+    it "should not allow relative URLs when relative URLs aren't whitelisted" do
+      input = '<a href="/foo/bar">Link</a>'
+
+      Sanitize.fragment(input,
+        :elements   => ['a'],
+        :attributes => {'a' => ['href']},
+        :protocols  => {'a' => {'href' => ['http']}}
+      ).must_equal '<a>Link</a>'
     end
 
     it 'should allow relative URLs containing colons when the colon is not in the first path segment' do
