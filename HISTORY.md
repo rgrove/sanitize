@@ -1,5 +1,20 @@
 # Sanitize History
 
+## 4.6.3 (2018-03-19)
+
+* Fixed an HTML injection vulnerability that could allow XSS.
+
+  When Sanitize <= 4.6.2 is used in combination with libxml2 >= 2.9.2, a
+  specially crafted HTML fragment can cause libxml2 to generate improperly
+  escaped output, allowing non-whitelisted attributes to be used on whitelisted
+  elements.
+
+  Sanitize now performs additional escaping on affected attributes to prevent
+  this.
+
+  Many thanks to the Shopify Application Security Team for responsibly reporting
+  this issue.
+
 ## 4.6.2 (2018-03-19)
 
 * Reduced string allocations to optimize memory usage. [@janklimo - #175][175]
