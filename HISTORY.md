@@ -1,5 +1,13 @@
 # Sanitize History
 
+## 4.6.4 (2018-03-20)
+
+* Fixed: A change introduced in 4.6.2 broke certain transformers that relied on
+  being able to mutate the name of an HTML node. That change has been reverted
+  and a test has been added to cover this case. [@zetter - #177][177]
+
+[177]:https://github.com/rgrove/sanitize/issues/177
+
 ## 4.6.3 (2018-03-19)
 
 * [CVE-2018-3740][176]: Fixed an HTML injection vulnerability that could allow
