@@ -2,7 +2,8 @@
 
 ## 4.6.3 (2018-03-19)
 
-* Fixed an HTML injection vulnerability that could allow XSS.
+* [CVE-2018-3740][176]: Fixed an HTML injection vulnerability that could allow
+  XSS.
 
   When Sanitize <= 4.6.2 is used in combination with libxml2 >= 2.9.2, a
   specially crafted HTML fragment can cause libxml2 to generate improperly
@@ -14,6 +15,8 @@
 
   Many thanks to the Shopify Application Security Team for responsibly reporting
   this issue.
+
+[176]:https://github.com/rgrove/sanitize/issues/176
 
 ## 4.6.2 (2018-03-19)
 
