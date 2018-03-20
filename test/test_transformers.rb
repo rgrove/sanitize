@@ -203,4 +203,22 @@ describe 'Transformers' do
         .must_equal('')
     end
   end
+
+  describe 'DOM modification transformer' do
+    b_to_strong_tag_transformer = lambda do |env|
+      node      = env[:node]
+      node_name = env[:node_name]
+
+      if node_name == 'b'
+        node.name = 'strong'
+      end
+    end
+
+    it 'should allow the <b> tag to be changed to a <strong> tag' do
+      input = '<b>text</b>'
+
+      Sanitize.fragment(input, :elements => ['strong'], :transformers => b_to_strong_tag_transformer)
+        .must_equal '<strong>text</strong>'
+    end
+  end
 end
