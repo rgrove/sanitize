@@ -94,9 +94,8 @@ class Sanitize
       @transformers << Transformers::CSS::CleanAttribute.new(scss)
     end
 
-    @transformers <<
-        Transformers::CleanDoctype <<
-        Transformers::CleanCDATA
+    @transformers << Transformers::CleanDoctype
+    @transformers << Transformers::CleanCDATA
   end
 
   # Returns a sanitized copy of the given _html_ document.
