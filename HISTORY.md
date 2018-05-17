@@ -1,5 +1,12 @@
 # Sanitize History
 
+## 4.6.5 (2018-05-16)
+
+* Improved performance slightly by tweaking the order of built-in transformers.
+  [@rafbm - #180][180]
+
+[180]:https://github.com/rgrove/sanitize/pull/180
+
 ## 4.6.4 (2018-03-20)
 
 * Fixed: A change introduced in 4.6.2 broke certain transformers that relied on
