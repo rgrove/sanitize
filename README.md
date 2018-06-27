@@ -474,6 +474,15 @@ children, in which case it will be inserted after those children.
 }
 ```
 
+The default elements with whitespace added before and after are:
+
+```
+address article aside blockquote br dd div dl dt
+footer h1 h2 h3 h4 h5 h6 header hgroup hr li nav
+ol p pre section ul
+
+```
+
 ## Transformers
 
 Transformers allow you to filter and modify HTML nodes using your own custom
