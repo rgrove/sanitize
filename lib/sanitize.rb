@@ -96,6 +96,8 @@ class Sanitize
 
     @transformers << Transformers::CleanDoctype
     @transformers << Transformers::CleanCDATA
+
+    @transformer_config = { config: @config }
   end
 
   # Returns a sanitized copy of the given _html_ document.
@@ -217,13 +219,20 @@ class Sanitize
 
   def transform_node!(node, node_whitelist)
     @transformers.each do |transformer|
-      result = transformer.call(
-        :config         => @config,
-        :is_whitelisted => node_whitelist.include?(node),
-        :node           => node,
-        :node_name      => node.name.downcase,
-        :node_whitelist => node_whitelist
-      )
+      # Since transform_node! may be called in a tight loop to process thousands
+      # of items, we can optimize both memory and CPU performance by:
+      #
+      # 1. Reusing the same config hash for each transformer
+      # 2. Directly assigning values to hash instead of using merge!. Not only
+      # does merge! create a new hash, it is also 2.6x slower:
+      # https://github.com/JuanitoFatas/fast-ruby#hashmerge-vs-hashmerge-code
+      config = @transformer_config
+      config[:is_whitelisted] = node_whitelist.include?(node)
+      config[:node] = node
+      config[:node_name] = node.name.downcase
+      config[:node_whitelist] = node_whitelist
+
+      result = transformer.call(config)
 
       if result.is_a?(Hash) && result[:node_whitelist].respond_to?(:each)
         node_whitelist.merge(result[:node_whitelist])
