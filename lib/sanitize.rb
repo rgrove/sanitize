@@ -218,6 +218,8 @@ class Sanitize
   end
 
   def transform_node!(node, node_whitelist)
+    node_name = node.name.downcase
+
     @transformers.each do |transformer|
       # Since transform_node! may be called in a tight loop to process thousands
       # of items, we can optimize both memory and CPU performance by:
@@ -229,7 +231,7 @@ class Sanitize
       config = @transformer_config
       config[:is_whitelisted] = node_whitelist.include?(node)
       config[:node] = node
-      config[:node_name] = node.name.downcase
+      config[:node_name] = node_name
       config[:node_whitelist] = node_whitelist
 
       result = transformer.call(config)
@@ -237,6 +239,10 @@ class Sanitize
       if result.is_a?(Hash) && result[:node_whitelist].respond_to?(:each)
         node_whitelist.merge(result[:node_whitelist])
       end
+
+      # It's possible that a transformer modifies the node name, so only
+      # copy the string again if it has changed.
+      node_name = node.name.downcase if node.name != node_name
     end
 
     node
