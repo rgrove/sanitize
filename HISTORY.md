@@ -1,5 +1,12 @@
 # Sanitize History
 
+## 4.6.6 (2018-07-23)
+
+* Improved performance and memory usage by optimizing `Sanitize#transform_node!`
+  [@stanhu - #183][183]
+
+[183]:https://github.com/rgrove/sanitize/pull/183
+
 ## 4.6.5 (2018-05-16)
 
 * Improved performance slightly by tweaking the order of built-in transformers.
