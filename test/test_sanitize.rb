@@ -21,6 +21,7 @@
 # SOFTWARE.
 #++
 
+require_relative 'common'
 
 strings = {
   :basic => {
