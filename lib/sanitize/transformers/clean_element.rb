@@ -102,7 +102,8 @@ class Sanitize; module Transformers
           # Leading and trailing whitespace around URLs is ignored at parse
           # time. Stripping it here prevents it from being escaped by the
           # libxml2 workaround below.
-          attr.value = attr.value.strip
+          stripped = attr.value.strip
+          attr.value = stripped unless stripped.empty?
 
           # libxml2 >= 2.9.2 doesn't escape comments within some attributes, in an
           # attempt to preserve server-side includes. This can result in XSS since
@@ -115,8 +116,8 @@ class Sanitize; module Transformers
           #
           # The relevant libxml2 code is here:
           # <https://github.com/GNOME/libxml2/commit/960f0e275616cadc29671a218d7fb9b69eb35588>
-          if UNSAFE_LIBXML_ATTRS_GLOBAL.include?(attr_name) ||
-              (name == 'a' && UNSAFE_LIBXML_ATTRS_A.include?(attr_name))
+          if !stripped.empty? && (UNSAFE_LIBXML_ATTRS_GLOBAL.include?(attr_name) ||
+              (name == 'a' && UNSAFE_LIBXML_ATTRS_A.include?(attr_name)))
             attr.value = attr.value.gsub(UNSAFE_LIBXML_ESCAPE_REGEX, UNSAFE_LIBXML_ESCAPE_CHARS)
           end
         end
