@@ -5,23 +5,24 @@ language: ruby
 before_install:
   - gem install bundler
 
-env:
-  - TEST_RUBYOPT_FROZEN_STRING_LITERAL=0
-  - TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
-
-rvm:
-  - 1.9.3
-  - 2.3
-  - 2.4
-  - 2.5
-  - 2.6
-  - ruby-head
-
 matrix:
   allow_failures:
     - rvm: ruby-head
 
-  exclude:
+  include:
     - rvm: 1.9.3
-      env:
-        - TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
+
+    - rvm: 2.3
+      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
+
+    - rvm: 2.4
+      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
+
+    - rvm: 2.5
+      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
+
+    - rvm: 2.6
+      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
+
+    - rvm: ruby-head
+      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
