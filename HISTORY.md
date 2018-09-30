@@ -324,6 +324,26 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 [n1008]:https://github.com/sparklemotion/nokogiri/issues/1008
 
 
+## 2.1.1 (2018-09-30)
+
+* [CVE-2018-3740][176]: Fixed an HTML injection vulnerability that could allow
+  XSS (backported from Sanitize 4.6.3). [@dometto - #188][188]
+
+  When Sanitize <= 2.1.0 is used in combination with libxml2 >= 2.9.2, a
+  specially crafted HTML fragment can cause libxml2 to generate improperly
+  escaped output, allowing non-whitelisted attributes to be used on whitelisted
+  elements.
+
+  Sanitize now performs additional escaping on affected attributes to prevent
+  this.
+
+  Many thanks to the Shopify Application Security Team for responsibly reporting
+  this issue.
+
+[176]:https://github.com/rgrove/sanitize/issues/176
+[188]:https://github.com/rgrove/sanitize/pull/188
+
+
 ## 2.1.0 (2014-01-13)
 
 * Added support for whitelisting arbitrary HTML5 `data-*` attributes. Use the
