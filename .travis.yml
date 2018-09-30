@@ -5,15 +5,22 @@ language: ruby
 before_install:
   - gem install bundler
 
+env:
+  - TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
+
+rvm:
+  - 1.9.3
+  - 2.3
+  - 2.4
+  - 2.5
+  - 2.6
+  - ruby-head
+
 matrix:
-  include:
-    - os: linux
-      rvm: 1.9.3
-    - os: linux
-      rvm: 2.0.0
-    - os: linux
-      rvm: 2.3.0
-    - os: linux
-      rvm: ruby-head
+  allow_failures:
+    - rvm: ruby-head
+
+  exclude:
+    - rvm: 1.9.3
       env:
         - TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
