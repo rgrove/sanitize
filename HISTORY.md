@@ -1,13 +1,13 @@
 Sanitize History
 ================================================================================
 
-Version 2.1.1 (2018-30-09)
+Version 2.1.1 (2018-09-30)
 --------------------------
 
-* [CVE-2018-3740][176]: Backported the fix for an HTML injection vulnerability that could allow
-  XSS from the `sanitize 4.x` line.
+* [CVE-2018-3740][176]: Fixed an HTML injection vulnerability that could allow
+  XSS (backported from Sanitize 4.6.3). [@dometto - #188][188]
 
-  When Sanitize <= 4.6.2 is used in combination with libxml2 >= 2.9.2, a
+  When Sanitize <= 2.1.0 is used in combination with libxml2 >= 2.9.2, a
   specially crafted HTML fragment can cause libxml2 to generate improperly
   escaped output, allowing non-whitelisted attributes to be used on whitelisted
   elements.
@@ -19,7 +19,8 @@ Version 2.1.1 (2018-30-09)
   this issue.
 
 [176]:https://github.com/rgrove/sanitize/issues/176
-[187]:https://github.com/rgrove/sanitize/issues/187
+[188]:https://github.com/rgrove/sanitize/pull/188
+
 
 Version 2.1.0 (2014-01-13)
 --------------------------
