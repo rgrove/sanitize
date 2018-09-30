@@ -8,7 +8,7 @@ Bundler::GemHelper.install_tasks
 
 Rake::TestTask.new
 
-if ENV['TEST_RUBYOPT_FROZEN_STRING_LITERAL'] # see .travis.yml
+if ENV['TEST_RUBYOPT_FROZEN_STRING_LITERAL'] == '1' # see .travis.yml
   ENV['RUBYOPT'] = "--enable-frozen-string-literal --debug=frozen-string-literal"
   puts "enabling frozen string literals"
 end
