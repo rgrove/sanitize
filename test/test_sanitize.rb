@@ -56,10 +56,10 @@ strings = {
 
   :malicious => {
     :html       => '<b>Lo<!-- comment -->rem</b> <a href="javascript:pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <<foo>script>alert("hello world");</script>',
-    :default    => 'Lorem ipsum dolor sit amet script&gt;alert("hello world");',
-    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sit amet script&gt;alert("hello world");',
-    :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet script&gt;alert("hello world");',
-    :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet script&gt;alert("hello world");'
+    :default    => 'Lorem ipsum dolor sit amet &lt;script&gt;alert("hello world");',
+    :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sit amet &lt;script&gt;alert("hello world");',
+    :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet &lt;script&gt;alert("hello world");',
+    :relaxed    => '<b>Lorem</b> <a title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet &lt;script&gt;alert("hello world");'
   },
 
   :raw_comment => {
