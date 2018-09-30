@@ -98,28 +98,6 @@ class Sanitize; module Transformers
               attr.unlink
             end
           end
-        
-          # Leading and trailing whitespace around URLs is ignored at parse
-          # time. Stripping it here prevents it from being escaped by the
-          # libxml2 workaround below.
-          stripped = attr.value.strip
-          attr.value = stripped unless stripped.empty?
-
-          # libxml2 >= 2.9.2 doesn't escape comments within some attributes, in an
-          # attempt to preserve server-side includes. This can result in XSS since
-          # an unescaped double quote can allow an attacker to inject a
-          # non-whitelisted attribute.
-          #
-          # Sanitize works around this by implementing its own escaping for
-          # affected attributes, some of which can exist on any element and some
-          # of which can only exist on `<a>` elements.
-          #
-          # The relevant libxml2 code is here:
-          # <https://github.com/GNOME/libxml2/commit/960f0e275616cadc29671a218d7fb9b69eb35588>
-          if !stripped.empty? && (UNSAFE_LIBXML_ATTRS_GLOBAL.include?(attr_name) ||
-              (name == 'a' && UNSAFE_LIBXML_ATTRS_A.include?(attr_name)))
-            attr.value = attr.value.gsub(UNSAFE_LIBXML_ESCAPE_REGEX, UNSAFE_LIBXML_ESCAPE_CHARS)
-          end
         end
 
         # Delete remaining attributes that use unacceptable protocols.
@@ -136,8 +114,34 @@ class Sanitize; module Transformers
               !protocol[attr_name].include?(:relative)
             end
 
-            attr.unlink if del
+            if del
+              attr.unlink
+            else
+              # Leading and trailing whitespace around URLs is ignored at parse
+              # time. Stripping it here prevents it from being escaped by the
+              # libxml2 workaround below.
+              attr.value = attr.value.strip
+            end
           end
+        end
+      end
+
+      # libxml2 >= 2.9.2 doesn't escape comments within some attributes, in an
+      # attempt to preserve server-side includes. This can result in XSS since
+      # an unescaped double quote can allow an attacker to inject a
+      # non-whitelisted attribute.
+      #
+      # Sanitize works around this by implementing its own escaping for
+      # affected attributes, some of which can exist on any element and some
+      # of which can only exist on `<a>` elements.
+      #
+      # The relevant libxml2 code is here:
+      # <https://github.com/GNOME/libxml2/commit/960f0e275616cadc29671a218d7fb9b69eb35588>
+      node.attribute_nodes.each do |attr|
+        attr_name = attr.name.downcase
+        if UNSAFE_LIBXML_ATTRS_GLOBAL.include?(attr_name) ||
+          (name == 'a' && UNSAFE_LIBXML_ATTRS_A.include?(attr_name))
+            attr.value = attr.value.gsub(UNSAFE_LIBXML_ESCAPE_REGEX, UNSAFE_LIBXML_ESCAPE_CHARS)
         end
       end
 
