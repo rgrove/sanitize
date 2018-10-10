@@ -121,19 +121,7 @@ class Sanitize
     return '' unless html
 
     html = preprocess(html)
-    doc  = Nokogiri::HTML5.parse("<html><body>#{html}")
-
-    # Hack to allow fragments containing <body>. Borrowed from
-    # Nokogiri::HTML::DocumentFragment.
-    if html =~ /\A<body(?:\s|>)/i
-      path = '/html/body'
-    else
-      path = '/html/body/node()'
-    end
-
-    frag = doc.fragment
-    frag << doc.xpath(path)
-
+    frag  = Nokogiri::HTML5.fragment(html)
     node!(frag)
     to_html(frag)
   end
@@ -184,37 +172,7 @@ class Sanitize
   end
 
   def to_html(node)
-    replace_meta = false
-
-    # Hacky workaround for a libxml2 bug that adds an undesired Content-Type
-    # meta tag to all serialized HTML documents.
-    #
-    # https://github.com/sparklemotion/nokogiri/issues/1008
-    if node.type == Nokogiri::XML::Node::DOCUMENT_NODE ||
-        node.type == Nokogiri::XML::Node::HTML_DOCUMENT_NODE
-
-      regex_meta   = %r|(<html[^>]*>\s*<head[^>]*>\s*)<meta http-equiv="Content-Type" content="text/html; charset=utf-8">|i
-
-      # Only replace the content-type meta tag if <meta> isn't whitelisted or
-      # the original document didn't actually include a content-type meta tag.
-      replace_meta = !@config[:elements].include?('meta') ||
-        node.xpath('/html/head/meta[@http-equiv]').none? do |meta|
-          meta['http-equiv'].casecmp('content-type').zero?
-        end
-    end
-
-    so = Nokogiri::XML::Node::SaveOptions
-
-    # Serialize to HTML without any formatting to prevent Nokogiri from adding
-    # newlines after certain tags.
-    html = node.to_html(
-      :encoding  => 'utf-8',
-      :indent    => 0,
-      :save_with => so::NO_DECLARATION | so::NO_EMPTY_TAGS | so::AS_HTML
-    )
-
-    html.gsub!(regex_meta, '\1') if replace_meta
-    html
+    node.to_html(preserve_newline: true)
   end
 
   def transform_node!(node, node_whitelist)

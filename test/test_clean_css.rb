@@ -13,7 +13,7 @@ describe 'Sanitize::Transformers::CSS::CleanAttribute' do
     @s.fragment(%[
       <div style="color: #fff; width: expression(alert(1)); /* <-- evil! */"></div>
     ].strip).must_equal %[
-      <div style="color: #fff;  /* &lt;-- evil! */"></div>
+      <div style="color: #fff;  /* <-- evil! */"></div>
     ].strip
   end
 

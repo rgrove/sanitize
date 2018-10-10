@@ -25,7 +25,7 @@ describe 'Sanitize' do
 
       it 'should sanitize an HTML document' do
         @s.document('<!doctype html><html><b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script></html>')
-          .must_equal "<html>Lorem ipsum dolor sit amet alert(\"hello world\");</html>\n"
+          .must_equal "<html>Lorem ipsum dolor sit amet alert(\"hello world\");</html>"
       end
 
       it 'should not modify the input string' do
@@ -35,7 +35,7 @@ describe 'Sanitize' do
       end
 
       it 'should not choke on frozen documents' do
-        @s.document('<!doctype html><html><b>foo</b>'.freeze).must_equal "<html>foo</html>\n"
+        @s.document('<!doctype html><html><b>foo</b>'.freeze).must_equal "<html>foo</html>"
       end
     end
 

@@ -21,7 +21,7 @@ describe 'Sanitize::Transformers::CleanElement' do
       :default    => 'Lorem dolor sit amet alert("hello world");',
       :restricted => 'Lorem <strong>dolor</strong> sit amet alert("hello world");',
       :basic      => 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br>amet alert("hello world");',
-      :relaxed    => 'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br>amet alert("hello world");',
+      :relaxed    => 'Lorem <a href="pants" title="foo>ipsum <a href="><strong>dolor</strong></a> sit<br>amet alert("hello world");',
     },
 
     :unclosed => {
@@ -234,7 +234,7 @@ describe 'Sanitize::Transformers::CleanElement' do
 
     it 'should not choke on valueless attributes' do
       @s.fragment('foo <a href>foo</a> bar')
-        .must_equal 'foo <a href rel="nofollow">foo</a> bar'
+        .must_equal 'foo <a href="" rel="nofollow">foo</a> bar'
     end
 
     it 'should downcase attribute names' do
@@ -262,7 +262,7 @@ describe 'Sanitize::Transformers::CleanElement' do
 
     it 'should encode special chars in attribute values' do
       @s.fragment('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>')
-        .must_equal '<a href="http://example.com" title="&lt;b&gt;éxamples&lt;/b&gt; &amp; things">foo</a>'
+        .must_equal '<a href="http://example.com" title="<b>éxamples</b> &amp; things">foo</a>'
     end
 
     strings.each do |name, data|

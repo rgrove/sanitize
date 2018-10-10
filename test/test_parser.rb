@@ -32,21 +32,21 @@ describe 'Parser' do
   it 'should work around the libxml2 content-type meta tag bug' do
     Sanitize.document('<html><head></head><body>Howdy!</body></html>',
       :elements => %w[html head body]
-    ).must_equal "<html><head></head><body>Howdy!</body></html>\n"
+    ).must_equal "<html><head></head><body>Howdy!</body></html>"
 
     Sanitize.document('<html><head></head><body>Howdy!</body></html>',
       :elements => %w[html head meta body]
-    ).must_equal "<html><head></head><body>Howdy!</body></html>\n"
+    ).must_equal "<html><head></head><body>Howdy!</body></html>"
 
     Sanitize.document('<html><head><meta charset="utf-8"></head><body>Howdy!</body></html>',
       :elements   => %w[html head meta body],
       :attributes => {'meta' => ['charset']}
-    ).must_equal "<html><head><meta charset=\"utf-8\"></head><body>Howdy!</body></html>\n"
+    ).must_equal "<html><head><meta charset=\"utf-8\"></head><body>Howdy!</body></html>"
 
     Sanitize.document('<html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8"></head><body>Howdy!</body></html>',
       :elements   => %w[html head meta body],
       :attributes => {'meta' => %w[charset content http-equiv]}
-    ).must_equal "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"></head><body>Howdy!</body></html>\n"
+    ).must_equal "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"></head><body>Howdy!</body></html>"
 
     # Edge case: an existing content-type meta tag with a non-UTF-8 content type
     # will be converted to UTF-8, since that's the only output encoding we
@@ -54,7 +54,7 @@ describe 'Parser' do
     Sanitize.document('<html><head><meta http-equiv="content-type" content="text/html;charset=us-ascii"></head><body>Howdy!</body></html>',
       :elements   => %w[html head meta body],
       :attributes => {'meta' => %w[charset content http-equiv]}
-    ).must_equal "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>Howdy!</body></html>\n"
+    ).must_equal "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><body>Howdy!</body></html>"
   end
 
   describe 'when siblings are added after a node during traversal' do
