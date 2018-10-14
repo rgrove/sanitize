@@ -20,7 +20,7 @@ describe 'Sanitize::Transformers::CleanComment' do
 
       # Special case: the comment markup is inside a <script>, which makes it
       # text content and not an actual HTML comment.
-      @s.fragment("<script><!-- comment --></script>").must_equal '&lt;!-- comment --&gt;'
+      @s.fragment("<script><!-- comment --></script>").must_equal ''
 
       Sanitize.fragment("<script><!-- comment --></script>", :allow_comments => false, :elements => ['script'])
         .must_equal '<script><!-- comment --></script>'
@@ -39,10 +39,6 @@ describe 'Sanitize::Transformers::CleanComment' do
       @s.fragment("foo <!--\n\n\n\n-->bar").must_equal "foo <!--\n\n\n\n-->bar"
       @s.fragment("foo <!-- <!-- <!-- --> --> -->bar").must_equal 'foo <!-- <!-- <!-- --> --&gt; --&gt;bar'
       @s.fragment("foo <div <!-- comment -->>bar</div>").must_equal 'foo <div>&gt;bar</div>'
-
-      # Special case: the comment markup is inside a <script>, which makes it
-      # text content and not an actual HTML comment.
-      @s.fragment("<script><!-- comment --></script>").must_equal '&lt;!-- comment --&gt;'
 
       Sanitize.fragment("<script><!-- comment --></script>", :allow_comments => true, :elements => ['script'])
         .must_equal '<script><!-- comment --></script>'

@@ -97,8 +97,10 @@ class Sanitize; module Transformers; class CleanElement
         end
       end
 
-      unless @remove_all_contents || @remove_element_contents.include?(name)
-        node.add_previous_sibling(node.children)
+      unless node.children.empty?
+        unless @remove_all_contents || @remove_element_contents.include?(name)
+          node.add_previous_sibling(node.children)
+        end
       end
 
       node.unlink

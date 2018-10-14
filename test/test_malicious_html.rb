@@ -65,7 +65,7 @@ describe 'Malicious HTML' do
 
     it 'should not be possible to inject <script> via a malformed <img> tag' do
       @s.fragment('<img """><script>alert("XSS")</script>">').
-        must_equal '<img>alert("XSS")"&gt;'
+        must_equal '<img>"&gt;'
     end
 
     it 'should not be possible to inject protocol-based JS' do
@@ -117,12 +117,12 @@ describe 'Malicious HTML' do
   describe '<script>' do
     it 'should not be possible to inject <script> using a malformed non-alphanumeric tag name' do
       @s.fragment(%[<script/xss src="http://ha.ckers.org/xss.js">alert(1)</script>]).
-        must_equal 'alert(1)'
+        must_equal ''
     end
 
     it 'should not be possible to inject <script> via extraneous open brackets' do
       @s.fragment(%[<<script>alert("XSS");//<</script>]).
-        must_equal '&lt;alert("XSS");//&lt;'
+        must_equal '&lt;'
     end
   end
 

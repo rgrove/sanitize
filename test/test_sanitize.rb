@@ -25,7 +25,7 @@ describe 'Sanitize' do
 
       it 'should sanitize an HTML document' do
         @s.document('<!doctype html><html><b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script></html>')
-          .must_equal "<html>Lorem ipsum dolor sit amet alert(\"hello world\");</html>"
+          .must_equal "<html>Lorem ipsum dolor sit amet </html>"
       end
 
       it 'should not modify the input string' do
@@ -42,7 +42,7 @@ describe 'Sanitize' do
     describe '#fragment' do
       it 'should sanitize an HTML fragment' do
         @s.fragment('<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>')
-          .must_equal 'Lorem ipsum dolor sit amet alert("hello world");'
+          .must_equal 'Lorem ipsum dolor sit amet '
       end
 
       it 'should not modify the input string' do
@@ -71,7 +71,7 @@ describe 'Sanitize' do
         doc.xpath('/html/body/node()').each {|node| frag << node }
 
         @s.node!(frag)
-        frag.to_html.must_equal 'Lorem ipsum dolor sit amet alert("hello world");'
+        frag.to_html.must_equal 'Lorem ipsum dolor sit amet '
       end
 
       describe "when the given node is a document and <html> isn't whitelisted" do

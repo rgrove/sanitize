@@ -8,25 +8,22 @@ describe 'Sanitize::Transformers::CleanElement' do
   strings = {
     :basic => {
       :html       => '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo" style="text-decoration: underline;">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <style>.foo { color: #fff; }</style> <script>alert("hello world");</script>',
-
-      :default    => 'Lorem ipsum dolor sit amet .foo { color: #fff; } alert("hello world");',
-      :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sit amet .foo { color: #fff; } alert("hello world");',
-      :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet .foo { color: #fff; } alert("hello world");',
-      :relaxed    => '<b>Lorem</b> <a href="pants" title="foo" style="text-decoration: underline;">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet <style>.foo { color: #fff; }</style> alert("hello world");'
+      :default    => 'Lorem ipsum dolor sit amet  ',
+      :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sit amet  ',
+      :basic      => '<b>Lorem</b> <a href="pants" rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet  ',
+      :relaxed    => '<b>Lorem</b> <a href="pants" title="foo" style="text-decoration: underline;">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br>amet <style>.foo { color: #fff; }</style> '
     },
 
     :malformed => {
       :html       => 'Lo<!-- comment -->rem</b> <a href=pants title="foo>ipsum <a href="http://foo.com/"><strong>dolor</a></strong> sit<br/>amet <script>alert("hello world");',
-
-      :default    => 'Lorem dolor sit amet alert("hello world");',
-      :restricted => 'Lorem <strong>dolor</strong> sit amet alert("hello world");',
-      :basic      => 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br>amet alert("hello world");',
-      :relaxed    => 'Lorem <a href="pants" title="foo>ipsum <a href="><strong>dolor</strong></a> sit<br>amet alert("hello world");',
+      :default    => 'Lorem dolor sit amet ',
+      :restricted => 'Lorem <strong>dolor</strong> sit amet ',
+      :basic      => 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br>amet ',
+      :relaxed    => 'Lorem <a href="pants" title="foo>ipsum <a href="><strong>dolor</strong></a> sit<br>amet ',
     },
 
     :unclosed => {
       :html       => '<p>a</p><blockquote>b',
-
       :default    => ' a  b ',
       :restricted => ' a  b ',
       :basic      => '<p>a</p><blockquote>b</blockquote>',
@@ -35,7 +32,6 @@ describe 'Sanitize::Transformers::CleanElement' do
 
     :malicious => {
       :html       => '<b>Lo<!-- comment -->rem</b> <a href="javascript:pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <<foo>script>alert("hello world");</script>',
-
       :default    => 'Lorem ipsum dolor sit amet &lt;script&gt;alert("hello world");',
       :restricted => '<b>Lorem</b> ipsum <strong>dolor</strong> sit amet &lt;script&gt;alert("hello world");',
       :basic      => '<b>Lorem</b> <a rel="nofollow">ipsum</a> <a href="http://foo.com/" rel="nofollow"><strong>dolor</strong></a> sit<br>amet &lt;script&gt;alert("hello world");',
@@ -171,10 +167,10 @@ describe 'Sanitize::Transformers::CleanElement' do
         .must_equal 'foo bar baz quux'
 
       Sanitize.fragment('<script>alert("<xss>");</script>')
-        .must_equal 'alert("&lt;xss&gt;");'
+        .must_equal ''
 
       Sanitize.fragment('<<script>script>alert("<xss>");</<script>>')
-        .must_equal '&lt;script&gt;alert("&lt;xss&gt;");&lt;/&lt;script&gt;&gt;'
+        .must_equal '&lt;'
 
       Sanitize.fragment('< script <>> alert("<xss>");</script>')
         .must_equal '&lt; script &lt;&gt;&gt; alert("");'
@@ -193,6 +189,46 @@ describe 'Sanitize::Transformers::CleanElement' do
 
     it 'should not choke on several instances of the same element in a row' do
       Sanitize.fragment('<img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif">')
+        .must_equal ''
+    end
+
+    it 'should escape the content of removed `plaintext` elements' do
+      Sanitize.fragment('<plaintext>hello! <script>alert(0)</script>')
+        .must_equal 'hello! &lt;script&gt;alert(0)&lt;/script&gt;'
+    end
+
+    it 'should escape the content of removed `xmp` elements' do
+      Sanitize.fragment('<xmp>hello! <script>alert(0)</script></xmp>')
+        .must_equal 'hello! &lt;script&gt;alert(0)&lt;/script&gt;'
+    end
+
+    it 'should not preserve the content of removed `iframe` elements' do
+      Sanitize.fragment('<iframe>hello! <script>alert(0)</script></iframe>')
+        .must_equal ''
+    end
+
+    it 'should not preserve the content of removed `noembed` elements' do
+      Sanitize.fragment('<noembed>hello! <script>alert(0)</script></noembed>')
+        .must_equal ''
+    end
+
+    it 'should not preserve the content of removed `noframes` elements' do
+      Sanitize.fragment('<noframes>hello! <script>alert(0)</script></noframes>')
+        .must_equal ''
+    end
+
+    it 'should not preserve the content of removed `noscript` elements' do
+      Sanitize.fragment('<noscript>hello! <script>alert(0)</script></noscript>')
+        .must_equal ''
+    end
+
+    it 'should not preserve the content of removed `script` elements' do
+      Sanitize.fragment('<script>hello! <script>alert(0)</script></script>')
+        .must_equal ''
+    end
+
+    it 'should not preserve the content of removed `style` elements' do
+      Sanitize.fragment('<style>hello! <script>alert(0)</script></style>')
         .must_equal ''
     end
 

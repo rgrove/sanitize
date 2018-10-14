@@ -19,8 +19,8 @@ describe 'Parser' do
   end
 
   it 'should not have the Nokogiri 1.4.2+ unterminated script/style element bug' do
-    Sanitize.fragment('foo <script>bar').must_equal 'foo bar'
-    Sanitize.fragment('foo <style>bar').must_equal 'foo bar'
+    Sanitize.fragment('foo <script>bar').must_equal 'foo '
+    Sanitize.fragment('foo <style>bar').must_equal 'foo '
   end
 
   it 'ambiguous non-tag brackets like "1 > 2 and 2 < 1" should be parsed correctly' do
