@@ -182,6 +182,20 @@ class Sanitize; module Transformers; class CleanElement
     if @add_attributes.include?(name)
       @add_attributes[name].each {|key, val| node[key] = val }
     end
+
+    # Element-specific special cases.
+
+    # If this is a whitelisted iframe that has children, remove all its
+    # children. The HTML standard says iframes shouldn't have content, but when
+    # they do, this content is parsed as text and is serialized verbatim without
+    # being escaped, which is unsafe because legacy browsers may still render it
+    # and execute `<script>` content. So the safe and correct thing to do is to
+    # always remove iframe content.
+    if name == 'iframe' && !node.children.empty?
+      node.children.each do |child|
+        child.unlink
+      end
+    end
   end
 
 end; end; end

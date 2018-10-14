@@ -400,6 +400,12 @@ describe 'Sanitize::Transformers::CleanElement' do
       ).must_equal 'foo bar  baz hi '
     end
 
+    it 'should remove the contents of whitelisted iframes' do
+      Sanitize.fragment('<iframe>hi <script>hello</script></iframe>',
+        :elements => ['iframe']
+      ).must_equal '<iframe></iframe>'
+    end
+
     it 'should not allow arbitrary HTML5 data attributes by default' do
       Sanitize.fragment('<b data-foo="bar"></b>',
         :elements => ['b']
@@ -457,7 +463,7 @@ describe 'Sanitize::Transformers::CleanElement' do
       s.fragment('foo<br>bar<br>baz').must_equal "foo\nbar\nbaz"
     end
 
-    it 'handles protocols correctly regardless of case' do
+    it 'should handle protocols correctly regardless of case' do
       input = '<a href="hTTpS://foo.com/">Text</a>'
 
       Sanitize.fragment(input, {

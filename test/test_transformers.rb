@@ -172,28 +172,28 @@ describe 'Transformers' do
       input = '<iframe width="420" height="315" src="http://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
 
       Sanitize.fragment(input, :transformers => youtube_transformer)
-        .must_equal '<iframe width="420" height="315" src="http://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen="">&lt;script&gt;alert()&lt;/script&gt;</iframe>'
+        .must_equal '<iframe width="420" height="315" src="http://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen=""></iframe>'
     end
 
     it 'should allow HTTPS YouTube video embeds' do
       input = '<iframe width="420" height="315" src="https://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
 
       Sanitize.fragment(input, :transformers => youtube_transformer)
-        .must_equal '<iframe width="420" height="315" src="https://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen="">&lt;script&gt;alert()&lt;/script&gt;</iframe>'
+        .must_equal '<iframe width="420" height="315" src="https://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen=""></iframe>'
     end
 
     it 'should allow protocol-relative YouTube video embeds' do
       input = '<iframe width="420" height="315" src="//www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
 
       Sanitize.fragment(input, :transformers => youtube_transformer)
-        .must_equal '<iframe width="420" height="315" src="//www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen="">&lt;script&gt;alert()&lt;/script&gt;</iframe>'
+        .must_equal '<iframe width="420" height="315" src="//www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen=""></iframe>'
     end
 
     it 'should allow privacy-enhanced YouTube video embeds' do
       input = '<iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
 
       Sanitize.fragment(input, :transformers => youtube_transformer)
-        .must_equal '<iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen="">&lt;script&gt;alert()&lt;/script&gt;</iframe>'
+        .must_equal '<iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen=""></iframe>'
     end
 
     it 'should not allow non-YouTube video embeds' do
