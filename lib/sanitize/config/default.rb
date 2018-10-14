@@ -66,9 +66,9 @@ class Sanitize
       # leaves the safe parts of an element's contents behind when the element
       # is removed.
       #
-      # If this is an Array of element names, then only the contents of the
-      # specified elements (when filtered) will be removed, and the contents of
-      # all other filtered elements will be left behind.
+      # If this is an Array or Set of element names, then only the contents of
+      # the specified elements (when filtered) will be removed, and the contents
+      # of all other filtered elements will be left behind.
       :remove_contents => false,
 
       # Transformers allow you to filter or alter nodes using custom logic. See

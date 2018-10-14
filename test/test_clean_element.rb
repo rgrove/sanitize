@@ -344,16 +344,24 @@ describe 'Sanitize::Transformers::CleanElement' do
       ).must_equal 'foo bar   '
     end
 
-    it 'should remove the contents of specified nodes when :remove_contents is an Array of element names as strings' do
-      Sanitize.fragment('foo bar <div>baz<span>quux</span><script>alert("hello!");</script></div>',
+    it 'should remove the contents of specified nodes when :remove_contents is an Array or Set of element names as strings' do
+      Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
         :remove_contents => ['script', 'span']
-      ).must_equal 'foo bar  baz '
+      ).must_equal 'foo bar  baz hi '
+
+      Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
+        :remove_contents => Set.new(['script', 'span'])
+      ).must_equal 'foo bar  baz hi '
     end
 
-    it 'should remove the contents of specified nodes when :remove_contents is an Array of element names as symbols' do
-      Sanitize.fragment('foo bar <div>baz<span>quux</span><script>alert("hello!");</script></div>',
+    it 'should remove the contents of specified nodes when :remove_contents is an Array or Set of element names as symbols' do
+      Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
         :remove_contents => [:script, :span]
-      ).must_equal 'foo bar  baz '
+      ).must_equal 'foo bar  baz hi '
+
+      Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
+        :remove_contents => Set.new([:script, :span])
+      ).must_equal 'foo bar  baz hi '
     end
 
     it 'should not allow arbitrary HTML5 data attributes by default' do

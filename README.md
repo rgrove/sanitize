@@ -441,13 +441,13 @@ include the symbol `:relative` in the protocol array:
 
 #### :remove_contents (boolean or Array or Set)
 
-If set to `true`, Sanitize will remove the contents of any non-whitelisted
+If this is `true`, Sanitize will remove the contents of any non-whitelisted
 elements in addition to the elements themselves. By default, Sanitize leaves the
 safe parts of an element's contents behind when the element is removed.
 
-If set to an array of element names, then only the contents of the specified
-elements (when filtered) will be removed, and the contents of all other filtered
-elements will be left behind.
+If this is an Array or Set of element names, then only the contents of the
+specified elements (when filtered) will be removed, and the contents of all
+other filtered elements will be left behind.
 
 The default value is `false`.
 

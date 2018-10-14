@@ -67,7 +67,7 @@ class Sanitize; module Transformers; class CleanElement
       @whitespace_elements = config[:whitespace_elements]
     end
 
-    if config[:remove_contents].is_a?(Set)
+    if config[:remove_contents].is_a?(Enumerable)
       @remove_element_contents.merge(config[:remove_contents].map(&:to_s))
     else
       @remove_all_contents = !!config[:remove_contents]
