@@ -37,10 +37,10 @@ describe 'Sanitize::Transformers::CleanDoctype' do
         .must_equal "<!DOCTYPE html><html>foo</html>"
 
       @s.document('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>foo</html>')
-        .must_equal "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\"><html>foo</html>"
+        .must_equal "<!DOCTYPE html><html>foo</html>"
 
       @s.document("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html>foo</html>")
-        .must_equal "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html>foo</html>"
+        .must_equal "<!DOCTYPE html><html>foo</html>"
     end
 
     it 'should not allow obviously invalid doctype declarations in documents' do
