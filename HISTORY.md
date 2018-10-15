@@ -1,5 +1,41 @@
 # Sanitize History
 
+## 5.0.0 (2018-10-14)
+
+For most users, upgrading from 4.x shouldn't require any changes. However, the
+minimum required Ruby version has changed, and Sanitize 5.x's HTML output may
+differ in some small ways from 4.x's output. If this matters to you, please
+review the changes below carefully.
+
+### Potentially Breaking Changes
+
+* Ruby 2.3.0 is now the oldest officially supported Ruby version. Sanitize may
+  work in older 2.x Rubies, but they aren't actively tested. Sanitize definitely
+  no longer works in Ruby 1.9.x.
+
+* Upgraded to Nokogumbo 2.x, which fixes various bugs and adds
+  standard-compliant HTML serialization. [@stevecheckoway - #189][189]
+
+* Children of the following elements are now removed by default when these
+  elements are removed, rather than being preserved and escaped:
+
+  - `iframe`
+  - `noembed`
+  - `noframes`
+  - `noscript`
+  - `script`
+  - `style`
+
+* Children of whitelisted `iframe` elements are now always removed. In modern
+  HTML, `iframe` elements should never have children. In HTML 4 and earlier
+  `iframe` elements were allowed to contain fallback content for legacy
+  browsers, but it's been almost two decades since that was useful.
+
+* Fixed a bug that caused `:remove_contents` to behave as if it were set to
+  `true` when it was actually an Array.
+
+[189]:https://github.com/rgrove/sanitize/pull/189
+
 ## 4.6.6 (2018-07-23)
 
 * Improved performance and memory usage by optimizing `Sanitize#transform_node!`
