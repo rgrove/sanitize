@@ -189,6 +189,7 @@ class Sanitize; module Transformers; class CleanElement
     end
 
     # Element-specific special cases.
+    case name
 
     # If this is a whitelisted iframe that has children, remove all its
     # children. The HTML standard says iframes shouldn't have content, but when
@@ -196,9 +197,28 @@ class Sanitize; module Transformers; class CleanElement
     # being escaped, which is unsafe because legacy browsers may still render it
     # and execute `<script>` content. So the safe and correct thing to do is to
     # always remove iframe content.
-    if name == 'iframe' && !node.children.empty?
-      node.children.each do |child|
-        child.unlink
+    when 'iframe'
+      if !node.children.empty?
+        node.children.each do |child|
+          child.unlink
+        end
+      end
+
+    # Prevent the use of `<meta>` elements that set a charset other than UTF-8,
+    # since Sanitize's output is always UTF-8.
+    when 'meta'
+      if node.has_attribute?('charset') &&
+          node['charset'].downcase != 'utf-8'
+
+        node['charset'] = 'utf-8'
+      end
+
+      if node.has_attribute?('http-equiv') &&
+          node.has_attribute?('content') &&
+          node['http-equiv'].downcase == 'content-type' &&
+          node['content'].downcase =~ /;\s*charset\s*=\s*(?!utf-8)/
+
+        node['content'] = node['content'].gsub(/;\s*charset\s*=.+\z/, ';charset=utf-8')
       end
     end
   end

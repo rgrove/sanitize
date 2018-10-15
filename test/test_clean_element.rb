@@ -480,5 +480,40 @@ describe 'Sanitize::Transformers::CleanElement' do
         :protocols  => {'a' => {'href' => ['https']}}
       }).must_equal "<a>Text</a>"
     end
+
+    it 'should prevent `<meta>` tags from being used to set a non-UTF-8 charset' do
+      Sanitize.document('<html><head><meta charset="utf-8"></head><body>Howdy!</body></html>',
+        :elements   => %w[html head meta body],
+        :attributes => {'meta' => ['charset']}
+      ).must_equal "<html><head><meta charset=\"utf-8\"></head><body>Howdy!</body></html>"
+
+      Sanitize.document('<html><meta charset="utf-8">Howdy!</html>',
+        :elements   => %w[html meta],
+        :attributes => {'meta' => ['charset']}
+      ).must_equal "<html><meta charset=\"utf-8\">Howdy!</html>"
+
+      Sanitize.document('<html><meta charset="us-ascii">Howdy!</html>',
+        :elements   => %w[html meta],
+        :attributes => {'meta' => ['charset']}
+      ).must_equal "<html><meta charset=\"utf-8\">Howdy!</html>"
+
+      Sanitize.document('<html><meta http-equiv="content-type" content=" text/html; charset=us-ascii">Howdy!</html>',
+        :elements   => %w[html meta],
+        :attributes => {'meta' => %w[content http-equiv]}
+      ).must_equal "<html><meta http-equiv=\"content-type\" content=\" text/html;charset=utf-8\">Howdy!</html>"
+
+      Sanitize.document('<html><meta http-equiv="Content-Type" content="text/plain;charset = us-ascii">Howdy!</html>',
+        :elements   => %w[html meta],
+        :attributes => {'meta' => %w[content http-equiv]}
+      ).must_equal "<html><meta http-equiv=\"Content-Type\" content=\"text/plain;charset=utf-8\">Howdy!</html>"
+    end
+
+    it 'should not modify `<meta>` tags that already set a UTF-8 charset' do
+      Sanitize.document('<html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8"></head><body>Howdy!</body></html>',
+        :elements   => %w[html head meta body],
+        :attributes => {'meta' => %w[content http-equiv]}
+      ).must_equal "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"></head><body>Howdy!</body></html>"
+    end
+
   end
 end
