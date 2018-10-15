@@ -1,28 +1,12 @@
 language: ruby
 
-# Workaround for a Travis bug that breaks Bundler in Ruby 1.9.3.
-# https://github.com/travis-ci/travis-ci/issues/5239
-before_install:
-  - gem install bundler
+rvm:
+  - 2.3
+  - 2.4
+  - 2.5
+  - 2.6
+  - ruby-head
 
 matrix:
   allow_failures:
     - rvm: ruby-head
-
-  include:
-    - rvm: 1.9.3
-
-    - rvm: 2.3
-      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
-
-    - rvm: 2.4
-      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
-
-    - rvm: 2.5
-      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
-
-    - rvm: 2.6
-      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
-
-    - rvm: ruby-head
-      env: TEST_RUBYOPT_FROZEN_STRING_LITERAL=1
