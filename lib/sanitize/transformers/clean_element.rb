@@ -168,6 +168,11 @@ class Sanitize; module Transformers; class CleanElement
         # affected attributes, some of which can exist on any element and some
         # of which can only exist on `<a>` elements.
         #
+        # This fix is technically no longer necessary with Nokogumbo >= 2.0
+        # since it no longer uses libxml2's serializer, but it's retained to
+        # avoid breaking use cases where people might be sanitizing individual
+        # Nokogiri nodes and then serializing them manually without Nokogumbo.
+        #
         # The relevant libxml2 code is here:
         # <https://github.com/GNOME/libxml2/commit/960f0e275616cadc29671a218d7fb9b69eb35588>
         if UNSAFE_LIBXML_ATTRS_GLOBAL.include?(attr_name) ||

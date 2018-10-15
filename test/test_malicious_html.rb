@@ -166,7 +166,12 @@ describe 'Malicious HTML' do
         input = %[<#{tag_name} #{attr_name}='examp<!--" onmouseover=alert(1)>-->le.com'>foo</#{tag_name}>]
 
         it 'should escape unsafe characters in attributes' do
-          @s.fragment(input).must_equal(%[<#{tag_name} #{attr_name}="examp<!--%22%20onmouseover=alert(1)>-->le.com">foo</#{tag_name}>])
+          output = %[<#{tag_name} #{attr_name}="examp<!--%22%20onmouseover=alert(1)>-->le.com">foo</#{tag_name}>]
+          @s.fragment(input).must_equal(output)
+
+          fragment = Nokogiri::HTML.fragment(input)
+          @s.node!(fragment)
+          fragment.to_html.must_equal(output)
         end
 
         it 'should round-trip to the same output' do
@@ -179,7 +184,11 @@ describe 'Malicious HTML' do
         input = %[<#{tag_name} #{attr_name}='examp<!--" onmouseover=alert(1)>-->le.com'>foo</#{tag_name}>]
 
         it 'should not escape characters unnecessarily' do
-          @s.fragment(input).must_equal(input)
+          @s.fragment(input).must_equal(%[<#{tag_name} #{attr_name}="examp<!--&quot; onmouseover=alert(1)>-->le.com">foo</#{tag_name}>])
+
+          fragment = Nokogiri::HTML.fragment(input)
+          @s.node!(fragment)
+          fragment.to_html.must_equal(%[<#{tag_name} #{attr_name}='examp<!--" onmouseover=alert(1)>-->le.com'>foo</#{tag_name}>])
         end
 
         it 'should round-trip to the same output' do
