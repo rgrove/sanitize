@@ -13,17 +13,17 @@ Gem::Specification.new do |s|
   s.description = 'Sanitize is a whitelist-based HTML and CSS sanitizer. Given a list of acceptable elements, attributes, and CSS properties, Sanitize will remove all unacceptable HTML and/or CSS from a string.'
 
   s.platform = Gem::Platform::RUBY
-  s.required_ruby_version = Gem::Requirement.new('>= 1.9.2')
+  s.required_ruby_version = Gem::Requirement.new('>= 2.1.0')
   s.required_rubygems_version = Gem::Requirement.new('>= 1.2.0')
 
   # Runtime dependencies.
   s.add_dependency('crass', '~> 1.0.2')
-  s.add_dependency('nokogiri', '>= 1.4.4')
+  s.add_dependency('nokogiri', '>= 1.8.0')
   s.add_dependency('nokogumbo', '~> 2.0')
 
   # Development dependencies.
-  s.add_development_dependency('minitest', '~> 5.10.2')
-  s.add_development_dependency('rake', '~> 12.0.0')
+  s.add_development_dependency('minitest', '~> 5.11.3')
+  s.add_development_dependency('rake', '~> 12.3.1')
 
   s.require_paths = ['lib']
 
