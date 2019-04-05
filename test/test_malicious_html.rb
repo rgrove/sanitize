@@ -166,12 +166,19 @@ describe 'Malicious HTML' do
         input = %[<#{tag_name} #{attr_name}='examp<!--" onmouseover=alert(1)>-->le.com'>foo</#{tag_name}>]
 
         it 'should escape unsafe characters in attributes' do
-          output = %[<#{tag_name} #{attr_name}="examp<!--%22%20onmouseover=alert(1)>-->le.com">foo</#{tag_name}>]
-          @s.fragment(input).must_equal(output)
+          # This uses Nokogumbo's HTML-compliant serializer rather than
+          # libxml2's.
+          @s.fragment(input).
+            must_equal(%[<#{tag_name} #{attr_name}="examp<!--%22%20onmouseover=alert(1)>-->le.com">foo</#{tag_name}>])
 
+          # This uses the not-quite-standards-compliant libxml2 serializer via
+          # Nokogiri, so the output may be a little different as of Nokogiri
+          # 1.10.2 when using Nokogiri's vendored libxml2 due to this patch:
+          # https://github.com/sparklemotion/nokogiri/commit/4852e43cb6039e26d8c51af78621e539cbf46c5d
           fragment = Nokogiri::HTML.fragment(input)
           @s.node!(fragment)
-          fragment.to_html.must_equal(output)
+          fragment.to_html.
+            must_equal(%[<#{tag_name} #{attr_name}="examp&lt;!--%22%20onmouseover=alert(1)&gt;--&gt;le.com">foo</#{tag_name}>])
         end
 
         it 'should round-trip to the same output' do
@@ -184,11 +191,19 @@ describe 'Malicious HTML' do
         input = %[<#{tag_name} #{attr_name}='examp<!--" onmouseover=alert(1)>-->le.com'>foo</#{tag_name}>]
 
         it 'should not escape characters unnecessarily' do
-          @s.fragment(input).must_equal(%[<#{tag_name} #{attr_name}="examp<!--&quot; onmouseover=alert(1)>-->le.com">foo</#{tag_name}>])
+          # This uses Nokogumbo's HTML-compliant serializer rather than
+          # libxml2's.
+          @s.fragment(input).
+            must_equal(%[<#{tag_name} #{attr_name}="examp<!--&quot; onmouseover=alert(1)>-->le.com">foo</#{tag_name}>])
 
+          # This uses the not-quite-standards-compliant libxml2 serializer via
+          # Nokogiri, so the output may be a little different as of Nokogiri
+          # 1.10.2 when using Nokogiri's vendored libxml2 due to this patch:
+          # https://github.com/sparklemotion/nokogiri/commit/4852e43cb6039e26d8c51af78621e539cbf46c5d
           fragment = Nokogiri::HTML.fragment(input)
           @s.node!(fragment)
-          fragment.to_html.must_equal(%[<#{tag_name} #{attr_name}='examp<!--" onmouseover=alert(1)>-->le.com'>foo</#{tag_name}>])
+          fragment.to_html.
+            must_equal(%[<#{tag_name} #{attr_name}='examp&lt;!--" onmouseover=alert(1)&gt;--&gt;le.com'>foo</#{tag_name}>])
         end
 
         it 'should round-trip to the same output' do
