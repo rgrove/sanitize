@@ -417,6 +417,17 @@ elements not in this array will be removed.
 ]
 ```
 
+#### :parser_options (Hash)
+
+[Parsing options](https://github.com/rubys/nokogumbo/tree/v2.0.1#parsing-options) supplied to `nokogumbo`.
+
+```ruby
+:parser_options => {
+  max_errors: -1,
+  max_tree_depth: -1
+}
+```
+
 #### :protocols (Hash)
 
 URL protocols to allow in specific attributes. If an attribute is listed here

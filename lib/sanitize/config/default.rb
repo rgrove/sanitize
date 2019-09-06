@@ -56,6 +56,10 @@ class Sanitize
       # that all HTML will be stripped).
       :elements => [],
 
+      # Parsing options supplied to nokogumbo.
+      # https://github.com/rubys/nokogumbo/tree/v2.0.1#parsing-options
+      :parser_options => {},
+
       # URL handling protocols to allow in specific attributes. By default, no
       # protocols are allowed. Use :relative in place of a protocol if you want
       # to allow relative URLs sans protocol.

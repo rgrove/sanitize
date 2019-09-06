@@ -121,7 +121,7 @@ class Sanitize
     return '' unless html
 
     html = preprocess(html)
-    frag  = Nokogiri::HTML5.fragment(html)
+    frag  = Nokogiri::HTML5.fragment(html, @config[:parser_options])
     node!(frag)
     to_html(frag)
   end
