@@ -120,8 +120,7 @@ class Sanitize
   def fragment(html)
     return '' unless html
 
-    html = preprocess(html)
-    frag  = Nokogiri::HTML5.fragment(html, @config[:parser_options])
+    frag = Nokogiri::HTML5.fragment(preprocess(html), @config[:parser_options])
     node!(frag)
     to_html(frag)
   end

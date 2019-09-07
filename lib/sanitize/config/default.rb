@@ -56,7 +56,7 @@ class Sanitize
       # that all HTML will be stripped).
       :elements => [],
 
-      # Parsing options supplied to nokogumbo.
+      # HTML parsing options to pass to Nokogumbo.
       # https://github.com/rubys/nokogumbo/tree/v2.0.1#parsing-options
       :parser_options => {},
 
