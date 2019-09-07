@@ -108,7 +108,7 @@ class Sanitize
   def document(html)
     return '' unless html
 
-    doc = Nokogiri::HTML5.parse(preprocess(html))
+    doc = Nokogiri::HTML5.parse(preprocess(html), @config[:parser_options])
     node!(doc)
     to_html(doc)
   end

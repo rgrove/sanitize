@@ -37,6 +37,29 @@ describe 'Sanitize' do
       it 'should not choke on frozen documents' do
         @s.document('<!doctype html><html><b>foo</b>'.freeze).must_equal "<html>foo</html>"
       end
+
+      describe 'when html body exceeds Nokogumbo::DEFAULT_MAX_TREE_DEPTH' do
+        let(:content) do
+          content = nest_html_content('<b>foo</b>', Nokogumbo::DEFAULT_MAX_TREE_DEPTH)
+          "<html>#{content}</html>"
+        end
+
+        it 'raises an ArgumentError exception' do
+          assert_raises ArgumentError do
+            @s.document(content)
+          end
+        end
+
+        describe 'and :max_tree_depth of -1 is supplied in :parser_options' do
+          before do
+            @s = Sanitize.new(elements: ['html'], parser_options: { max_tree_depth: -1 })
+          end
+
+          it 'does not raise an ArgumentError exception' do
+            @s.document(content).must_equal '<html>foo</html>'
+          end
+        end
+      end
     end
 
     describe '#fragment' do
