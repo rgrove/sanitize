@@ -108,27 +108,30 @@ describe 'Sanitize' do
 
   describe 'class methods' do
     describe '.document' do
-      it 'should call #document' do
-        Sanitize.stub_instance(:document, proc {|html| html + ' called' }) do
-          Sanitize.document('<html>foo</html>')
-            .must_equal '<html>foo</html> called'
-        end
+      it 'should sanitize an HTML document with the given config' do
+        html = '<!doctype html><html><b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script></html>'
+        Sanitize.document(html, :elements => ['html'])
+          .must_equal "<html>Lorem ipsum dolor sit amet </html>"
       end
     end
 
     describe '.fragment' do
-      it 'should call #fragment' do
-        Sanitize.stub_instance(:fragment, proc {|html| html + ' called' }) do
-          Sanitize.fragment('<b>foo</b>').must_equal '<b>foo</b> called'
-        end
+      it 'should sanitize an HTML fragment with the given config' do
+        html = '<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>'
+        Sanitize.fragment(html, :elements => ['strong'])
+          .must_equal 'Lorem ipsum <strong>dolor</strong> sit amet '
       end
     end
 
     describe '.node!' do
-      it 'should call #node!' do
-        Sanitize.stub_instance(:node!, proc {|input| input + ' called' }) do
-          Sanitize.node!('not really a node').must_equal 'not really a node called'
-        end
+      it 'should sanitize a Nokogiri::XML::Node with the given config' do
+        doc = Nokogiri::HTML5.parse('<b>Lo<!-- comment -->rem</b> <a href="pants" title="foo">ipsum</a> <a href="http://foo.com/"><strong>dolor</strong></a> sit<br/>amet <script>alert("hello world");</script>')
+        frag = doc.fragment
+
+        doc.xpath('/html/body/node()').each {|node| frag << node }
+
+        Sanitize.node!(frag, :elements => ['strong'])
+        frag.to_html.must_equal 'Lorem ipsum <strong>dolor</strong> sit amet '
       end
     end
   end

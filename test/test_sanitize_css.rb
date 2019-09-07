@@ -196,26 +196,53 @@ describe 'Sanitize::CSS' do
 
   describe 'class methods' do
     describe '.properties' do
-      it 'should call #properties' do
-        Sanitize::CSS.stub_instance(:properties, proc {|css| css + 'bar' }) do
-          Sanitize::CSS.properties('foo').must_equal 'foobar'
-        end
+      it 'should sanitize CSS properties with the given config' do
+        css = 'background: #fff; width: expression(alert("hi"));'
+
+        Sanitize::CSS.properties(css).must_equal ' '
+        Sanitize::CSS.properties(css, Sanitize::Config::RELAXED[:css]).must_equal 'background: #fff; '
+        Sanitize::CSS.properties(css, :properties => %w[background color width]).must_equal 'background: #fff; '
       end
     end
 
     describe '.stylesheet' do
-      it 'should call #stylesheet' do
-        Sanitize::CSS.stub_instance(:stylesheet, proc {|css| css + 'bar' }) do
-          Sanitize::CSS.stylesheet('foo').must_equal 'foobar'
-        end
+      it 'should sanitize a CSS stylesheet with the given config' do
+        css = %[
+          /* Yay CSS! */
+          .foo { color: #fff; }
+          #bar { background: url(yay.jpg); }
+
+          @media screen (max-width:480px) {
+            .foo { width: 400px; }
+            #bar:not(.baz) { height: 100px; }
+          }
+        ].strip
+
+        Sanitize::CSS.stylesheet(css).strip.must_equal %[
+          .foo {  }
+          #bar {  }
+        ].strip
+
+        Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED[:css]).must_equal css
+
+        Sanitize::CSS.stylesheet(css, :properties => %w[background color width]).strip.must_equal %[
+          .foo { color: #fff; }
+          #bar {  }
+        ].strip
       end
     end
 
     describe '.tree!' do
-      it 'should call #tree!' do
-        Sanitize::CSS.stub_instance(:tree!, proc {|tree| tree + 'bar' }) do
-          Sanitize::CSS.tree!('foo').must_equal 'foobar'
-        end
+      it 'should sanitize a Crass CSS parse tree with the given config' do
+        tree = Crass.parse(String.new("@import url(foo.css);\n") <<
+          ".foo { background: #fff; font: 16pt 'Comic Sans MS'; }\n" <<
+          "#bar { top: 125px; background: green; }")
+
+        Sanitize::CSS.tree!(tree, :properties => %w[background color width]).must_be_same_as tree
+
+        Crass::Parser.stringify(tree).must_equal String.new("\n") <<
+            ".foo { background: #fff;  }\n" <<
+            "#bar {  background: green; }"
       end
     end
   end
