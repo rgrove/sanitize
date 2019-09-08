@@ -1,5 +1,24 @@
 # Sanitize History
 
+## 5.1.0 (2019-09-07)
+
+### Features
+
+* Added a `:parser_options` config hash, which makes it possible to pass custom
+  parsing options to Nokogumbo. [@austin-wang - #194][194]
+
+### Bug Fixes
+
+* Non-characters and non-whitespace control characters are now stripped from
+  HTML input before parsing to comply with the HTML Standard's [preprocessing
+  guidelines][html-preprocessing]. Prior to this Sanitize had adhered to [older
+  W3C guidelines][unicode-xml] that have since been withdrawn. [#179][179]
+
+[179]:https://github.com/rgrove/sanitize/issues/179
+[194]:https://github.com/rgrove/sanitize/pull/194
+[html-preprocessing]:https://html.spec.whatwg.org/multipage/parsing.html#preprocessing-the-input-stream
+[unicode-xml]:https://www.w3.org/TR/unicode-xml/
+
 ## 5.0.0 (2018-10-14)
 
 For most users, upgrading from 4.x shouldn't require any changes. However, the
