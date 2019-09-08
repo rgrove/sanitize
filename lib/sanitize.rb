@@ -19,6 +19,20 @@ require_relative 'sanitize/transformers/clean_element'
 class Sanitize
   attr_reader :config
 
+  # Matches one or more control characters that should be removed from HTML
+  # before parsing, as defined by the HTML living standard.
+  #
+  # -   https://html.spec.whatwg.org/multipage/parsing.html#preprocessing-the-input-stream
+  # -   https://infra.spec.whatwg.org/#control
+  REGEX_HTML_CONTROL_CHARACTERS = /[\u0001-\u0008\u000b\u000e-\u001f\u007f-\u009f]+/u
+
+  # Matches one or more non-characters that should be removed from HTML before
+  # parsing, as defined by the HTML living standard.
+  #
+  # -   https://html.spec.whatwg.org/multipage/parsing.html#preprocessing-the-input-stream
+  # -   https://infra.spec.whatwg.org/#noncharacter
+  REGEX_HTML_NON_CHARACTERS = /[\ufdd0-\ufdef\ufffe\uffff\u{1fffe}\u{1ffff}\u{2fffe}\u{2ffff}\u{3fffe}\u{3ffff}\u{4fffe}\u{4ffff}\u{5fffe}\u{5ffff}\u{6fffe}\u{6ffff}\u{7fffe}\u{7ffff}\u{8fffe}\u{8ffff}\u{9fffe}\u{9ffff}\u{afffe}\u{affff}\u{bfffe}\u{bffff}\u{cfffe}\u{cffff}\u{dfffe}\u{dffff}\u{efffe}\u{effff}\u{ffffe}\u{fffff}\u{10fffe}\u{10ffff}]+/u
+
   # Matches an attribute value that could be treated by a browser as a URL
   # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
   # or more characters followed by a colon is considered a match, even if the
@@ -26,11 +40,12 @@ class Sanitize
   # IE6 and Opera will still parse).
   REGEX_PROTOCOL = /\A\s*([^\/#]*?)(?:\:|&#0*58|&#x0*3a)/i
 
-  # Matches Unicode characters that should be stripped from HTML before passing
-  # it to the parser.
+  # Matches one or more characters that should be stripped from HTML before
+  # parsing. This is a combination of `REGEX_HTML_CONTROL_CHARACTERS` and
+  # `REGEX_HTML_NON_CHARACTERS`.
   #
-  # http://www.w3.org/TR/unicode-xml/#Charlist
-  REGEX_UNSUITABLE_CHARS = /[\u0000\u0340\u0341\u17a3\u17d3\u2028\u2029\u202a-\u202e\u206a-\u206f\ufff9-\ufffb\ufeff\ufffc\u{1d173}-\u{1d17a}\u{e0000}-\u{e007f}]/u
+  # https://html.spec.whatwg.org/multipage/parsing.html#preprocessing-the-input-stream
+  REGEX_UNSUITABLE_CHARS = /(?:#{REGEX_HTML_CONTROL_CHARACTERS}|#{REGEX_HTML_NON_CHARACTERS})/u
 
   #--
   # Class Methods

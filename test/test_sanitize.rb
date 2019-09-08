@@ -38,6 +38,21 @@ describe 'Sanitize' do
         @s.document('<!doctype html><html><b>foo</b>'.freeze).must_equal "<html>foo</html>"
       end
 
+      it 'should normalize newlines' do
+        @s.document("a\r\n\n\r\r\r\nz").must_equal "<html>a\n\n\n\n\nz</html>"
+      end
+
+      it 'should strip control characters (except ASCII whitespace)' do
+        sample_control_chars = "\u0001\u0008\u000b\u000e\u001f\u007f\u009f"
+        whitespace = "\t\n\f\u0020"
+        @s.document("a#{sample_control_chars}#{whitespace}z").must_equal "<html>a#{whitespace}z</html>"
+      end
+
+      it 'should strip non-characters' do
+        sample_non_chars = "\ufdd0\ufdef\ufffe\uffff\u{1fffe}\u{1ffff}\u{2fffe}\u{2ffff}\u{3fffe}\u{3ffff}\u{4fffe}\u{4ffff}\u{5fffe}\u{5ffff}\u{6fffe}\u{6ffff}\u{7fffe}\u{7ffff}\u{8fffe}\u{8ffff}\u{9fffe}\u{9ffff}\u{afffe}\u{affff}\u{bfffe}\u{bffff}\u{cfffe}\u{cffff}\u{dfffe}\u{dffff}\u{efffe}\u{effff}\u{ffffe}\u{fffff}\u{10fffe}\u{10ffff}"
+        @s.document("a#{sample_non_chars}z").must_equal "<html>az</html>"
+      end
+
       describe 'when html body exceeds Nokogumbo::DEFAULT_MAX_TREE_DEPTH' do
         let(:content) do
           content = nest_html_content('<b>foo</b>', Nokogumbo::DEFAULT_MAX_TREE_DEPTH)
@@ -83,6 +98,21 @@ describe 'Sanitize' do
 
       it 'should not choke on frozen fragments' do
         @s.fragment('<b>foo</b>'.freeze).must_equal 'foo'
+      end
+
+      it 'should normalize newlines' do
+        @s.fragment("a\r\n\n\r\r\r\nz").must_equal "a\n\n\n\n\nz"
+      end
+
+      it 'should strip control characters (except ASCII whitespace)' do
+        sample_control_chars = "\u0001\u0008\u000b\u000e\u001f\u007f\u009f"
+        whitespace = "\t\n\f\u0020"
+        @s.fragment("a#{sample_control_chars}#{whitespace}z").must_equal "a#{whitespace}z"
+      end
+
+      it 'should strip non-characters' do
+        sample_non_chars = "\ufdd0\ufdef\ufffe\uffff\u{1fffe}\u{1ffff}\u{2fffe}\u{2ffff}\u{3fffe}\u{3ffff}\u{4fffe}\u{4ffff}\u{5fffe}\u{5ffff}\u{6fffe}\u{6ffff}\u{7fffe}\u{7ffff}\u{8fffe}\u{8ffff}\u{9fffe}\u{9ffff}\u{afffe}\u{affff}\u{bfffe}\u{bffff}\u{cfffe}\u{cffff}\u{dfffe}\u{dffff}\u{efffe}\u{effff}\u{ffffe}\u{fffff}\u{10fffe}\u{10ffff}"
+        @s.fragment("a#{sample_non_chars}z").must_equal "az"
       end
 
       describe 'when html body exceeds Nokogumbo::DEFAULT_MAX_TREE_DEPTH' do
