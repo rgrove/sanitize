@@ -135,6 +135,8 @@ describe 'Malicious HTML' do
   # The relevant libxml2 code is here:
   # <https://github.com/GNOME/libxml2/commit/960f0e275616cadc29671a218d7fb9b69eb35588>
   describe 'unsafe libxml2 server-side includes in attributes' do
+    using_unpatched_libxml2 = Nokogiri::VersionInfo.instance.libxml2_using_system?
+
     tag_configs = [
       {
         tag_name: 'a',
@@ -166,6 +168,8 @@ describe 'Malicious HTML' do
         input = %[<#{tag_name} #{attr_name}='examp<!--" onmouseover=alert(1)>-->le.com'>foo</#{tag_name}>]
 
         it 'should escape unsafe characters in attributes' do
+          skip "behavior should only exist in nokogiri's patched libxml" if using_unpatched_libxml2
+
           # This uses Nokogumbo's HTML-compliant serializer rather than
           # libxml2's.
           @s.fragment(input).
@@ -191,6 +195,8 @@ describe 'Malicious HTML' do
         input = %[<#{tag_name} #{attr_name}='examp<!--" onmouseover=alert(1)>-->le.com'>foo</#{tag_name}>]
 
         it 'should not escape characters unnecessarily' do
+          skip "behavior should only exist in nokogiri's patched libxml" if using_unpatched_libxml2
+
           # This uses Nokogumbo's HTML-compliant serializer rather than
           # libxml2's.
           @s.fragment(input).
