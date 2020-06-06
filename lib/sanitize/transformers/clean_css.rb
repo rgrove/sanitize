@@ -1,6 +1,6 @@
 class Sanitize; module Transformers; module CSS
 
-# Enforces a CSS whitelist on the contents of `style` attributes.
+# Enforces a CSS allowlist on the contents of `style` attributes.
 class CleanAttribute
   def initialize(sanitizer_or_config)
     if Sanitize::CSS === sanitizer_or_config
@@ -14,7 +14,7 @@ class CleanAttribute
     node = env[:node]
 
     return unless node.type == Nokogiri::XML::Node::ELEMENT_NODE &&
-        node.key?('style') && !env[:is_whitelisted]
+        node.key?('style') && !env[:is_allowlisted]
 
     attr = node.attribute('style')
     css  = @scss.properties(attr.value)
@@ -27,7 +27,7 @@ class CleanAttribute
   end
 end
 
-# Enforces a CSS whitelist on the contents of `<style>` elements.
+# Enforces a CSS allowlist on the contents of `<style>` elements.
 class CleanElement
   def initialize(sanitizer_or_config)
     if Sanitize::CSS === sanitizer_or_config

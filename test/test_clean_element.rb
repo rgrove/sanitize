@@ -162,7 +162,7 @@ describe 'Sanitize::Transformers::CleanElement' do
   }
 
   describe 'Default config' do
-    it 'should remove non-whitelisted elements, leaving safe contents behind' do
+    it 'should remove non-allowlisted elements, leaving safe contents behind' do
       Sanitize.fragment('foo <b>bar</b> <strong><a href="#a">baz</a></strong> quux')
         .must_equal 'foo bar baz quux'
 
@@ -315,7 +315,7 @@ describe 'Sanitize::Transformers::CleanElement' do
   end
 
   describe 'Custom configs' do
-    it 'should allow attributes on all elements if whitelisted under :all' do
+    it 'should allow attributes on all elements if allowlisted under :all' do
       input = '<p class="foo">bar</p>'
 
       Sanitize.fragment(input).must_equal ' bar '
@@ -336,7 +336,7 @@ describe 'Sanitize::Transformers::CleanElement' do
       }).must_equal input
     end
 
-    it "should not allow relative URLs when relative URLs aren't whitelisted" do
+    it "should not allow relative URLs when relative URLs aren't allowlisted" do
       input = '<a href="/foo/bar">Link</a>'
 
       Sanitize.fragment(input,
@@ -400,7 +400,7 @@ describe 'Sanitize::Transformers::CleanElement' do
       ).must_equal 'foo bar  baz hi '
     end
 
-    it 'should remove the contents of whitelisted iframes' do
+    it 'should remove the contents of allowlisted iframes' do
       Sanitize.fragment('<iframe>hi <script>hello</script></iframe>',
         :elements => ['iframe']
       ).must_equal '<iframe></iframe>'

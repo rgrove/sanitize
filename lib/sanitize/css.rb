@@ -175,7 +175,7 @@ class Sanitize; class CSS
         next prop
 
       when :semicolon
-        # Only preserve the semicolon if it was preceded by a whitelisted
+        # Only preserve the semicolon if it was preceded by an allowlisted
         # property. Otherwise, omit it in order to prevent redundant semicolons.
         if preceded_by_property
           preceded_by_property = false
@@ -296,7 +296,7 @@ class Sanitize; class CSS
   end
 
   # Returns `true` if the given node (which may be of type `:url` or
-  # `:function`, since the CSS syntax can produce both) uses a whitelisted
+  # `:function`, since the CSS syntax can produce both) uses an allowlisted
   # protocol.
   def valid_url?(node)
     type = node[:node]

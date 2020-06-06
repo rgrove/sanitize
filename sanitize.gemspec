@@ -3,14 +3,14 @@ require './lib/sanitize/version'
 
 Gem::Specification.new do |s|
   s.name     = 'sanitize'
-  s.summary  = 'Whitelist-based HTML and CSS sanitizer.'
+  s.summary  = 'Allowlist-based HTML and CSS sanitizer.'
   s.version  = Sanitize::VERSION
   s.authors  = ['Ryan Grove']
   s.email    = 'ryan@wonko.com'
   s.homepage = 'https://github.com/rgrove/sanitize/'
   s.licenses = ['MIT']
 
-  s.description = 'Sanitize is a whitelist-based HTML and CSS sanitizer. Given a list of acceptable elements, attributes, and CSS properties, Sanitize will remove all unacceptable HTML and/or CSS from a string.'
+  s.description = 'Sanitize is an allowlist-based HTML and CSS sanitizer. It removes all HTML and/or CSS from a string except the elements, attributes, and properties you choose to allow.'
 
   s.platform = Gem::Platform::RUBY
   s.required_ruby_version = Gem::Requirement.new('>= 2.1.0')

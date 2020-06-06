@@ -54,7 +54,7 @@ class Sanitize
   # Returns a sanitized copy of the given full _html_ document, using the
   # settings in _config_ if specified.
   #
-  # When sanitizing a document, the `<html>` element must be whitelisted or an
+  # When sanitizing a document, the `<html>` element must be allowlisted or an
   # error will be raised. If this is undesirable, you should probably use
   # {#fragment} instead.
   def self.document(html, config = {})
@@ -117,7 +117,7 @@ class Sanitize
 
   # Returns a sanitized copy of the given _html_ document.
   #
-  # When sanitizing a document, the `<html>` element must be whitelisted or an
+  # When sanitizing a document, the `<html>` element must be allowlisted or an
   # error will be raised. If this is undesirable, you should probably use
   # {#fragment} instead.
   def document(html)
@@ -147,20 +147,20 @@ class Sanitize
   # in place.
   #
   # If _node_ is a `Nokogiri::XML::Document`, the `<html>` element must be
-  # whitelisted or an error will be raised.
+  # allowlisted or an error will be raised.
   def node!(node)
     raise ArgumentError unless node.is_a?(Nokogiri::XML::Node)
 
     if node.is_a?(Nokogiri::XML::Document)
       unless @config[:elements].include?('html')
-        raise Error, 'When sanitizing a document, "<html>" must be whitelisted.'
+        raise Error, 'When sanitizing a document, "<html>" must be allowlisted.'
       end
     end
 
-    node_whitelist = Set.new
+    node_allowlist = Set.new
 
     traverse(node) do |n|
-      transform_node!(n, node_whitelist)
+      transform_node!(n, node_allowlist)
     end
 
     node
@@ -189,7 +189,7 @@ class Sanitize
     node.to_html(preserve_newline: true)
   end
 
-  def transform_node!(node, node_whitelist)
+  def transform_node!(node, node_allowlist)
     @transformers.each do |transformer|
       # Since transform_node! may be called in a tight loop to process thousands
       # of items, we can optimize both memory and CPU performance by:
@@ -199,15 +199,19 @@ class Sanitize
       # does merge! create a new hash, it is also 2.6x slower:
       # https://github.com/JuanitoFatas/fast-ruby#hashmerge-vs-hashmerge-code
       config = @transformer_config
-      config[:is_whitelisted] = node_whitelist.include?(node)
+      config[:is_allowlisted] = config[:is_whitelisted] = node_allowlist.include?(node)
       config[:node] = node
       config[:node_name] = node.name.downcase
-      config[:node_whitelist] = node_whitelist
+      config[:node_allowlist] = config[:node_whitelist] = node_allowlist
 
       result = transformer.call(config)
 
-      if result.is_a?(Hash) && result[:node_whitelist].respond_to?(:each)
-        node_whitelist.merge(result[:node_whitelist])
+      if result.is_a?(Hash)
+        result_allowlist = result[:node_allowlist] || result[:node_whitelist]
+
+        if result_allowlist.respond_to?(:each)
+          node_allowlist.merge(result_allowlist)
+        end
       end
     end
 

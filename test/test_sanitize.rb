@@ -150,7 +150,7 @@ describe 'Sanitize' do
         frag.to_html.must_equal 'Lorem ipsum dolor sit amet '
       end
 
-      describe "when the given node is a document and <html> isn't whitelisted" do
+      describe "when the given node is a document and <html> isn't allowlisted" do
         it 'should raise a Sanitize::Error' do
           doc = Nokogiri::HTML5.parse('foo')
           proc { @s.node!(doc) }.must_raise Sanitize::Error

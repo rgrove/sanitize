@@ -76,11 +76,11 @@ class Sanitize; module Transformers; class CleanElement
 
   def call(env)
     node = env[:node]
-    return if node.type != Nokogiri::XML::Node::ELEMENT_NODE || env[:is_whitelisted]
+    return if node.type != Nokogiri::XML::Node::ELEMENT_NODE || env[:is_allowlisted]
 
     name = env[:node_name]
 
-    # Delete any element that isn't in the config whitelist, unless the node has
+    # Delete any element that isn't in the config allowlist, unless the node has
     # already been deleted from the document.
     #
     # It's important that we not try to reparent the children of a node that has
@@ -107,20 +107,20 @@ class Sanitize; module Transformers; class CleanElement
       return
     end
 
-    attr_whitelist = @attributes[name] || @attributes[:all]
+    attr_allowlist = @attributes[name] || @attributes[:all]
 
-    if attr_whitelist.nil?
-      # Delete all attributes from elements with no whitelisted attributes.
+    if attr_allowlist.nil?
+      # Delete all attributes from elements with no allowlisted attributes.
       node.attribute_nodes.each {|attr| attr.unlink }
     else
-      allow_data_attributes = attr_whitelist.include?(:data)
+      allow_data_attributes = attr_allowlist.include?(:data)
 
       # Delete any attribute that isn't allowed on this element.
       node.attribute_nodes.each do |attr|
         attr_name = attr.name.downcase
 
-        unless attr_whitelist.include?(attr_name)
-          # The attribute isn't whitelisted.
+        unless attr_allowlist.include?(attr_name)
+          # The attribute isn't allowed.
 
           if allow_data_attributes && attr_name.start_with?('data-')
             # Arbitrary data attributes are allowed. If this is a data
@@ -134,7 +134,7 @@ class Sanitize; module Transformers; class CleanElement
           next
         end
 
-        # The attribute is whitelisted.
+        # The attribute is allowed.
 
         # Remove any attributes that use unacceptable protocols.
         if @protocols.include?(name) && @protocols[name].include?(attr_name)
@@ -162,7 +162,7 @@ class Sanitize; module Transformers; class CleanElement
         # libxml2 >= 2.9.2 doesn't escape comments within some attributes, in an
         # attempt to preserve server-side includes. This can result in XSS since
         # an unescaped double quote can allow an attacker to inject a
-        # non-whitelisted attribute.
+        # non-allowlisted attribute.
         #
         # Sanitize works around this by implementing its own escaping for
         # affected attributes, some of which can exist on any element and some
@@ -191,7 +191,7 @@ class Sanitize; module Transformers; class CleanElement
     # Element-specific special cases.
     case name
 
-    # If this is a whitelisted iframe that has children, remove all its
+    # If this is an allowlisted iframe that has children, remove all its
     # children. The HTML standard says iframes shouldn't have content, but when
     # they do, this content is parsed as text and is serialized verbatim without
     # being escaped, which is unsafe because legacy browsers may still render it

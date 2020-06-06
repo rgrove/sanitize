@@ -45,7 +45,7 @@ review the changes below carefully.
   - `script`
   - `style`
 
-* Children of whitelisted `iframe` elements are now always removed. In modern
+* Children of allowlisted `iframe` elements are now always removed. In modern
   HTML, `iframe` elements should never have children. In HTML 4 and earlier
   `iframe` elements were allowed to contain fallback content for legacy
   browsers, but it's been almost two decades since that was useful.
@@ -84,7 +84,7 @@ review the changes below carefully.
 
   When Sanitize <= 4.6.2 is used in combination with libxml2 >= 2.9.2, a
   specially crafted HTML fragment can cause libxml2 to generate improperly
-  escaped output, allowing non-whitelisted attributes to be used on whitelisted
+  escaped output, allowing non-allowlisted attributes to be used on allowlisted
   elements.
 
   Sanitize now performs additional escaping on affected attributes to prevent
@@ -128,7 +128,7 @@ review the changes below carefully.
 
 ## 4.4.0 (2016-09-29)
 
-* Added `srcset` to the attribute whitelist for `img` elements in the relaxed
+* Added `srcset` to the attribute allowlist for `img` elements in the relaxed
   config. [@ejtttje - #156][156]
 
 [156]:https://github.com/rgrove/sanitize/pull/156
@@ -249,7 +249,7 @@ review the changes below carefully.
 ## 3.0.4 (2014-12-12)
 
 * Fixed: Harmless whitespace preceding a URL protocol (such as " http://")
-  caused the URL to be removed even when the protocol was whitelisted.
+  caused the URL to be removed even when the protocol was allowlisted.
   [@benubois - #126][126]
 
 [126]:https://github.com/rgrove/sanitize/pull/126
@@ -258,7 +258,7 @@ review the changes below carefully.
 ## 3.0.3 (2014-10-29)
 
 * Fixed: Some CSS selectors weren't parsed correctly inside the body of a
-  `@media` block, causing them to be removed even when whitelist rules should
+  `@media` block, causing them to be removed even when allowlist rules should
   have allowed them to remain. [#121][121]
 
 [121]:https://github.com/rgrove/sanitize/issues/121
@@ -323,7 +323,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 * The `clean_node!` method was renamed to `node!`.
 
 * The `document` method now raises a `Sanitize::Error` if the `<html>` element
-  isn't whitelisted, rather than a `RuntimeError`. This error is also now raised
+  isn't allowlisted, rather than a `RuntimeError`. This error is also now raised
   regardless of the `:remove_contents` config setting.
 
 * The `:output` config has been removed. Output is now always HTML, not XHTML.
@@ -334,7 +334,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 
 * Added advanced CSS sanitization support using [Crass][crass], which is fully
   compliant with the CSS Syntax Module Level 3 parsing spec. The contents of
-  whitelisted `<style>` elements and `style` attributes in HTML will be
+  allowlisted `<style>` elements and `style` attributes in HTML will be
   sanitized as CSS, or you can use the `Sanitize::CSS` class to manually
   sanitize CSS stylesheets or properties.
 
@@ -386,7 +386,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 
   When Sanitize <= 2.1.0 is used in combination with libxml2 >= 2.9.2, a
   specially crafted HTML fragment can cause libxml2 to generate improperly
-  escaped output, allowing non-whitelisted attributes to be used on whitelisted
+  escaped output, allowing non-allowlisted attributes to be used on allowlisted
   elements.
 
   Sanitize now performs additional escaping on affected attributes to prevent
@@ -401,7 +401,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 
 ## 2.1.0 (2014-01-13)
 
-* Added support for whitelisting arbitrary HTML5 `data-*` attributes. Use the
+* Added support for allowlisting arbitrary HTML5 `data-*` attributes. Use the
   symbol `:data` instead of an attribute name in the `:attributes` config to
   indicate that arbitrary data attributes should be allowed on an element.
 
@@ -482,12 +482,12 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
   the default depth-first mode.
 
 * Added the `abbr`, `dfn`, `kbd`, `mark`, `s`, `samp`, `time`, and `var`
-  elements to the whitelists for the basic and relaxed configs.
+  elements to the allowlists for the basic and relaxed configs.
 
 * Added the `bdo`, `del`, `figcaption`, `figure`, `hgroup`, `ins`, `rp`, `rt`,
-  `ruby`, and `wbr` elements to the whitelist for the relaxed config.
+  `ruby`, and `wbr` elements to the allowlist for the relaxed config.
 
-* The `dir`, `lang`, and `title` attributes are now whitelisted for all
+* The `dir`, `lang`, and `title` attributes are now allowlisted for all
   elements in the relaxed config.
 
 * Bumped minimum Nokogiri version to 1.4.4 to avoid a bug in 1.4.2+
@@ -498,7 +498,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 ## 1.2.1 (2010-04-20)
 
 * Added a `:remove_contents` config setting. If set to `true`, Sanitize will
-  remove the contents of all non-whitelisted elements in addition to the
+  remove the contents of all non-allowlisted elements in addition to the
   elements themselves. If set to an array of element names, Sanitize will
   remove the contents of only those elements (when filtered), and leave the
   contents of other filtered elements. [Thanks to Rafael Souza for the array
@@ -526,7 +526,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 * Added `Sanitize.clean_node!`, which sanitizes a `Nokogiri::XML::Node` and
   all its children.
 
-* Added elements `<h1>` through `<h6>` to the Relaxed whitelist. [Suggested by
+* Added elements `<h1>` through `<h6>` to the Relaxed allowlist. [Suggested by
   David Reese]
 
 
@@ -546,7 +546,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 
 * Added a workaround for an Hpricot bug that prevents attribute names from
   being downcased in recent versions of Hpricot. This was exploitable to
-  prevent non-whitelisted protocols from being cleaned. [Reported by Ben
+  prevent non-allowlisted protocols from being cleaned. [Reported by Ben
   Wanicur]
 
 
@@ -576,7 +576,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 
 ## 1.0.5 (2009-02-05)
 
-* Fixed a bug introduced in version 1.0.3 that prevented non-whitelisted
+* Fixed a bug introduced in version 1.0.3 that prevented non-allowlisted
   protocols from being cleaned when relative URLs were allowed. [Reported by
   Dev Purkayastha]
 
@@ -586,7 +586,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 
 ## 1.0.4 (2009-01-16)
 
-* Fixed a bug that made it possible to sneak a non-whitelisted element through
+* Fixed a bug that made it possible to sneak a non-allowlisted element through
   by repeating it several times in a row. All versions of Sanitize prior to
   1.0.4 are vulnerable. [Reported by Cristobal]
 
@@ -594,7 +594,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 ## 1.0.3 (2009-01-15)
 
 * Fixed a bug whereby incomplete Unicode or hex entities could be used to
-  prevent non-whitelisted protocols from being cleaned. Since IE6 and Opera
+  prevent non-allowlisted protocols from being cleaned. Since IE6 and Opera
   still decode the incomplete entities, users of those browsers may be
   vulnerable to malicious script injection on websites using versions of
   Sanitize prior to 1.0.3.

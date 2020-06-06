@@ -21,17 +21,17 @@ Feature                                               | [Sanitize 4.0.0][sanitiz
 Actually parses HTML (not with regexes)               | ✓                          | ✓                      |                                |
 HTML5-compliant parser                                | ✓                          |                        |                                |
 Fixes up badly broken/malicious markup                | ✓                          | ✓                      |                                |
-Fully configurable whitelists                         | ✓                          |                        | ✓                              |
-Global attribute whitelist                            | ✓                          | ✓ (hard-coded)         |                                |
-Element-specific attribute whitelist                  | ✓                          |                        | ✓                              |
-Attribute-specific protocol whitelist                 | ✓                          |                        | ✓                              |
+Fully configurable allowlists                         | ✓                          |                        | ✓                              |
+Global attribute allowlist                            | ✓                          | ✓ (hard-coded)         |                                |
+Element-specific attribute allowlist                  | ✓                          |                        | ✓                              |
+Attribute-specific protocol allowlist                 | ✓                          |                        | ✓                              |
 Supports HTML5 `data-` attributes                     | ✓                          | ✓ (hard-coded)         |                                |
 Optionally escapes unsafe HTML instead of removing it |                            | ✓                      |                                |
 Allows custom HTML manipulation (transformers)        | ✓                          | ✓                      |                                |
 Built-in MathML support                               |                            | always enabled         |                                |
 Built-in SVG support                                  |                            | always enabled         |                                |
 Basic CSS sanitization                                | ✓                          | regex-based            | regex-based                    |
-Advanced whitelist-based CSS sanitization             | ✓                          |                        |                                |
+Advanced allowlist-based CSS sanitization             | ✓                          |                        |                                |
 
 ### Notes
 
@@ -47,19 +47,19 @@ Advanced whitelist-based CSS sanitization             | ✓                     
   does basic tag balancing but not much more, and garbage in generally results
   in garbage out.
 
-* Loofah's whitelist configuration is hard-coded and can only be customized by
+* Loofah's allowlist configuration is hard-coded and can only be customized by
   either editing its source or monkeypatching. Sanitize and HTMLFilter both have
-  easily customizable whitelist configurations.
+  easily customizable allowlist configurations.
 
-* Loofah has a single global whitelist for attributes, which it uses for all
-  elements. HTMLFilter has per-element attribute whitelists, but provides no way
-  to whitelist global attributes (i.e., attributes that should be allowed on any
+* Loofah has a single global allowlist for attributes, which it uses for all
+  elements. HTMLFilter has per-element attribute allowlists, but provides no way
+  to allowlist global attributes (i.e., attributes that should be allowed on any
   element, such as `class`). Sanitize supports both global and element-specific
-  attribute whitelists.
+  attribute allowlists.
 
 * Sanitize and Loofah both support HTML5 data attributes. In Sanitize, data
   attributes can be enabled or disabled in either the global or element-specific
-  whitelists. Loofah always allows data attributes on all elements, and this is
+  allowlists. Loofah always allows data attributes on all elements, and this is
   not configurable. HTMLFilter does not support data attributes.
 
 * Both Sanitize and Loofah allow you to write blocks or methods that can perform
@@ -67,12 +67,12 @@ Advanced whitelist-based CSS sanitization             | ✓                     
   "transformers", whereas Loofah calls them "scrubbers". They're more or less
   equivalent in terms of functionality.
 
-* Loofah has hard-coded whitelists for sanitizing MathML and SVG, which cannot
+* Loofah has hard-coded allowlists for sanitizing MathML and SVG, which cannot
   be disabled via configuration. Sanitize does not provide built-in configs for
   sanitizing MathML or SVG, but it would be fairly trivial to add MathML and
-  SVG elements and attributes to a custom whitelist config.
+  SVG elements and attributes to a custom allowlist config.
 
-* Sanitize performs advanced whitelist-based CSS sanitization using
+* Sanitize performs advanced allowlist-based CSS sanitization using
   [Crass][crass], a full-fledged CSS parser compliant with the CSS Syntax Module
   Level 3 parsing spec. Loofah and HTMLFilter both perform rudimentary
   regex-based CSS sanitization, but I wouldn't trust either of them to actually

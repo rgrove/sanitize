@@ -55,7 +55,7 @@ describe 'Parser' do
             siblings << env[:node][:id]
           end
 
-          return {:node_whitelist => [env[:node]]}
+          return {:node_allowlist => [env[:node]]}
       })
 
       # All siblings should be traversed, and in the order added.

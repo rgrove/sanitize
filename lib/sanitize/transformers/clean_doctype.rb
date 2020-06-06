@@ -3,7 +3,7 @@
 class Sanitize; module Transformers
 
   CleanDoctype = lambda do |env|
-    return if env[:is_whitelisted]
+    return if env[:is_allowlisted]
 
     node = env[:node]
 

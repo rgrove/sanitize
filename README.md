@@ -1,20 +1,19 @@
 Sanitize
 ========
 
-Sanitize is a whitelist-based HTML and CSS sanitizer. Given a list of acceptable
-elements, attributes, and CSS properties, Sanitize will remove all unacceptable
-HTML and/or CSS from a string.
+Sanitize is an allowlist-based HTML and CSS sanitizer. It removes all HTML
+and/or CSS from a string except the elements, attributes, and properties you
+choose to allow.
 
 Using a simple configuration syntax, you can tell Sanitize to allow certain HTML
 elements, certain attributes within those elements, and even certain URL
-protocols within attributes that contain URLs. You can also whitelist CSS
-properties, @ rules, and URL protocols you wish to allow in elements or
-attributes containing CSS. Any HTML or CSS that you don't explicitly allow will
-be removed.
+protocols within attributes that contain URLs. You can also allow specific CSS
+properties, @ rules, and URL protocols in elements or attributes containing CSS.
+Any HTML or CSS that you don't explicitly allow will be removed.
 
 Sanitize is based on [Google's Gumbo HTML5 parser][gumbo], which parses HTML
 exactly the same way modern browsers do, and [Crass][crass], which parses CSS
-exactly the same way modern browsers do. As long as your whitelist config only
+exactly the same way modern browsers do. As long as your allowlist config only
 allows safe markup and CSS, even the most malformed or malicious input will be
 transformed into safe output.
 
@@ -88,7 +87,7 @@ Sanitize.fragment(html)
 # => 'foo'
 ```
 
-To keep certain elements, add them to the element whitelist.
+To keep certain elements, add them to the element allowlist.
 
 ```ruby
 Sanitize.fragment(html, :elements => ['b'])
@@ -97,7 +96,7 @@ Sanitize.fragment(html, :elements => ['b'])
 
 ### HTML Documents
 
-When sanitizing a document, the `<html>` element must be whitelisted. You can
+When sanitizing a document, the `<html>` element must be allowlisted. You can
 also set `:allow_doctype` to `true` to allow well-formed document type
 definitions.
 
@@ -123,8 +122,8 @@ Sanitize.document(html,
 
 ### CSS in HTML
 
-To sanitize CSS in an HTML fragment or document, first whitelist the `<style>`
-element and/or the `style` attribute. Then whitelist the CSS properties,
+To sanitize CSS in an HTML fragment or document, first allowlist the `<style>`
+element and/or the `style` attribute. Then allowlist the CSS properties,
 @ rules, and URL protocols you wish to allow. You can also choose whether to
 allow CSS comments or browser compatibility hacks.
 
@@ -267,7 +266,7 @@ new copy using `Sanitize::Config.merge()`, like so:
 
 ```ruby
 # Create a customized copy of the Basic config, adding <div> and <table> to the
-# existing whitelisted elements.
+# existing allowlisted elements.
 Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
   :elements        => Sanitize::Config::BASIC[:elements] + ['div', 'table'],
   :remove_contents => true
@@ -395,8 +394,7 @@ Proc.new { |url| url.start_with?("https://fonts.googleapis.com") }
 
 ##### :css => :properties (Array or Set)
 
-Whitelist of CSS property names to allow. Names should be specified in
-lowercase.
+List of CSS property names to allow. Names should be specified in lowercase.
 
 ##### :css => :protocols (Array or Set)
 
@@ -452,7 +450,7 @@ include the symbol `:relative` in the protocol array:
 
 #### :remove_contents (boolean or Array or Set)
 
-If this is `true`, Sanitize will remove the contents of any non-whitelisted
+If this is `true`, Sanitize will remove the contents of any non-allowlisted
 elements in addition to the elements themselves. By default, Sanitize leaves the
 safe parts of an element's contents behind when the element is removed.
 
@@ -518,33 +516,33 @@ argument a Hash that contains the following items:
 
   * **:config** - The current Sanitize configuration Hash.
 
-  * **:is_whitelisted** - `true` if the current node has been whitelisted by a
+  * **:is_allowlisted** - `true` if the current node has been allowlisted by a
     previous transformer, `false` otherwise. It's generally bad form to remove
-    a node that a previous transformer has whitelisted.
+    a node that a previous transformer has allowlisted.
 
   * **:node** - A `Nokogiri::XML::Node` object representing an HTML node. The
     node may be an element, a text node, a comment, a CDATA node, or a document
     fragment. Use Nokogiri's inspection methods (`element?`, `text?`, etc.) to
     selectively ignore node types you aren't interested in.
 
+  * **:node_allowlist** - Set of `Nokogiri::XML::Node` objects in the current
+    document that have been allowlisted by previous transformers, if any. It's
+    generally bad form to remove a node that a previous transformer has
+    allowlisted.
+
   * **:node_name** - The name of the current HTML node, always lowercase (e.g.
     "div" or "span"). For non-element nodes, the name will be something like
     "text", "comment", "#cdata-section", "#document-fragment", etc.
-
-  * **:node_whitelist** - Set of `Nokogiri::XML::Node` objects in the current
-    document that have been whitelisted by previous transformers, if any. It's
-    generally bad form to remove a node that a previous transformer has
-    whitelisted.
 
 ### Output
 
 A transformer doesn't have to return anything, but may optionally return a Hash,
 which may contain the following items:
 
-  * **:node_whitelist** -  Array or Set of specific Nokogiri::XML::Node objects
-    to add to the document's whitelist, bypassing the current Sanitize config.
-    These specific nodes and all their attributes will be whitelisted, but
-    their children will not be.
+  * **:node_allowlist** -  Array or Set of specific `Nokogiri::XML::Node`
+    objects to add to the document's allowlist, bypassing the current Sanitize
+    config. These specific nodes and all their attributes will be allowlisted,
+    but their children will not be.
 
 If a transformer returns anything other than a Hash, the return value will be
 ignored.
@@ -587,16 +585,16 @@ Transformers have a tremendous amount of power, including the power to
 completely bypass Sanitize's built-in filtering. Be careful! Your safety is in
 your own hands.
 
-### Example: Transformer to whitelist image URLs by domain
+### Example: Transformer to allow image URLs by domain
 
 The following example demonstrates how to remove image elements unless they use
 a relative URL or are hosted on a specific domain. It assumes that the `<img>`
-element and its `src` attribute are already whitelisted.
+element and its `src` attribute are already allowlisted.
 
 ```ruby
 require 'uri'
 
-image_whitelist_transformer = lambda do |env|
+image_allowlist_transformer = lambda do |env|
   # Ignore everything except <img> elements.
   return unless env[:node_name] == 'img'
 
@@ -612,20 +610,20 @@ image_whitelist_transformer = lambda do |env|
 end
 ```
 
-### Example: Transformer to whitelist YouTube video embeds
+### Example: Transformer to allow YouTube video embeds
 
 The following example demonstrates how to create a transformer that will safely
-whitelist valid YouTube video embeds without having to blindly allow other kinds
-of embedded content, which would be the case if you tried to do this by just
-whitelisting all `<iframe>` elements:
+allow valid YouTube video embeds without having to allow other kinds of embedded
+content, which would be the case if you tried to do this by just allowing all
+`<iframe>` elements:
 
 ```ruby
 youtube_transformer = lambda do |env|
   node      = env[:node]
   node_name = env[:node_name]
 
-  # Don't continue if this node is already whitelisted or is not an element.
-  return if env[:is_whitelisted] || !node.element?
+  # Don't continue if this node is already allowlisted or is not an element.
+  return if env[:is_allowlisted] || !node.element?
 
   # Don't continue unless the node is an iframe.
   return unless node_name == 'iframe'
@@ -646,8 +644,8 @@ youtube_transformer = lambda do |env|
 
   # Now that we're sure that this is a valid YouTube embed and that there are
   # no unwanted elements or attributes hidden inside it, we can tell Sanitize
-  # to whitelist the current node.
-  {:node_whitelist => [node]}
+  # to allowlist the current node.
+  {:node_allowlist => [node]}
 end
 
 html = %[

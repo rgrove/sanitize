@@ -21,7 +21,7 @@ describe 'Sanitize::CSS' do
         @custom.properties(css).must_equal 'background: #fff; '
       end
 
-      it 'should allow whitelisted URL protocols' do
+      it 'should allow allowlisted URL protocols' do
         [
           "background: url(relative.jpg)",
           "background: url('relative.jpg')",
@@ -36,7 +36,7 @@ describe 'Sanitize::CSS' do
         end
       end
 
-      it 'should not allow non-whitelisted URL protocols' do
+      it 'should not allow non-allowlisted URL protocols' do
         [
           "background: url(javascript:alert(0))",
           "background: url(ja\\56 ascript:alert(0))",
@@ -307,7 +307,7 @@ describe 'Sanitize::CSS' do
     end
 
     describe ":at_rules" do
-      it "should remove blockless at-rules that aren't whitelisted" do
+      it "should remove blockless at-rules that aren't allowlisted" do
         css = %[
           @charset 'utf-8';
           @import url('foo.css');
@@ -319,7 +319,7 @@ describe 'Sanitize::CSS' do
         ].strip
       end
 
-      describe "when blockless at-rules are whitelisted" do
+      describe "when blockless at-rules are allowlisted" do
         before do
           @scss = Sanitize::CSS.new(Sanitize::Config.merge(Sanitize::Config::RELAXED[:css], {
             :at_rules => ['charset', 'import']

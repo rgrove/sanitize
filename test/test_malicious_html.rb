@@ -128,7 +128,7 @@ describe 'Malicious HTML' do
 
   # libxml2 >= 2.9.2 doesn't escape comments within some attributes, in an
   # attempt to preserve server-side includes. This can result in XSS since an
-  # unescaped double quote can allow an attacker to inject a non-whitelisted
+  # unescaped double quote can allow an attacker to inject a non-allowlisted
   # attribute. Sanitize works around this by implementing its own escaping for
   # affected attributes.
   #

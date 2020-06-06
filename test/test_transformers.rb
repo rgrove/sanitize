@@ -12,11 +12,13 @@ describe 'Transformers' do
         return unless env[:node].element?
 
         env[:config][:foo].must_equal :bar
-        env[:is_whitelisted].must_equal false
+        env[:is_allowlisted].must_equal false
+        env[:is_whitelisted].must_equal env[:is_allowlisted]
         env[:node].must_be_kind_of Nokogiri::XML::Node
         env[:node_name].must_equal 'span'
-        env[:node_whitelist].must_be_kind_of Set
-        env[:node_whitelist].must_be_empty
+        env[:node_allowlist].must_be_kind_of Set
+        env[:node_allowlist].must_be_empty
+        env[:node_whitelist].must_equal env[:node_allowlist]
       }
     )
   end
@@ -43,34 +45,38 @@ describe 'Transformers' do
     nodes.must_equal %w[div span strong b p]
   end
 
-  it 'should whitelist nodes in the node whitelist' do
+  it 'should allowlist nodes in the node allowlist' do
     Sanitize.fragment('<div class="foo">foo</div><span>bar</span>',
       :transformers => [
         proc {|env|
-          {:node_whitelist => [env[:node]]} if env[:node_name] == 'div'
+          {:node_allowlist => [env[:node]]} if env[:node_name] == 'div'
         },
 
         proc {|env|
-          env[:is_whitelisted].must_equal false unless env[:node_name] == 'div'
-          env[:is_whitelisted].must_equal true if env[:node_name] == 'div'
-          env[:node_whitelist].must_include env[:node] if env[:node_name] == 'div'
+          env[:is_allowlisted].must_equal false unless env[:node_name] == 'div'
+          env[:is_allowlisted].must_equal true if env[:node_name] == 'div'
+          env[:node_allowlist].must_include env[:node] if env[:node_name] == 'div'
+          env[:is_whitelisted].must_equal env[:is_allowlisted]
+          env[:node_whitelist].must_equal env[:node_allowlist]
         }
       ]
     ).must_equal '<div class="foo">foo</div>bar'
   end
 
-  it 'should clear the node whitelist after each fragment' do
+  it 'should clear the node allowlist after each fragment' do
     called = false
 
     Sanitize.fragment('<div>foo</div>',
-      :transformers => proc {|env| {:node_whitelist => [env[:node]]}}
+      :transformers => proc {|env| {:node_allowlist => [env[:node]]}}
     )
 
     Sanitize.fragment('<div>foo</div>',
       :transformers => proc {|env|
         called = true
-        env[:is_whitelisted].must_equal false
-        env[:node_whitelist].must_be_empty
+        env[:is_allowlisted].must_equal false
+        env[:is_whitelisted].must_equal env[:is_allowlisted]
+        env[:node_allowlist].must_be_empty
+        env[:node_whitelist].must_equal env[:node_allowlist]
       }
     )
 
@@ -83,10 +89,10 @@ describe 'Transformers' do
       .must_equal(' foo ')
   end
 
-  describe 'Image whitelist transformer' do
+  describe 'Image allowlist transformer' do
     require 'uri'
 
-    image_whitelist_transformer = lambda do |env|
+    image_allowlist_transformer = lambda do |env|
       # Ignore everything except <img> elements.
       return unless env[:node_name] == 'img'
 
@@ -103,7 +109,7 @@ describe 'Transformers' do
 
     before do
       @s = Sanitize.new(Sanitize::Config.merge(Sanitize::Config::RELAXED,
-          :transformers => image_whitelist_transformer))
+          :transformers => image_allowlist_transformer))
     end
 
     it 'should allow images with relative URLs' do
@@ -142,8 +148,8 @@ describe 'Transformers' do
       node      = env[:node]
       node_name = env[:node_name]
 
-      # Don't continue if this node is already whitelisted or is not an element.
-      return if env[:is_whitelisted] || !node.element?
+      # Don't continue if this node is already allowlisted or is not an element.
+      return if env[:is_allowlisted] || !node.element?
 
       # Don't continue unless the node is an iframe.
       return unless node_name == 'iframe'
@@ -164,8 +170,8 @@ describe 'Transformers' do
 
       # Now that we're sure that this is a valid YouTube embed and that there are
       # no unwanted elements or attributes hidden inside it, we can tell Sanitize
-      # to whitelist the current node.
-      {:node_whitelist => [node]}
+      # to allowlist the current node.
+      {:node_allowlist => [node]}
     end
 
     it 'should allow HTTP YouTube video embeds' do
