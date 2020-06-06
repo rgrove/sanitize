@@ -1,5 +1,25 @@
 # Sanitize History
 
+## 5.2.0 (2020-06-06)
+
+### Changes
+
+* The term "whitelist" has been replaced with "allowlist" throughout Sanitize's
+  source and documentation.
+
+  While the etymology of "whitelist" may not be explicitly racist in origin or
+  intent, there are inherent racial connotations in the implication that white
+  is good and black (as in "blacklist") is not.
+
+  This is a change I should have made long ago, and I apologize for not making
+  it sooner.
+
+* In transformer input, the `:is_whitelisted` and `:node_whitelist` keys are now
+  deprecated. New `:is_allowlisted` and `:node_allowlist` keys have been added.
+  The old keys will continue to work in order to avoid breaking existing code,
+  but they are no longer documented and may be removed in a future semver major
+  release.
+
 ## 5.1.0 (2019-09-07)
 
 ### Features
