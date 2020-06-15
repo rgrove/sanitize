@@ -1,5 +1,41 @@
 # Sanitize History
 
+## 5.2.1 (2020-06-16)
+
+### Bug Fixes
+
+* Fixed an HTML sanitization bypass that could allow XSS. This issue affects
+  Sanitize versions 3.0.0 through 5.2.0.
+
+  When HTML was sanitized using the "relaxed" config or a custom config that
+  allows certain elements, some content in a `<math>` or `<svg>` element may not
+  have beeen sanitized correctly even if `math` and `svg` were not in the
+  allowlist. This could allow carefully crafted input to sneak arbitrary HTML
+  through Sanitize, potentially enabling an XSS (cross-site scripting) attack.
+
+  You are likely to be vulnerable to this issue if you use Sanitize's relaxed
+  config or a custom config that allows one or more of the following HTML
+  elements:
+
+    -   `iframe`
+    -   `math`
+    -   `noembed`
+    -   `noframes`
+    -   `noscript`
+    -   `plaintext`
+    -   `script`
+    -   `style`
+    -   `svg`
+    -   `xmp`
+
+  See the security advisory for more details, including a workaround if you're
+  not able to upgrade: [GHSA-p4x4-rw2p-8j8m]
+
+  Many thanks to Michał Bentkowski of Securitum for reporting this issue and
+  helping to verify the fix.
+
+[GHSA-p4x4-rw2p-8j8m]:https://github.com/rgrove/sanitize/security/advisories/GHSA-p4x4-rw2p-8j8m
+
 ## 5.2.0 (2020-06-06)
 
 ### Changes
