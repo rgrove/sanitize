@@ -219,4 +219,17 @@ describe 'Malicious HTML' do
       end
     end
   end
+
+  # https://github.com/rgrove/sanitize/security/advisories/GHSA-p4x4-rw2p-8j8m
+  describe 'foreign content bypass in relaxed config' do
+    it 'prevents a sanitization bypass via carefully crafted foreign content' do
+      %w[iframe noembed noframes noscript plaintext script style xmp].each do |tag_name|
+        @s.fragment(%[<math><#{tag_name}>/*&lt;/#{tag_name}&gt;&lt;img src onerror=alert(1)>*/]).
+          must_equal ''
+
+        @s.fragment(%[<svg><#{tag_name}>/*&lt;/#{tag_name}&gt;&lt;img src onerror=alert(1)>*/]).
+          must_equal ''
+      end
+    end
+  end
 end

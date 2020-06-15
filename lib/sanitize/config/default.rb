@@ -74,7 +74,7 @@ class Sanitize
       # the specified elements (when filtered) will be removed, and the contents
       # of all other filtered elements will be left behind.
       :remove_contents => %w[
-        iframe noembed noframes noscript script style
+        iframe math noembed noframes noscript plaintext script style svg xmp
       ],
 
       # Transformers allow you to filter or alter nodes using custom logic. See

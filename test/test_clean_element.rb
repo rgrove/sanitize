@@ -192,18 +192,13 @@ describe 'Sanitize::Transformers::CleanElement' do
         .must_equal ''
     end
 
-    it 'should escape the content of removed `plaintext` elements' do
-      Sanitize.fragment('<plaintext>hello! <script>alert(0)</script>')
-        .must_equal 'hello! &lt;script&gt;alert(0)&lt;/script&gt;'
-    end
-
-    it 'should escape the content of removed `xmp` elements' do
-      Sanitize.fragment('<xmp>hello! <script>alert(0)</script></xmp>')
-        .must_equal 'hello! &lt;script&gt;alert(0)&lt;/script&gt;'
-    end
-
     it 'should not preserve the content of removed `iframe` elements' do
       Sanitize.fragment('<iframe>hello! <script>alert(0)</script></iframe>')
+        .must_equal ''
+    end
+
+    it 'should not preserve the content of removed `math` elements' do
+      Sanitize.fragment('<math>hello! <script>alert(0)</script></math>')
         .must_equal ''
     end
 
@@ -222,6 +217,11 @@ describe 'Sanitize::Transformers::CleanElement' do
         .must_equal ''
     end
 
+    it 'should not preserve the content of removed `plaintext` elements' do
+      Sanitize.fragment('<plaintext>hello! <script>alert(0)</script>')
+        .must_equal ''
+    end
+
     it 'should not preserve the content of removed `script` elements' do
       Sanitize.fragment('<script>hello! <script>alert(0)</script></script>')
         .must_equal ''
@@ -229,6 +229,16 @@ describe 'Sanitize::Transformers::CleanElement' do
 
     it 'should not preserve the content of removed `style` elements' do
       Sanitize.fragment('<style>hello! <script>alert(0)</script></style>')
+        .must_equal ''
+    end
+
+    it 'should not preserve the content of removed `svg` elements' do
+      Sanitize.fragment('<svg>hello! <script>alert(0)</script></svg>')
+        .must_equal ''
+    end
+
+    it 'should not preserve the content of removed `xmp` elements' do
+      Sanitize.fragment('<xmp>hello! <script>alert(0)</script></xmp>')
         .must_equal ''
     end
 

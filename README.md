@@ -72,6 +72,11 @@ Sanitize can sanitize the following types of input:
 * Standalone CSS stylesheets
 * Standalone CSS properties
 
+However, please note that Sanitize _cannot_ fully sanitize the contents of
+`<math>` or `<svg>` elements, since these elements don't follow the same parsing
+rules as the rest of HTML. If this is something you need, you may want to look
+for another solution.
+
 ### HTML Fragments
 
 A fragment is a snippet of HTML that doesn't contain a root-level `<html>`
@@ -414,6 +419,12 @@ elements not in this array will be removed.
   q s samp small strike strong sub sup time u ul var
 ]
 ```
+
+**Warning:** Sanitize cannot fully sanitize the contents of `<math>` or `<svg>`
+elements, since these elements don't follow the same parsing rules as the rest
+of HTML. If you add `math` or `svg` to the allowlist, you must assume that any
+content inside them will be allowed, even if that content would otherwise be
+removed by Sanitize.
 
 #### :parser_options (Hash)
 
