@@ -2,13 +2,7 @@
 
 ## Supported Versions
 
-The following versions of Sanitize will receive security updates when necessary. Updates _may_ be made available for older versions on a case by case basis, but this would typically depend on community contributions since maintainer time is limited.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.x     | :white_check_mark: |
-| 4.x     | :white_check_mark: |
-| < 4.0   | :x:                |
+The most recent major version of Sanitize will receive security updates when necessary. Updates _may_ be made available for older versions on a case by case basis, but this will typically depend on community contributions since maintainer time is limited and backporting changes to older versions can be challenging.
 
 ## Reporting a Vulnerability
 
