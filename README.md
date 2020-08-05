@@ -469,7 +469,7 @@ If this is an Array or Set of element names, then only the contents of the
 specified elements (when filtered) will be removed, and the contents of all
 other filtered elements will be left behind.
 
-The default value is `false`.
+The default value is `%w[iframe math noembed noframes noscript plaintext script style svg xmp]`.
 
 #### :transformers (Array or callable)
 
