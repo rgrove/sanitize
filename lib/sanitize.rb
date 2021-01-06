@@ -204,7 +204,7 @@ class Sanitize
       config[:node_name] = node.name.downcase
       config[:node_allowlist] = config[:node_whitelist] = node_allowlist
 
-      result = transformer.call(config)
+      result = transformer.call(**config)
 
       if result.is_a?(Hash)
         result_allowlist = result[:node_allowlist] || result[:node_whitelist]
