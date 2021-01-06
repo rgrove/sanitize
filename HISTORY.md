@@ -1,5 +1,14 @@
 # Sanitize History
 
+## 5.2.2 (2021-01-06)
+
+### Bug Fixes
+
+* Fixed a deprecation warning in Ruby 2.7+ when using keyword arguments in a
+  custom transformer. [@mscrivo - #206][206]
+
+[206]:https://github.com/rgrove/sanitize/pull/206
+
 ## 5.2.1 (2020-06-16)
 
 ### Bug Fixes
