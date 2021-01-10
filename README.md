@@ -18,7 +18,7 @@ allows safe markup and CSS, even the most malformed or malicious input will be
 transformed into safe output.
 
 [![Gem Version](https://badge.fury.io/rb/sanitize.svg)](http://badge.fury.io/rb/sanitize)
-![Tests](https://github.com/rgrove/sanitize/workflows/Tests/badge.svg)
+[![Tests](https://github.com/rgrove/sanitize/workflows/Tests/badge.svg)](https://github.com/rgrove/sanitize/actions?query=workflow%3ATests)
 
 [crass]:https://github.com/rgrove/crass
 [gumbo]:https://github.com/google/gumbo-parser
