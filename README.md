@@ -17,8 +17,8 @@ exactly the same way modern browsers do. As long as your allowlist config only
 allows safe markup and CSS, even the most malformed or malicious input will be
 transformed into safe output.
 
-[![Build Status](https://travis-ci.org/rgrove/sanitize.svg?branch=master)](https://travis-ci.org/rgrove/sanitize)
 [![Gem Version](https://badge.fury.io/rb/sanitize.svg)](http://badge.fury.io/rb/sanitize)
+![Tests](https://github.com/rgrove/sanitize/workflows/Tests/badge.svg)
 
 [crass]:https://github.com/rgrove/crass
 [gumbo]:https://github.com/google/gumbo-parser
