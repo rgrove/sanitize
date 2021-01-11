@@ -122,16 +122,15 @@ class Sanitize; module Transformers; class CleanElement
         unless attr_allowlist.include?(attr_name)
           # The attribute isn't allowed.
 
-          if allow_data_attributes && attr_name.start_with?('data-')
-            # Arbitrary data attributes are allowed. If this is a data
-            # attribute, continue.
-            next if attr_name =~ REGEX_DATA_ATTR
+          # Arbitrary data attributes are allowed. If this is a data
+          # attribute, continue.
+          unless allow_data_attributes && attr_name.start_with?('data-') &&
+            attr_name =~ REGEX_DATA_ATTR
+            # Either the attribute isn't a data attribute or arbitrary data
+            # attributes aren't allowed. Remove the attribute.
+            attr.unlink
+            next
           end
-
-          # Either the attribute isn't a data attribute or arbitrary data
-          # attributes aren't allowed. Remove the attribute.
-          attr.unlink
-          next
         end
 
         # The attribute is allowed.

@@ -491,6 +491,22 @@ describe 'Sanitize::Transformers::CleanElement' do
       }).must_equal "<a>Text</a>"
     end
 
+    it 'should sanitize protocols in data attributes even if data attributes are generically allowed' do
+      input = '<a data-url="mailto:someone@example.com">Text</a>'
+
+      Sanitize.fragment(input, {
+        :elements => ['a'],
+        :attributes => {'a' => [:data]},
+        :protocols => {'a' => {'data-url' => ['https']}}
+      }).must_equal "<a>Text</a>"
+
+      Sanitize.fragment(input, {
+        :elements => ['a'],
+        :attributes => {'a' => [:data]},
+        :protocols => {'a' => {'data-url' => ['mailto']}}
+      }).must_equal input
+    end
+
     it 'should prevent `<meta>` tags from being used to set a non-UTF-8 charset' do
       Sanitize.document('<html><head><meta charset="utf-8"></head><body>Howdy!</body></html>',
         :elements   => %w[html head meta body],
