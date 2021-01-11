@@ -1,5 +1,14 @@
 # Sanitize History
 
+## 5.2.3 (2021-01-11)
+
+### Bug Fixes
+
+* Ensure protocol sanitization is applied to data attributes.
+  [@ccutrer - #207][207]
+
+[207]:https://github.com/rgrove/sanitize/pull/207
+
 ## 5.2.2 (2021-01-06)
 
 ### Bug Fixes
