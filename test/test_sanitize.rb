@@ -53,9 +53,9 @@ describe 'Sanitize' do
         @s.document("a#{sample_non_chars}z").must_equal "<html>az</html>"
       end
 
-      describe 'when html body exceeds Nokogumbo::DEFAULT_MAX_TREE_DEPTH' do
+      describe 'when html body exceeds Nokogiri::Gumbo::DEFAULT_MAX_TREE_DEPTH' do
         let(:content) do
-          content = nest_html_content('<b>foo</b>', Nokogumbo::DEFAULT_MAX_TREE_DEPTH)
+          content = nest_html_content('<b>foo</b>', Nokogiri::Gumbo::DEFAULT_MAX_TREE_DEPTH)
           "<html>#{content}</html>"
         end
 
@@ -115,9 +115,9 @@ describe 'Sanitize' do
         @s.fragment("a#{sample_non_chars}z").must_equal "az"
       end
 
-      describe 'when html body exceeds Nokogumbo::DEFAULT_MAX_TREE_DEPTH' do
+      describe 'when html body exceeds Nokogiri::Gumbo::DEFAULT_MAX_TREE_DEPTH' do
         let(:content) do
-          content = nest_html_content('<b>foo</b>', Nokogumbo::DEFAULT_MAX_TREE_DEPTH)
+          content = nest_html_content('<b>foo</b>', Nokogiri::Gumbo::DEFAULT_MAX_TREE_DEPTH)
           "<body>#{content}</body>"
         end
 

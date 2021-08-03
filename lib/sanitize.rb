@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require 'nokogumbo'
+require 'nokogiri'
 require 'set'
 
 require_relative 'sanitize/version'
