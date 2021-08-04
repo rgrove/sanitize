@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = 'Sanitize is an allowlist-based HTML and CSS sanitizer. It removes all HTML and/or CSS from a string except the elements, attributes, and properties you choose to allow.'
 
   s.platform = Gem::Platform::RUBY
-  s.required_ruby_version = Gem::Requirement.new('>= 2.1.0')
+  s.required_ruby_version = Gem::Requirement.new('>= 2.5.0')
   s.required_rubygems_version = Gem::Requirement.new('>= 1.2.0')
 
   # Runtime dependencies.
