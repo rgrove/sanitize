@@ -11,7 +11,7 @@ protocols within attributes that contain URLs. You can also allow specific CSS
 properties, @ rules, and URL protocols in elements or attributes containing CSS.
 Any HTML or CSS that you don't explicitly allow will be removed.
 
-Sanitize is based on [Google's Gumbo HTML5 parser][gumbo], which parses HTML
+Sanitize is based on the [Nokogumbo HTML5 parser][nokogumbo], which parses HTML
 exactly the same way modern browsers do, and [Crass][crass], which parses CSS
 exactly the same way modern browsers do. As long as your allowlist config only
 allows safe markup and CSS, even the most malformed or malicious input will be
@@ -21,7 +21,7 @@ transformed into safe output.
 [![Tests](https://github.com/rgrove/sanitize/workflows/Tests/badge.svg)](https://github.com/rgrove/sanitize/actions?query=workflow%3ATests)
 
 [crass]:https://github.com/rgrove/crass
-[gumbo]:https://github.com/google/gumbo-parser
+[nokogumbo]:https://github.com/rubys/nokogumbo
 
 Links
 -----
@@ -428,7 +428,7 @@ removed by Sanitize.
 
 #### :parser_options (Hash)
 
-[Parsing options](https://github.com/rubys/nokogumbo/tree/v2.0.1#parsing-options) supplied to `nokogumbo`.
+[Parsing options](https://github.com/rubys/nokogumbo/tree/master#parsing-options) to be supplied to `nokogumbo`.
 
 ```ruby
 :parser_options => {
