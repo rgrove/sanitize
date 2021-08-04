@@ -1,5 +1,16 @@
 # Sanitize History
 
+## 6.0.0 (2021-08-03)
+
+### Potentially Breaking Changes
+
+* Ruby 2.5.0 is now the oldest officially supported Ruby version.
+
+* Sanitize now requires Nokogiri 1.12.0 or higher, which includes Nokogumbo.
+  The separate dependency on Nokogumbo has been removed. [@lis2 - #211][211]
+
+[211]:https://github.com/rgrove/sanitize/pull/211
+
 ## 5.2.3 (2021-01-11)
 
 ### Bug Fixes
