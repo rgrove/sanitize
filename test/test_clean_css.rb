@@ -10,15 +10,15 @@ describe 'Sanitize::Transformers::CSS::CleanAttribute' do
   end
 
   it 'should sanitize CSS properties in style attributes' do
-    @s.fragment(%[
+    _(@s.fragment(%[
       <div style="color: #fff; width: expression(alert(1)); /* <-- evil! */"></div>
-    ].strip).must_equal %[
+    ].strip)).must_equal %[
       <div style="color: #fff;  /* <-- evil! */"></div>
     ].strip
   end
 
   it 'should remove the style attribute if the sanitized CSS is empty' do
-    @s.fragment('<div style="width: expression(alert(1))"></div>').
+    _(@s.fragment('<div style="width: expression(alert(1))"></div>')).
       must_equal '<div></div>'
   end
 end
@@ -46,7 +46,7 @@ describe 'Sanitize::Transformers::CSS::CleanElement' do
       </style>
     ].strip
 
-    @s.fragment(html).must_equal %[
+    _(@s.fragment(html)).must_equal %[
       <style>
       /* Yay CSS! */
       .foo { color: #fff; }
@@ -62,6 +62,6 @@ describe 'Sanitize::Transformers::CSS::CleanElement' do
   end
 
   it 'should remove the <style> element if the sanitized CSS is empty' do
-    @s.fragment('<style></style>').must_equal ''
+    _(@s.fragment('<style></style>')).must_equal ''
   end
 end

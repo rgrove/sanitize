@@ -6,7 +6,7 @@ describe 'Config' do
   parallelize_me!
 
   def verify_deeply_frozen(config)
-    config.must_be :frozen?
+    _(config).must_be :frozen?
 
     if Hash === config
       config.each_value {|v| verify_deeply_frozen(v) }
@@ -27,7 +27,7 @@ describe 'Config' do
       a = {:one => {:one_one => [0, '1', :a], :one_two => false, :one_three => Set.new([:a, :b, :c])}}
       b = Sanitize::Config.freeze_config(a)
 
-      b.must_be_same_as a
+      _(b).must_be_same_as a
       verify_deeply_frozen a
     end
   end
@@ -40,10 +40,10 @@ describe 'Config' do
 
       c = Sanitize::Config.merge(a, b)
 
-      c.wont_be_same_as a
-      c.wont_be_same_as b
+      _(c).wont_be_same_as a
+      _(c).wont_be_same_as b
 
-      c.must_equal(
+      _(c).must_equal(
         :one => {
           :one_one   => [0, '1', :a],
           :one_two   => true,
@@ -53,13 +53,13 @@ describe 'Config' do
         :two => 2
       )
 
-      c[:one].wont_be_same_as a[:one]
-      c[:one][:one_one].wont_be_same_as a[:one][:one_one]
+      _(c[:one]).wont_be_same_as a[:one]
+      _(c[:one][:one_one]).wont_be_same_as a[:one][:one_one]
     end
 
     it 'should raise an ArgumentError if either argument is not a Hash' do
-      proc { Sanitize::Config.merge('foo', {}) }.must_raise ArgumentError
-      proc { Sanitize::Config.merge({}, 'foo') }.must_raise ArgumentError
+      _(proc { Sanitize::Config.merge('foo', {}) }).must_raise ArgumentError
+      _(proc { Sanitize::Config.merge({}, 'foo') }).must_raise ArgumentError
     end
   end
 end

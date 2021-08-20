@@ -11,14 +11,14 @@ describe 'Transformers' do
       :transformers => lambda {|env|
         return unless env[:node].element?
 
-        env[:config][:foo].must_equal :bar
-        env[:is_allowlisted].must_equal false
-        env[:is_whitelisted].must_equal env[:is_allowlisted]
-        env[:node].must_be_kind_of Nokogiri::XML::Node
-        env[:node_name].must_equal 'span'
-        env[:node_allowlist].must_be_kind_of Set
-        env[:node_allowlist].must_be_empty
-        env[:node_whitelist].must_equal env[:node_allowlist]
+        _(env[:config][:foo]).must_equal :bar
+        _(env[:is_allowlisted]).must_equal false
+        _(env[:is_whitelisted]).must_equal env[:is_allowlisted]
+        _(env[:node]).must_be_kind_of Nokogiri::XML::Node
+        _(env[:node_name]).must_equal 'span'
+        _(env[:node_allowlist]).must_be_kind_of Set
+        _(env[:node_allowlist]).must_be_empty
+        _(env[:node_whitelist]).must_equal env[:node_allowlist]
       }
     )
   end
@@ -30,7 +30,7 @@ describe 'Transformers' do
       :transformers => proc {|env| nodes << env[:node_name] }
     )
 
-    nodes.must_equal %w[
+    _(nodes).must_equal %w[
       #document-fragment div text text text comment script text
     ]
   end
@@ -42,25 +42,25 @@ describe 'Transformers' do
       :transformers => proc {|env| nodes << env[:node_name] if env[:node].element? }
     )
 
-    nodes.must_equal %w[div span strong b p]
+    _(nodes).must_equal %w[div span strong b p]
   end
 
   it 'should allowlist nodes in the node allowlist' do
-    Sanitize.fragment('<div class="foo">foo</div><span>bar</span>',
+    _(Sanitize.fragment('<div class="foo">foo</div><span>bar</span>',
       :transformers => [
         proc {|env|
           {:node_allowlist => [env[:node]]} if env[:node_name] == 'div'
         },
 
         proc {|env|
-          env[:is_allowlisted].must_equal false unless env[:node_name] == 'div'
-          env[:is_allowlisted].must_equal true if env[:node_name] == 'div'
-          env[:node_allowlist].must_include env[:node] if env[:node_name] == 'div'
-          env[:is_whitelisted].must_equal env[:is_allowlisted]
-          env[:node_whitelist].must_equal env[:node_allowlist]
+          _(env[:is_allowlisted]).must_equal false unless env[:node_name] == 'div'
+          _(env[:is_allowlisted]).must_equal true if env[:node_name] == 'div'
+          _(env[:node_allowlist]).must_include env[:node] if env[:node_name] == 'div'
+          _(env[:is_whitelisted]).must_equal env[:is_allowlisted]
+          _(env[:node_whitelist]).must_equal env[:node_allowlist]
         }
       ]
-    ).must_equal '<div class="foo">foo</div>bar'
+    )).must_equal '<div class="foo">foo</div>bar'
   end
 
   it 'should clear the node allowlist after each fragment' do
@@ -73,19 +73,19 @@ describe 'Transformers' do
     Sanitize.fragment('<div>foo</div>',
       :transformers => proc {|env|
         called = true
-        env[:is_allowlisted].must_equal false
-        env[:is_whitelisted].must_equal env[:is_allowlisted]
-        env[:node_allowlist].must_be_empty
-        env[:node_whitelist].must_equal env[:node_allowlist]
+        _(env[:is_allowlisted]).must_equal false
+        _(env[:is_whitelisted]).must_equal env[:is_allowlisted]
+        _(env[:node_allowlist]).must_be_empty
+        _(env[:node_whitelist]).must_equal env[:node_allowlist]
       }
     )
 
-    called.must_equal true
+    _(called).must_equal true
   end
 
   it 'should accept a method transformer' do
     def transformer(env); end
-    Sanitize.fragment('<div>foo</div>', :transformers => method(:transformer))
+    _(Sanitize.fragment('<div>foo</div>', :transformers => method(:transformer)))
       .must_equal(' foo ')
   end
 
@@ -114,32 +114,32 @@ describe 'Transformers' do
 
     it 'should allow images with relative URLs' do
       input = '<img src="/foo/bar.jpg">'
-      @s.fragment(input).must_equal(input)
+      _(@s.fragment(input)).must_equal(input)
     end
 
     it 'should allow images at the example.com domain' do
       input = '<img src="http://example.com/foo/bar.jpg">'
-      @s.fragment(input).must_equal(input)
+      _(@s.fragment(input)).must_equal(input)
 
       input = '<img src="https://example.com/foo/bar.jpg">'
-      @s.fragment(input).must_equal(input)
+      _(@s.fragment(input)).must_equal(input)
 
       input = '<img src="//example.com/foo/bar.jpg">'
-      @s.fragment(input).must_equal(input)
+      _(@s.fragment(input)).must_equal(input)
     end
 
     it 'should not allow images at other domains' do
       input = '<img src="http://evil.com/foo/bar.jpg">'
-      @s.fragment(input).must_equal('')
+      _(@s.fragment(input)).must_equal('')
 
       input = '<img src="https://evil.com/foo/bar.jpg">'
-      @s.fragment(input).must_equal('')
+      _(@s.fragment(input)).must_equal('')
 
       input = '<img src="//evil.com/foo/bar.jpg">'
-      @s.fragment(input).must_equal('')
+      _(@s.fragment(input)).must_equal('')
 
       input = '<img src="http://subdomain.example.com/foo/bar.jpg">'
-      @s.fragment(input).must_equal('')
+      _(@s.fragment(input)).must_equal('')
     end
   end
 
@@ -177,35 +177,35 @@ describe 'Transformers' do
     it 'should allow HTTP YouTube video embeds' do
       input = '<iframe width="420" height="315" src="http://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
 
-      Sanitize.fragment(input, :transformers => youtube_transformer)
+      _(Sanitize.fragment(input, :transformers => youtube_transformer))
         .must_equal '<iframe width="420" height="315" src="http://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen=""></iframe>'
     end
 
     it 'should allow HTTPS YouTube video embeds' do
       input = '<iframe width="420" height="315" src="https://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
 
-      Sanitize.fragment(input, :transformers => youtube_transformer)
+      _(Sanitize.fragment(input, :transformers => youtube_transformer))
         .must_equal '<iframe width="420" height="315" src="https://www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen=""></iframe>'
     end
 
     it 'should allow protocol-relative YouTube video embeds' do
       input = '<iframe width="420" height="315" src="//www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
 
-      Sanitize.fragment(input, :transformers => youtube_transformer)
+      _(Sanitize.fragment(input, :transformers => youtube_transformer))
         .must_equal '<iframe width="420" height="315" src="//www.youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen=""></iframe>'
     end
 
     it 'should allow privacy-enhanced YouTube video embeds' do
       input = '<iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen bogus="bogus"><script>alert()</script></iframe>'
 
-      Sanitize.fragment(input, :transformers => youtube_transformer)
+      _(Sanitize.fragment(input, :transformers => youtube_transformer))
         .must_equal '<iframe width="420" height="315" src="https://www.youtube-nocookie.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen=""></iframe>'
     end
 
     it 'should not allow non-YouTube video embeds' do
       input = '<iframe width="420" height="315" src="http://www.fake-youtube.com/embed/QH2-TGUlwu4" frameborder="0" allowfullscreen></iframe>'
 
-      Sanitize.fragment(input, :transformers => youtube_transformer)
+      _(Sanitize.fragment(input, :transformers => youtube_transformer))
         .must_equal('')
     end
   end
@@ -223,7 +223,7 @@ describe 'Transformers' do
     it 'should allow the <b> tag to be changed to a <strong> tag' do
       input = '<b>text</b>'
 
-      Sanitize.fragment(input, :elements => ['strong'], :transformers => b_to_strong_tag_transformer)
+      _(Sanitize.fragment(input, :elements => ['strong'], :transformers => b_to_strong_tag_transformer))
         .must_equal '<strong>text</strong>'
     end
   end
