@@ -16,9 +16,9 @@ describe 'Sanitize::CSS' do
       it 'should sanitize CSS properties' do
         css = 'background: #fff; width: expression(alert("hi"));'
 
-        @default.properties(css).must_equal ' '
-        @relaxed.properties(css).must_equal 'background: #fff; '
-        @custom.properties(css).must_equal 'background: #fff; '
+        _(@default.properties(css)).must_equal ' '
+        _(@relaxed.properties(css)).must_equal 'background: #fff; '
+        _(@custom.properties(css)).must_equal 'background: #fff; '
       end
 
       it 'should allow allowlisted URL protocols' do
@@ -30,9 +30,9 @@ describe 'Sanitize::CSS' do
           "background: url(https://example.com/https.jpg)",
           "background: url('https://example.com/https.jpg')",
         ].each do |css|
-          @default.properties(css).must_equal ''
-          @relaxed.properties(css).must_equal css
-          @custom.properties(css).must_equal ''
+          _(@default.properties(css)).must_equal ''
+          _(@relaxed.properties(css)).must_equal css
+          _(@custom.properties(css)).must_equal ''
         end
       end
 
@@ -46,18 +46,18 @@ describe 'Sanitize::CSS' do
           "background: url('javas\\\ncript:alert(0)')",
           "background: url('java\\0script:foo')"
         ].each do |css|
-          @default.properties(css).must_equal ''
-          @relaxed.properties(css).must_equal ''
-          @custom.properties(css).must_equal ''
+          _(@default.properties(css)).must_equal ''
+          _(@relaxed.properties(css)).must_equal ''
+          _(@custom.properties(css)).must_equal ''
         end
       end
 
       it 'should not allow -moz-binding' do
         css = "-moz-binding:url('http://ha.ckers.org/xssmoz.xml#xss')"
 
-        @default.properties(css).must_equal ''
-        @relaxed.properties(css).must_equal ''
-        @custom.properties(css).must_equal ''
+        _(@default.properties(css)).must_equal ''
+        _(@relaxed.properties(css)).must_equal ''
+        _(@custom.properties(css)).must_equal ''
       end
 
       it 'should not allow expressions' do
@@ -69,50 +69,50 @@ describe 'Sanitize::CSS' do
           "xss:expression(alert(1))",
           "height: foo(expression(alert(1)));"
         ].each do |css|
-          @default.properties(css).must_equal ''
-          @relaxed.properties(css).must_equal ''
-          @custom.properties(css).must_equal ''
+          _(@default.properties(css)).must_equal ''
+          _(@relaxed.properties(css)).must_equal ''
+          _(@custom.properties(css)).must_equal ''
         end
       end
 
       it 'should not allow behaviors' do
         css = "behavior: url(xss.htc);"
 
-        @default.properties(css).must_equal ''
-        @relaxed.properties(css).must_equal ''
-        @custom.properties(css).must_equal ''
+        _(@default.properties(css)).must_equal ''
+        _(@relaxed.properties(css)).must_equal ''
+        _(@custom.properties(css)).must_equal ''
       end
 
       describe 'when :allow_comments is true' do
         it 'should preserve comments' do
-          @relaxed.properties('color: #fff; /* comment */ width: 100px;')
+          _(@relaxed.properties('color: #fff; /* comment */ width: 100px;'))
             .must_equal 'color: #fff; /* comment */ width: 100px;'
 
-          @relaxed.properties("color: #fff; /* \n\ncomment */ width: 100px;")
+          _(@relaxed.properties("color: #fff; /* \n\ncomment */ width: 100px;"))
             .must_equal "color: #fff; /* \n\ncomment */ width: 100px;"
         end
       end
 
       describe 'when :allow_comments is false' do
         it 'should strip comments' do
-          @custom.properties('color: #fff; /* comment */ width: 100px;')
+          _(@custom.properties('color: #fff; /* comment */ width: 100px;'))
             .must_equal 'color: #fff;  width: 100px;'
 
-          @custom.properties("color: #fff; /* \n\ncomment */ width: 100px;")
+          _(@custom.properties("color: #fff; /* \n\ncomment */ width: 100px;"))
             .must_equal 'color: #fff;  width: 100px;'
         end
       end
 
       describe 'when :allow_hacks is true' do
         it 'should allow common CSS hacks' do
-          @relaxed.properties('_border: 1px solid #fff; *width: 10px')
+          _(@relaxed.properties('_border: 1px solid #fff; *width: 10px'))
             .must_equal '_border: 1px solid #fff; *width: 10px'
         end
       end
 
       describe 'when :allow_hacks is false' do
         it 'should not allow common CSS hacks' do
-          @custom.properties('_border: 1px solid #fff; *width: 10px')
+          _(@custom.properties('_border: 1px solid #fff; *width: 10px'))
             .must_equal ' '
         end
       end
@@ -131,14 +131,14 @@ describe 'Sanitize::CSS' do
           }
         ].strip
 
-        @default.stylesheet(css).strip.must_equal %[
+        _(@default.stylesheet(css).strip).must_equal %[
           .foo {  }
           #bar {  }
         ].strip
 
-        @relaxed.stylesheet(css).must_equal css
+        _(@relaxed.stylesheet(css)).must_equal css
 
-        @custom.stylesheet(css).strip.must_equal %[
+        _(@custom.stylesheet(css).strip).must_equal %[
           .foo { color: #fff; }
           #bar {  }
         ].strip
@@ -146,34 +146,34 @@ describe 'Sanitize::CSS' do
 
       describe 'when :allow_comments is true' do
         it 'should preserve comments' do
-          @relaxed.stylesheet('.foo { color: #fff; /* comment */ width: 100px; }')
+          _(@relaxed.stylesheet('.foo { color: #fff; /* comment */ width: 100px; }'))
             .must_equal '.foo { color: #fff; /* comment */ width: 100px; }'
 
-          @relaxed.stylesheet(".foo { color: #fff; /* \n\ncomment */ width: 100px; }")
+          _(@relaxed.stylesheet(".foo { color: #fff; /* \n\ncomment */ width: 100px; }"))
             .must_equal ".foo { color: #fff; /* \n\ncomment */ width: 100px; }"
         end
       end
 
       describe 'when :allow_comments is false' do
         it 'should strip comments' do
-          @custom.stylesheet('.foo { color: #fff; /* comment */ width: 100px; }')
+          _(@custom.stylesheet('.foo { color: #fff; /* comment */ width: 100px; }'))
             .must_equal '.foo { color: #fff;  width: 100px; }'
 
-          @custom.stylesheet(".foo { color: #fff; /* \n\ncomment */ width: 100px; }")
+          _(@custom.stylesheet(".foo { color: #fff; /* \n\ncomment */ width: 100px; }"))
             .must_equal '.foo { color: #fff;  width: 100px; }'
         end
       end
 
       describe 'when :allow_hacks is true' do
         it 'should allow common CSS hacks' do
-          @relaxed.stylesheet('.foo { _border: 1px solid #fff; *width: 10px }')
+          _(@relaxed.stylesheet('.foo { _border: 1px solid #fff; *width: 10px }'))
             .must_equal '.foo { _border: 1px solid #fff; *width: 10px }'
         end
       end
 
       describe 'when :allow_hacks is false' do
         it 'should not allow common CSS hacks' do
-          @custom.stylesheet('.foo { _border: 1px solid #fff; *width: 10px }')
+          _(@custom.stylesheet('.foo { _border: 1px solid #fff; *width: 10px }'))
             .must_equal '.foo {  }'
         end
       end
@@ -185,9 +185,9 @@ describe 'Sanitize::CSS' do
           ".foo { background: #fff; font: 16pt 'Comic Sans MS'; }\n" <<
           "#bar { top: 125px; background: green; }")
 
-        @custom.tree!(tree).must_be_same_as tree
+        _(@custom.tree!(tree)).must_be_same_as tree
 
-        Crass::Parser.stringify(tree).must_equal String.new("\n") <<
+        _(Crass::Parser.stringify(tree)).must_equal String.new("\n") <<
             ".foo { background: #fff;  }\n" <<
             "#bar {  background: green; }"
       end
@@ -199,9 +199,9 @@ describe 'Sanitize::CSS' do
       it 'should sanitize CSS properties with the given config' do
         css = 'background: #fff; width: expression(alert("hi"));'
 
-        Sanitize::CSS.properties(css).must_equal ' '
-        Sanitize::CSS.properties(css, Sanitize::Config::RELAXED[:css]).must_equal 'background: #fff; '
-        Sanitize::CSS.properties(css, :properties => %w[background color width]).must_equal 'background: #fff; '
+        _(Sanitize::CSS.properties(css)).must_equal ' '
+        _(Sanitize::CSS.properties(css, Sanitize::Config::RELAXED[:css])).must_equal 'background: #fff; '
+        _(Sanitize::CSS.properties(css, :properties => %w[background color width])).must_equal 'background: #fff; '
       end
     end
 
@@ -218,14 +218,14 @@ describe 'Sanitize::CSS' do
           }
         ].strip
 
-        Sanitize::CSS.stylesheet(css).strip.must_equal %[
+        _(Sanitize::CSS.stylesheet(css).strip).must_equal %[
           .foo {  }
           #bar {  }
         ].strip
 
-        Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED[:css]).must_equal css
+        _(Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED[:css])).must_equal css
 
-        Sanitize::CSS.stylesheet(css, :properties => %w[background color width]).strip.must_equal %[
+        _(Sanitize::CSS.stylesheet(css, :properties => %w[background color width]).strip).must_equal %[
           .foo { color: #fff; }
           #bar {  }
         ].strip
@@ -238,9 +238,9 @@ describe 'Sanitize::CSS' do
           ".foo { background: #fff; font: 16pt 'Comic Sans MS'; }\n" <<
           "#bar { top: 125px; background: green; }")
 
-        Sanitize::CSS.tree!(tree, :properties => %w[background color width]).must_be_same_as tree
+        _(Sanitize::CSS.tree!(tree, :properties => %w[background color width])).must_be_same_as tree
 
-        Crass::Parser.stringify(tree).must_equal String.new("\n") <<
+        _(Crass::Parser.stringify(tree)).must_equal String.new("\n") <<
             ".foo { background: #fff;  }\n" <<
             "#bar {  background: green; }"
       end
@@ -256,7 +256,7 @@ describe 'Sanitize::CSS' do
     # https://github.com/rgrove/sanitize/issues/121
     it 'should parse the contents of @media rules properly' do
       css = '@media { p[class="center"] { text-align: center; }}'
-      @relaxed.stylesheet(css).must_equal css
+      _(@relaxed.stylesheet(css)).must_equal css
 
       css = %[
         @media (max-width: 720px) {
@@ -269,7 +269,7 @@ describe 'Sanitize::CSS' do
         }
       ].strip
 
-      @relaxed.stylesheet(css).must_equal %[
+      _(@relaxed.stylesheet(css)).must_equal %[
         @media (max-width: 720px) {
           p.foo > .bar { float: right;  }
           #baz { color: green; }
@@ -303,7 +303,7 @@ describe 'Sanitize::CSS' do
         }
       ].strip
 
-      @relaxed.stylesheet(css).must_equal css
+      _(@relaxed.stylesheet(css)).must_equal css
     end
 
     describe ":at_rules" do
@@ -314,7 +314,7 @@ describe 'Sanitize::CSS' do
           .foo { color: green; }
         ].strip
 
-        @relaxed.stylesheet(css).strip.must_equal %[
+        _(@relaxed.stylesheet(css).strip).must_equal %[
           .foo { color: green; }
         ].strip
       end
@@ -333,7 +333,7 @@ describe 'Sanitize::CSS' do
             .foo { color: green; }
           ].strip
 
-          @scss.stylesheet(css).must_equal %[
+          _(@scss.stylesheet(css)).must_equal %[
             @charset 'utf-8';
             @import url('foo.css');
             .foo { color: green; }
@@ -347,7 +347,7 @@ describe 'Sanitize::CSS' do
             .foo { color: green; }
           ].strip
 
-          @scss.stylesheet(css).strip.must_equal %[
+          _(@scss.stylesheet(css).strip).must_equal %[
             .foo { color: green; }
           ].strip
         end
@@ -367,7 +367,7 @@ describe 'Sanitize::CSS' do
               @import url('https://somesite.com/something.css');
             ].strip
 
-            @scss.stylesheet(css).strip.must_equal %[
+            _(@scss.stylesheet(css).strip).must_equal %[
               @import url('https://somesite.com/something.css');
             ].strip
           end
@@ -388,7 +388,7 @@ describe 'Sanitize::CSS' do
               @import url('https://fonts.googleapis.com/css?family=Indie+Flower');
             ].strip
 
-            @scss.stylesheet(css).strip.must_equal %[
+            _(@scss.stylesheet(css).strip).must_equal %[
               @import 'https://fonts.googleapis.com/css?family=Indie+Flower';
               @import url('https://fonts.googleapis.com/css?family=Indie+Flower');
             ].strip
@@ -401,7 +401,7 @@ describe 'Sanitize::CSS' do
               @import url('https://nastysite.com/nasty_hax0r.css');
             ].strip
 
-            @scss.stylesheet(css).strip.must_equal %[
+            _(@scss.stylesheet(css).strip).must_equal %[
               @import 'https://fonts.googleapis.com/css?family=Indie+Flower';
             ].strip
           end
@@ -413,7 +413,7 @@ describe 'Sanitize::CSS' do
               @import url('');
             ].strip
 
-            @scss.stylesheet(css).strip.must_equal %[
+            _(@scss.stylesheet(css).strip).must_equal %[
               @import 'https://fonts.googleapis.com/css?family=Indie+Flower';
             ].strip
           end

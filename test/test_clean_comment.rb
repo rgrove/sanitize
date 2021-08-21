@@ -11,18 +11,18 @@ describe 'Sanitize::Transformers::CleanComment' do
     end
 
     it 'should remove comments' do
-      @s.fragment('foo <!-- comment --> bar').must_equal 'foo  bar'
-      @s.fragment('foo <!-- ').must_equal 'foo '
-      @s.fragment('foo <!-- - -> bar').must_equal 'foo '
-      @s.fragment("foo <!--\n\n\n\n-->bar").must_equal 'foo bar'
-      @s.fragment("foo <!-- <!-- <!-- --> --> -->bar").must_equal 'foo  --&gt; --&gt;bar'
-      @s.fragment("foo <div <!-- comment -->>bar</div>").must_equal 'foo <div>&gt;bar</div>'
+      _(@s.fragment('foo <!-- comment --> bar')).must_equal 'foo  bar'
+      _(@s.fragment('foo <!-- ')).must_equal 'foo '
+      _(@s.fragment('foo <!-- - -> bar')).must_equal 'foo '
+      _(@s.fragment("foo <!--\n\n\n\n-->bar")).must_equal 'foo bar'
+      _(@s.fragment("foo <!-- <!-- <!-- --> --> -->bar")).must_equal 'foo  --&gt; --&gt;bar'
+      _(@s.fragment("foo <div <!-- comment -->>bar</div>")).must_equal 'foo <div>&gt;bar</div>'
 
       # Special case: the comment markup is inside a <script>, which makes it
       # text content and not an actual HTML comment.
-      @s.fragment("<script><!-- comment --></script>").must_equal ''
+      _(@s.fragment("<script><!-- comment --></script>")).must_equal ''
 
-      Sanitize.fragment("<script><!-- comment --></script>", :allow_comments => false, :elements => ['script'])
+      _(Sanitize.fragment("<script><!-- comment --></script>", :allow_comments => false, :elements => ['script']))
         .must_equal '<script><!-- comment --></script>'
     end
   end
@@ -33,14 +33,14 @@ describe 'Sanitize::Transformers::CleanComment' do
     end
 
     it 'should allow comments' do
-      @s.fragment('foo <!-- comment --> bar').must_equal 'foo <!-- comment --> bar'
-      @s.fragment('foo <!-- ').must_equal 'foo <!-- -->'
-      @s.fragment('foo <!-- - -> bar').must_equal 'foo <!-- - -> bar-->'
-      @s.fragment("foo <!--\n\n\n\n-->bar").must_equal "foo <!--\n\n\n\n-->bar"
-      @s.fragment("foo <!-- <!-- <!-- --> --> -->bar").must_equal 'foo <!-- <!-- <!-- --> --&gt; --&gt;bar'
-      @s.fragment("foo <div <!-- comment -->>bar</div>").must_equal 'foo <div>&gt;bar</div>'
+      _(@s.fragment('foo <!-- comment --> bar')).must_equal 'foo <!-- comment --> bar'
+      _(@s.fragment('foo <!-- ')).must_equal 'foo <!-- -->'
+      _(@s.fragment('foo <!-- - -> bar')).must_equal 'foo <!-- - -> bar-->'
+      _(@s.fragment("foo <!--\n\n\n\n-->bar")).must_equal "foo <!--\n\n\n\n-->bar"
+      _(@s.fragment("foo <!-- <!-- <!-- --> --> -->bar")).must_equal 'foo <!-- <!-- <!-- --> --&gt; --&gt;bar'
+      _(@s.fragment("foo <div <!-- comment -->>bar</div>")).must_equal 'foo <div>&gt;bar</div>'
 
-      Sanitize.fragment("<script><!-- comment --></script>", :allow_comments => true, :elements => ['script'])
+      _(Sanitize.fragment("<script><!-- comment --></script>", :allow_comments => true, :elements => ['script']))
         .must_equal '<script><!-- comment --></script>'
     end
   end

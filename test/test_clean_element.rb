@@ -163,94 +163,94 @@ describe 'Sanitize::Transformers::CleanElement' do
 
   describe 'Default config' do
     it 'should remove non-allowlisted elements, leaving safe contents behind' do
-      Sanitize.fragment('foo <b>bar</b> <strong><a href="#a">baz</a></strong> quux')
+      _(Sanitize.fragment('foo <b>bar</b> <strong><a href="#a">baz</a></strong> quux'))
         .must_equal 'foo bar baz quux'
 
-      Sanitize.fragment('<script>alert("<xss>");</script>')
+      _(Sanitize.fragment('<script>alert("<xss>");</script>'))
         .must_equal ''
 
-      Sanitize.fragment('<<script>script>alert("<xss>");</<script>>')
+      _(Sanitize.fragment('<<script>script>alert("<xss>");</<script>>'))
         .must_equal '&lt;'
 
-      Sanitize.fragment('< script <>> alert("<xss>");</script>')
+      _(Sanitize.fragment('< script <>> alert("<xss>");</script>'))
         .must_equal '&lt; script &lt;&gt;&gt; alert("");'
     end
 
     it 'should surround the contents of :whitespace_elements with space characters when removing the element' do
-      Sanitize.fragment('foo<div>bar</div>baz')
+      _(Sanitize.fragment('foo<div>bar</div>baz'))
         .must_equal 'foo bar baz'
 
-      Sanitize.fragment('foo<br>bar<br>baz')
+      _(Sanitize.fragment('foo<br>bar<br>baz'))
         .must_equal 'foo bar baz'
 
-      Sanitize.fragment('foo<hr>bar<hr>baz')
+      _(Sanitize.fragment('foo<hr>bar<hr>baz'))
         .must_equal 'foo bar baz'
     end
 
     it 'should not choke on several instances of the same element in a row' do
-      Sanitize.fragment('<img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif">')
+      _(Sanitize.fragment('<img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif"><img src="http://www.google.com/intl/en_ALL/images/logo.gif">'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `iframe` elements' do
-      Sanitize.fragment('<iframe>hello! <script>alert(0)</script></iframe>')
+      _(Sanitize.fragment('<iframe>hello! <script>alert(0)</script></iframe>'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `math` elements' do
-      Sanitize.fragment('<math>hello! <script>alert(0)</script></math>')
+      _(Sanitize.fragment('<math>hello! <script>alert(0)</script></math>'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `noembed` elements' do
-      Sanitize.fragment('<noembed>hello! <script>alert(0)</script></noembed>')
+      _(Sanitize.fragment('<noembed>hello! <script>alert(0)</script></noembed>'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `noframes` elements' do
-      Sanitize.fragment('<noframes>hello! <script>alert(0)</script></noframes>')
+      _(Sanitize.fragment('<noframes>hello! <script>alert(0)</script></noframes>'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `noscript` elements' do
-      Sanitize.fragment('<noscript>hello! <script>alert(0)</script></noscript>')
+      _(Sanitize.fragment('<noscript>hello! <script>alert(0)</script></noscript>'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `plaintext` elements' do
-      Sanitize.fragment('<plaintext>hello! <script>alert(0)</script>')
+      _(Sanitize.fragment('<plaintext>hello! <script>alert(0)</script>'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `script` elements' do
-      Sanitize.fragment('<script>hello! <script>alert(0)</script></script>')
+      _(Sanitize.fragment('<script>hello! <script>alert(0)</script></script>'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `style` elements' do
-      Sanitize.fragment('<style>hello! <script>alert(0)</script></style>')
+      _(Sanitize.fragment('<style>hello! <script>alert(0)</script></style>'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `svg` elements' do
-      Sanitize.fragment('<svg>hello! <script>alert(0)</script></svg>')
+      _(Sanitize.fragment('<svg>hello! <script>alert(0)</script></svg>'))
         .must_equal ''
     end
 
     it 'should not preserve the content of removed `xmp` elements' do
-      Sanitize.fragment('<xmp>hello! <script>alert(0)</script></xmp>')
+      _(Sanitize.fragment('<xmp>hello! <script>alert(0)</script></xmp>'))
         .must_equal ''
     end
 
     strings.each do |name, data|
       it "should clean #{name} HTML" do
-        Sanitize.fragment(data[:html]).must_equal(data[:default])
+        _(Sanitize.fragment(data[:html])).must_equal(data[:default])
       end
     end
 
     protocols.each do |name, data|
       it "should not allow #{name}" do
-        Sanitize.fragment(data[:html]).must_equal(data[:default])
+        _(Sanitize.fragment(data[:html])).must_equal(data[:default])
       end
     end
   end
@@ -262,13 +262,13 @@ describe 'Sanitize::Transformers::CleanElement' do
 
     strings.each do |name, data|
       it "should clean #{name} HTML" do
-        @s.fragment(data[:html]).must_equal(data[:restricted])
+        _(@s.fragment(data[:html])).must_equal(data[:restricted])
       end
     end
 
     protocols.each do |name, data|
       it "should not allow #{name}" do
-        @s.fragment(data[:html]).must_equal(data[:restricted])
+        _(@s.fragment(data[:html])).must_equal(data[:restricted])
       end
     end
   end
@@ -279,24 +279,24 @@ describe 'Sanitize::Transformers::CleanElement' do
     end
 
     it 'should not choke on valueless attributes' do
-      @s.fragment('foo <a href>foo</a> bar')
+      _(@s.fragment('foo <a href>foo</a> bar'))
         .must_equal 'foo <a href="" rel="nofollow">foo</a> bar'
     end
 
     it 'should downcase attribute names' do
-      @s.fragment('<a HREF="javascript:alert(\'foo\')">bar</a>')
+      _(@s.fragment('<a HREF="javascript:alert(\'foo\')">bar</a>'))
         .must_equal '<a rel="nofollow">bar</a>'
     end
 
     strings.each do |name, data|
       it "should clean #{name} HTML" do
-        @s.fragment(data[:html]).must_equal(data[:basic])
+        _(@s.fragment(data[:html])).must_equal(data[:basic])
       end
     end
 
     protocols.each do |name, data|
       it "should not allow #{name}" do
-        @s.fragment(data[:html]).must_equal(data[:basic])
+        _(@s.fragment(data[:html])).must_equal(data[:basic])
       end
     end
   end
@@ -307,19 +307,19 @@ describe 'Sanitize::Transformers::CleanElement' do
     end
 
     it 'should encode special chars in attribute values' do
-      @s.fragment('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>')
+      _(@s.fragment('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>'))
         .must_equal '<a href="http://example.com" title="<b>éxamples</b> &amp; things">foo</a>'
     end
 
     strings.each do |name, data|
       it "should clean #{name} HTML" do
-        @s.fragment(data[:html]).must_equal(data[:relaxed])
+        _(@s.fragment(data[:html])).must_equal(data[:relaxed])
       end
     end
 
     protocols.each do |name, data|
       it "should not allow #{name}" do
-        @s.fragment(data[:html]).must_equal(data[:relaxed])
+        _(@s.fragment(data[:html])).must_equal(data[:relaxed])
       end
     end
   end
@@ -328,103 +328,103 @@ describe 'Sanitize::Transformers::CleanElement' do
     it 'should allow attributes on all elements if allowlisted under :all' do
       input = '<p class="foo">bar</p>'
 
-      Sanitize.fragment(input).must_equal ' bar '
+      _(Sanitize.fragment(input)).must_equal ' bar '
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements   => ['p'],
         :attributes => {:all => ['class']}
-      }).must_equal input
+      })).must_equal input
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements   => ['p'],
         :attributes => {'div' => ['class']}
-      }).must_equal '<p>bar</p>'
+      })).must_equal '<p>bar</p>'
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements   => ['p'],
         :attributes => {'p' => ['title'], :all => ['class']}
-      }).must_equal input
+      })).must_equal input
     end
 
     it "should not allow relative URLs when relative URLs aren't allowlisted" do
       input = '<a href="/foo/bar">Link</a>'
 
-      Sanitize.fragment(input,
+      _(Sanitize.fragment(input,
         :elements   => ['a'],
         :attributes => {'a' => ['href']},
         :protocols  => {'a' => {'href' => ['http']}}
-      ).must_equal '<a>Link</a>'
+      )).must_equal '<a>Link</a>'
     end
 
     it 'should allow relative URLs containing colons when the colon is not in the first path segment' do
       input = '<a href="/wiki/Special:Random">Random Page</a>'
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements   => ['a'],
         :attributes => {'a' => ['href']},
         :protocols  => {'a' => {'href' => [:relative]}}
-      }).must_equal input
+      })).must_equal input
     end
 
     it 'should allow relative URLs containing colons when the colon is part of an anchor' do
       input = '<a href="#fn:1">Footnote 1</a>'
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements   => ['a'],
         :attributes => {'a' => ['href']},
         :protocols  => {'a' => {'href' => [:relative]}}
-      }).must_equal input
+      })).must_equal input
 
       input = '<a href="somepage#fn:1">Footnote 1</a>'
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements   => ['a'],
         :attributes => {'a' => ['href']},
         :protocols  => {'a' => {'href' => [:relative]}}
-      }).must_equal input
+      })).must_equal input
     end
 
     it 'should remove the contents of filtered nodes when :remove_contents is true' do
-      Sanitize.fragment('foo bar <div>baz<span>quux</span></div>',
+      _(Sanitize.fragment('foo bar <div>baz<span>quux</span></div>',
         :remove_contents => true
-      ).must_equal 'foo bar   '
+      )).must_equal 'foo bar   '
     end
 
     it 'should remove the contents of specified nodes when :remove_contents is an Array or Set of element names as strings' do
-      Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
+      _(Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
         :remove_contents => ['script', 'span']
-      ).must_equal 'foo bar  baz hi '
+      )).must_equal 'foo bar  baz hi '
 
-      Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
+      _(Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
         :remove_contents => Set.new(['script', 'span'])
-      ).must_equal 'foo bar  baz hi '
+      )).must_equal 'foo bar  baz hi '
     end
 
     it 'should remove the contents of specified nodes when :remove_contents is an Array or Set of element names as symbols' do
-      Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
+      _(Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
         :remove_contents => [:script, :span]
-      ).must_equal 'foo bar  baz hi '
+      )).must_equal 'foo bar  baz hi '
 
-      Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
+      _(Sanitize.fragment('foo bar <div>baz<span>quux</span> <b>hi</b><script>alert("hello!");</script></div>',
         :remove_contents => Set.new([:script, :span])
-      ).must_equal 'foo bar  baz hi '
+      )).must_equal 'foo bar  baz hi '
     end
 
     it 'should remove the contents of allowlisted iframes' do
-      Sanitize.fragment('<iframe>hi <script>hello</script></iframe>',
+      _(Sanitize.fragment('<iframe>hi <script>hello</script></iframe>',
         :elements => ['iframe']
-      ).must_equal '<iframe></iframe>'
+      )).must_equal '<iframe></iframe>'
     end
 
     it 'should not allow arbitrary HTML5 data attributes by default' do
-      Sanitize.fragment('<b data-foo="bar"></b>',
+      _(Sanitize.fragment('<b data-foo="bar"></b>',
         :elements => ['b']
-      ).must_equal '<b></b>'
+      )).must_equal '<b></b>'
 
-      Sanitize.fragment('<b class="foo" data-foo="bar"></b>',
+      _(Sanitize.fragment('<b class="foo" data-foo="bar"></b>',
         :attributes => {'b' => ['class']},
         :elements   => ['b']
-      ).must_equal '<b class="foo"></b>'
+      )).must_equal '<b class="foo"></b>'
     end
 
     it 'should allow arbitrary HTML5 data attributes when the :attributes config includes :data' do
@@ -433,28 +433,28 @@ describe 'Sanitize::Transformers::CleanElement' do
         :elements   => ['b']
       )
 
-      s.fragment('<b data-foo="valid" data-bar="valid"></b>')
+      _(s.fragment('<b data-foo="valid" data-bar="valid"></b>'))
         .must_equal '<b data-foo="valid" data-bar="valid"></b>'
 
-      s.fragment('<b data-="invalid"></b>')
+      _(s.fragment('<b data-="invalid"></b>'))
         .must_equal '<b></b>'
 
-      s.fragment('<b data-="invalid"></b>')
+      _(s.fragment('<b data-="invalid"></b>'))
         .must_equal '<b></b>'
 
-      s.fragment('<b data-xml="invalid"></b>')
+      _(s.fragment('<b data-xml="invalid"></b>'))
         .must_equal '<b></b>'
 
-      s.fragment('<b data-xmlfoo="invalid"></b>')
+      _(s.fragment('<b data-xmlfoo="invalid"></b>'))
         .must_equal '<b></b>'
 
-      s.fragment('<b data-f:oo="valid"></b>')
+      _(s.fragment('<b data-f:oo="valid"></b>'))
         .must_equal '<b></b>'
 
-      s.fragment('<b data-f/oo="partial"></b>')
+      _(s.fragment('<b data-f/oo="partial"></b>'))
         .must_equal '<b data-f=""></b>' # Nokogiri quirk; not ideal, but harmless
 
-      s.fragment('<b data-éfoo="valid"></b>')
+      _(s.fragment('<b data-éfoo="valid"></b>'))
         .must_equal '<b></b>' # Another annoying Nokogiri quirk.
     end
 
@@ -467,78 +467,78 @@ describe 'Sanitize::Transformers::CleanElement' do
         }
       )
 
-      s.fragment('<p>foo</p>').must_equal "\nfoo\n"
-      s.fragment('<p>foo</p><p>bar</p>').must_equal "\nfoo\n\nbar\n"
-      s.fragment('foo<div>bar</div>baz').must_equal "foo\nbar\nbaz"
-      s.fragment('foo<br>bar<br>baz').must_equal "foo\nbar\nbaz"
+      _(s.fragment('<p>foo</p>')).must_equal "\nfoo\n"
+      _(s.fragment('<p>foo</p><p>bar</p>')).must_equal "\nfoo\n\nbar\n"
+      _(s.fragment('foo<div>bar</div>baz')).must_equal "foo\nbar\nbaz"
+      _(s.fragment('foo<br>bar<br>baz')).must_equal "foo\nbar\nbaz"
     end
 
     it 'should handle protocols correctly regardless of case' do
       input = '<a href="hTTpS://foo.com/">Text</a>'
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements   => ['a'],
         :attributes => {'a' => ['href']},
         :protocols  => {'a' => {'href' => ['https']}}
-      }).must_equal input
+      })).must_equal input
 
       input = '<a href="mailto:someone@example.com?Subject=Hello">Text</a>'
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements   => ['a'],
         :attributes => {'a' => ['href']},
         :protocols  => {'a' => {'href' => ['https']}}
-      }).must_equal "<a>Text</a>"
+      })).must_equal "<a>Text</a>"
     end
 
     it 'should sanitize protocols in data attributes even if data attributes are generically allowed' do
       input = '<a data-url="mailto:someone@example.com">Text</a>'
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements => ['a'],
         :attributes => {'a' => [:data]},
         :protocols => {'a' => {'data-url' => ['https']}}
-      }).must_equal "<a>Text</a>"
+      })).must_equal "<a>Text</a>"
 
-      Sanitize.fragment(input, {
+      _(Sanitize.fragment(input, {
         :elements => ['a'],
         :attributes => {'a' => [:data]},
         :protocols => {'a' => {'data-url' => ['mailto']}}
-      }).must_equal input
+      })).must_equal input
     end
 
     it 'should prevent `<meta>` tags from being used to set a non-UTF-8 charset' do
-      Sanitize.document('<html><head><meta charset="utf-8"></head><body>Howdy!</body></html>',
+      _(Sanitize.document('<html><head><meta charset="utf-8"></head><body>Howdy!</body></html>',
         :elements   => %w[html head meta body],
         :attributes => {'meta' => ['charset']}
-      ).must_equal "<html><head><meta charset=\"utf-8\"></head><body>Howdy!</body></html>"
+      )).must_equal "<html><head><meta charset=\"utf-8\"></head><body>Howdy!</body></html>"
 
-      Sanitize.document('<html><meta charset="utf-8">Howdy!</html>',
+      _(Sanitize.document('<html><meta charset="utf-8">Howdy!</html>',
         :elements   => %w[html meta],
         :attributes => {'meta' => ['charset']}
-      ).must_equal "<html><meta charset=\"utf-8\">Howdy!</html>"
+      )).must_equal "<html><meta charset=\"utf-8\">Howdy!</html>"
 
-      Sanitize.document('<html><meta charset="us-ascii">Howdy!</html>',
+      _(Sanitize.document('<html><meta charset="us-ascii">Howdy!</html>',
         :elements   => %w[html meta],
         :attributes => {'meta' => ['charset']}
-      ).must_equal "<html><meta charset=\"utf-8\">Howdy!</html>"
+      )).must_equal "<html><meta charset=\"utf-8\">Howdy!</html>"
 
-      Sanitize.document('<html><meta http-equiv="content-type" content=" text/html; charset=us-ascii">Howdy!</html>',
+      _(Sanitize.document('<html><meta http-equiv="content-type" content=" text/html; charset=us-ascii">Howdy!</html>',
         :elements   => %w[html meta],
         :attributes => {'meta' => %w[content http-equiv]}
-      ).must_equal "<html><meta http-equiv=\"content-type\" content=\" text/html;charset=utf-8\">Howdy!</html>"
+      )).must_equal "<html><meta http-equiv=\"content-type\" content=\" text/html;charset=utf-8\">Howdy!</html>"
 
-      Sanitize.document('<html><meta http-equiv="Content-Type" content="text/plain;charset = us-ascii">Howdy!</html>',
+      _(Sanitize.document('<html><meta http-equiv="Content-Type" content="text/plain;charset = us-ascii">Howdy!</html>',
         :elements   => %w[html meta],
         :attributes => {'meta' => %w[content http-equiv]}
-      ).must_equal "<html><meta http-equiv=\"Content-Type\" content=\"text/plain;charset=utf-8\">Howdy!</html>"
+      )).must_equal "<html><meta http-equiv=\"Content-Type\" content=\"text/plain;charset=utf-8\">Howdy!</html>"
     end
 
     it 'should not modify `<meta>` tags that already set a UTF-8 charset' do
-      Sanitize.document('<html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8"></head><body>Howdy!</body></html>',
+      _(Sanitize.document('<html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8"></head><body>Howdy!</body></html>',
         :elements   => %w[html head meta body],
         :attributes => {'meta' => %w[content http-equiv]}
-      ).must_equal "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"></head><body>Howdy!</body></html>"
+      )).must_equal "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"></head><body>Howdy!</body></html>"
     end
 
   end

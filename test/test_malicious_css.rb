@@ -16,27 +16,27 @@ describe 'Malicious CSS' do
   end
 
   it 'should not be possible to inject an expression by munging it with a comment' do
-    @s.properties(%[width:expr/*XSS*/ession(alert('XSS'))]).
+    _(@s.properties(%[width:expr/*XSS*/ession(alert('XSS'))])).
       must_equal ''
 
-    @s.properties(%[width:ex/*XSS*//*/*/pression(alert("XSS"))]).
+    _(@s.properties(%[width:ex/*XSS*//*/*/pression(alert("XSS"))])).
       must_equal ''
   end
 
   it 'should not be possible to inject an expression by munging it with a newline' do
-    @s.properties(%[width:\nexpression(alert('XSS'));]).
+    _(@s.properties(%[width:\nexpression(alert('XSS'));])).
       must_equal ''
   end
 
   it 'should not allow the javascript protocol' do
-    @s.properties(%[background-image:url("javascript:alert('XSS')");]).
+    _(@s.properties(%[background-image:url("javascript:alert('XSS')");])).
       must_equal ''
 
-    Sanitize.fragment(%[<div style="background-image: url(&#1;javascript:alert('XSS'))">],
-      Sanitize::Config::RELAXED).must_equal '<div></div>'
+    _(Sanitize.fragment(%[<div style="background-image: url(&#1;javascript:alert('XSS'))">],
+      Sanitize::Config::RELAXED)).must_equal '<div></div>'
   end
 
   it 'should not allow behaviors' do
-    @s.properties(%[behavior: url(xss.htc);]).must_equal ''
+    _(@s.properties(%[behavior: url(xss.htc);])).must_equal ''
   end
 end
