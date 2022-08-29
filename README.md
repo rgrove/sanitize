@@ -30,7 +30,7 @@ Links
 * [API Docs](http://rubydoc.info/github/rgrove/sanitize/master)
 * [Issues](https://github.com/rgrove/sanitize/issues)
 * [Release History](https://github.com/rgrove/sanitize/blob/master/HISTORY.md#sanitize-history)
-* [Online Demo](https://sanitize.herokuapp.com/)
+* [Online Demo](https://sanitize-web.fly.dev/)
 * [Biased comparison of Ruby HTML sanitization libraries](https://github.com/rgrove/sanitize/blob/master/COMPARISON.md)
 
 Installation
