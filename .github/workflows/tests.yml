@@ -1,30 +1,24 @@
 name: Tests
 on: [ push, pull_request ]
-
 jobs:
   test:
     runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         ruby:
-          - 2.5
-          - 2.6
-          - 2.7
-          - 3.0
-          - 3.1
-          - head
+          - '2.5'
+          - '2.6'
+          - '2.7'
+          - '3.0'
+          - ruby
+          - ruby-head
           - truffleruby-head
-
     continue-on-error: ${{ endsWith(matrix.ruby, 'head') }}
-
     steps:
       - uses: actions/checkout@v3
-
       - uses: ruby/setup-ruby@v1
         with:
-          bundler-cache: true # Installs and caches dependencies
+          bundler-cache: true
           ruby-version: ${{ matrix.ruby }}
-
       - run: bundle exec rake
