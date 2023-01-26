@@ -72,10 +72,11 @@ Sanitize can sanitize the following types of input:
 * Standalone CSS stylesheets
 * Standalone CSS properties
 
-However, please note that Sanitize _cannot_ fully sanitize the contents of
-`<math>` or `<svg>` elements, since these elements don't follow the same parsing
-rules as the rest of HTML. If this is something you need, you may want to look
-for another solution.
+> **Warning**
+>
+> Sanitize cannot fully sanitize the contents of `<math>` or `<svg>` elements. MathML and SVG elements are [foreign elements](https://html.spec.whatwg.org/multipage/syntax.html#foreign-elements) that don't follow normal HTML parsing rules.
+>
+> By default, Sanitize will remove all MathML and SVG elements. If you add MathML or SVG elements to a custom element allowlist, you may create a security vulnerability in your application.
 
 ### HTML Fragments
 
@@ -420,11 +421,11 @@ elements not in this array will be removed.
 ]
 ```
 
-**Warning:** Sanitize cannot fully sanitize the contents of `<math>` or `<svg>`
-elements, since these elements don't follow the same parsing rules as the rest
-of HTML. If you add `math` or `svg` to the allowlist, you must assume that any
-content inside them will be allowed, even if that content would otherwise be
-removed by Sanitize.
+> **Warning**
+>
+> Sanitize cannot fully sanitize the contents of `<math>` or `<svg>` elements. MathML and SVG elements are [foreign elements](https://html.spec.whatwg.org/multipage/syntax.html#foreign-elements) that don't follow normal HTML parsing rules.
+>
+> By default, Sanitize will remove all MathML and SVG elements. If you add MathML or SVG elements to a custom element allowlist, you must assume that any content inside them will be allowed, even if that content would otherwise be removed or escaped by Sanitize. This may create a security vulnerability in your application.
 
 #### :parser_options (Hash)
 

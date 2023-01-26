@@ -1,5 +1,30 @@
 # Sanitize History
 
+## 6.0.1 (git)
+
+### Bug Fixes
+
+* Fixed an edge case in which the contents of an "unescaped text" element (such
+  as `<noembed>` or `<xmp>`) were not properly escaped if that element was
+  allowlisted and was also inside an allowlisted `<math>` or `<svg>` element.
+
+  The only way to encounter this situation was to ignore multiple warnings in
+  the readme and create a custom config that allowlisted all the elements
+  involved, including `<math>` or `<svg>`. If you're using a default config or
+  if you heeded the warnings about MathML and SVG not being supported, you're
+  not affected by this issue.
+
+  Please let this be a reminder that Sanitize cannot safely sanitize MathML or
+  SVG content and does not support this use case. The default configs don't
+  allow MathML or SVG elements, and allowlisting MathML or SVG elements in a
+  custom config may create a security vulnerability in your application.
+
+  Documentation has been updated to add more warnings and to make the existing
+  warnings about this more prominent.
+
+  Thanks to David Klein from [TU Braunschweig](https://www.tu-braunschweig.de/en/ias)
+  (@leeN) for reporting this issue.
+
 ## 6.0.0 (2021-08-03)
 
 ### Potentially Breaking Changes

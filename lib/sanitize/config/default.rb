@@ -54,6 +54,11 @@ class Sanitize
 
       # HTML elements to allow. By default, no elements are allowed (which means
       # that all HTML will be stripped).
+      #
+      # Warning: Sanitize cannot safely sanitize the contents of foreign
+      # elements (elements in the MathML or SVG namespaces). Do not add `math`
+      # or `svg` to this list! If you do, you may create a security
+      # vulnerability in your application.
       :elements => [],
 
       # HTML parsing options to pass to Nokogumbo.

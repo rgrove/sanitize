@@ -232,4 +232,90 @@ describe 'Malicious HTML' do
       end
     end
   end
+
+  # These tests cover an unsupported and unsafe custom config that allows MathML
+  # and SVG elements, which Sanitize's docs specifically say multiple times in
+  # big prominent warnings that you SHOULD NOT DO because Sanitize doesn't
+  # support MathML or SVG.
+  #
+  # Do not use the custom configs you see in these tests! If you do, you may be
+  # creating XSS vulnerabilities in your application.
+  describe 'foreign content bypass in unsafe custom config that allows MathML or SVG' do
+    unescaped_content_elements = %w[
+      noembed
+      noframes
+      noscript
+      plaintext
+      script
+      xmp
+    ]
+
+    removed_content_elements = %w[
+      iframe
+    ]
+
+    removed_elements = %w[
+      style
+    ]
+
+    before do
+      @s = Sanitize.new(
+        Sanitize::Config.merge(
+          Sanitize::Config::RELAXED,
+          elements: Sanitize::Config::RELAXED[:elements] +
+            unescaped_content_elements +
+            removed_content_elements +
+            %w[math svg]
+        )
+      )
+    end
+
+    unescaped_content_elements.each do |name|
+      it "forcibly escapes text content inside `<#{name}>` in a MathML namespace" do
+        assert_equal(
+          "<math><#{name}>&lt;img src=x onerror=alert(1)&gt;</#{name}></math>",
+          @s.fragment("<math><#{name}>&lt;img src=x onerror=alert(1)&gt;</#{name}>")
+        )
+      end
+
+      it "forcibly escapes text content inside `<#{name}>` in an SVG namespace" do
+        assert_equal(
+          "<svg><#{name}>&lt;img src=x onerror=alert(1)&gt;</#{name}></svg>",
+          @s.fragment("<svg><#{name}>&lt;img src=x onerror=alert(1)&gt;</#{name}>")
+        )
+      end
+    end
+
+    removed_content_elements.each do |name|
+      it "removes text content inside `<#{name}>` in a MathML namespace" do
+        assert_equal(
+          "<math><#{name}></#{name}></math>",
+          @s.fragment("<math><#{name}>&lt;img src=x onerror=alert(1)&gt;</#{name}>")
+        )
+      end
+
+      it "removes text content inside `<#{name}>` in an SVG namespace" do
+        assert_equal(
+          "<svg><#{name}></#{name}></svg>",
+          @s.fragment("<svg><#{name}>&lt;img src=x onerror=alert(1)&gt;</#{name}>")
+        )
+      end
+    end
+
+    removed_elements.each do |name|
+      it "removes `<#{name}>` elements in a MathML namespace" do
+        assert_equal(
+          '<math></math>',
+          @s.fragment("<math><#{name}>&lt;img src=x onerror=alert(1)&gt;</#{name}>")
+        )
+      end
+
+      it "removes `<#{name}>` elements in an SVG namespace" do
+        assert_equal(
+          '<svg></svg>',
+          @s.fragment("<svg><#{name}>&lt;img src=x onerror=alert(1)&gt;</#{name}>")
+        )
+      end
+    end
+  end
 end
