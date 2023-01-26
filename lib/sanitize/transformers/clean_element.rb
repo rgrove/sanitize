@@ -252,6 +252,16 @@ class Sanitize; module Transformers; class CleanElement
 
         node['content'] = node['content'].gsub(/;\s*charset\s*=.+\z/, ';charset=utf-8')
       end
+
+    # A `<noscript>` element's content is parsed differently in browsers
+    # depending on whether or not scripting is enabled. Since Nokogiri doesn't
+    # support scripting, it always parses `<noscript>` elements as if scripting
+    # is disabled. This results in edge cases where it's not possible to
+    # reliably sanitize the contents of a `<noscript>` element because Nokogiri
+    # can't fully replicate the parsing behavior of a scripting-enabled browser.
+    # The safest thing to do is to simply remove all `<noscript>` elements.
+    when 'noscript'
+      node.unlink
     end
   end
 

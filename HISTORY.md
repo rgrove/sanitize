@@ -4,6 +4,33 @@
 
 ### Bug Fixes
 
+* Sanitize now always removes `<noscript>` elements and their contents, even
+  when `noscript` is in the allowlist.
+
+  This fixes a sanitization bypass that could occur when `noscript` was allowed
+  by a custom allowlist. In this scenario, carefully crafted input could sneak
+  arbitrary HTML through Sanitize, potentially enabling an XSS (cross-site
+  scripting) attack.
+
+  Sanitize's default configs don't allow `<noscript>` elements and are not
+  vulnerable. This issue only affects users who are using a custom config that
+  adds `noscript` to the element allowlist.
+
+  The root cause of this issue is that HTML parsing rules treat the contents of
+  a `<noscript>` element differently depending on whether scripting is enabled
+  in the user agent. Nokogiri doesn't support scripting so it follows the
+  "scripting disabled" rules, but a web browser with scripting enabled will
+  follow the "scripting enabled" rules. This means that Sanitize can't reliably
+  make the contents of a `<noscript>` element safe for scripting enabled
+  browsers, so the safest thing to do is to remove the element and its contents
+  entirely.
+
+  See the following security advisory for additional details:
+  [GHSA-fw3g-2h3j-qmm7](https://github.com/rgrove/sanitize/security/advisories/GHSA-fw3g-2h3j-qmm7)
+
+  Thanks to David Klein from [TU Braunschweig](https://www.tu-braunschweig.de/en/ias)
+  (@leeN) for reporting this issue.
+
 * Fixed an edge case in which the contents of an "unescaped text" element (such
   as `<noembed>` or `<xmp>`) were not properly escaped if that element was
   allowlisted and was also inside an allowlisted `<math>` or `<svg>` element.

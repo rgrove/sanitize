@@ -244,7 +244,6 @@ describe 'Malicious HTML' do
     unescaped_content_elements = %w[
       noembed
       noframes
-      noscript
       plaintext
       script
       xmp
@@ -255,6 +254,7 @@ describe 'Malicious HTML' do
     ]
 
     removed_elements = %w[
+      noscript
       style
     ]
 
@@ -316,6 +316,24 @@ describe 'Malicious HTML' do
           @s.fragment("<svg><#{name}>&lt;img src=x onerror=alert(1)&gt;</#{name}>")
         )
       end
+    end
+  end
+
+  describe 'sanitization bypass by exploiting scripting-disabled <noscript> behavior' do
+    before do
+      @s = Sanitize.new(
+        Sanitize::Config.merge(
+          Sanitize::Config::RELAXED,
+          elements: Sanitize::Config::RELAXED[:elements] + ['noscript']
+        )
+      )
+    end
+
+    it 'is prevented by removing `<noscript>` elements regardless of the allowlist' do
+      assert_equal(
+        '',
+        @s.fragment(%[<noscript><div id='</noscript>&lt;img src=x onerror=alert(1)&gt; '>])
+      )
     end
   end
 end

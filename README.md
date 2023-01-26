@@ -12,10 +12,10 @@ properties, @ rules, and URL protocols in elements or attributes containing CSS.
 Any HTML or CSS that you don't explicitly allow will be removed.
 
 Sanitize is based on the [Nokogumbo HTML5 parser][nokogumbo], which parses HTML
-exactly the same way modern browsers do, and [Crass][crass], which parses CSS
-exactly the same way modern browsers do. As long as your allowlist config only
-allows safe markup and CSS, even the most malformed or malicious input will be
-transformed into safe output.
+the same way modern browsers do, and [Crass][crass], which parses CSS the same
+way modern browsers do. As long as your allowlist config only allows safe markup
+and CSS, even the most malformed or malicious input will be transformed into
+safe output.
 
 [![Gem Version](https://badge.fury.io/rb/sanitize.svg)](http://badge.fury.io/rb/sanitize)
 [![Tests](https://github.com/rgrove/sanitize/workflows/Tests/badge.svg)](https://github.com/rgrove/sanitize/actions?query=workflow%3ATests)
@@ -426,6 +426,12 @@ elements not in this array will be removed.
 > Sanitize cannot fully sanitize the contents of `<math>` or `<svg>` elements. MathML and SVG elements are [foreign elements](https://html.spec.whatwg.org/multipage/syntax.html#foreign-elements) that don't follow normal HTML parsing rules.
 >
 > By default, Sanitize will remove all MathML and SVG elements. If you add MathML or SVG elements to a custom element allowlist, you must assume that any content inside them will be allowed, even if that content would otherwise be removed or escaped by Sanitize. This may create a security vulnerability in your application.
+
+> **Note**
+>
+> Sanitize always removes `<noscript>` elements and their contents, even if `noscript` is in the allowlist.
+>
+> This is because a `<noscript>` element's content is parsed differently in browsers depending on whether or not scripting is enabled. Since Nokogiri doesn't support scripting, it always parses `<noscript>` elements as if scripting is disabled. This results in edge cases where it's not possible to reliably sanitize the contents of a `<noscript>` element because Nokogiri can't fully replicate the parsing behavior of a scripting-enabled browser.
 
 #### :parser_options (Hash)
 

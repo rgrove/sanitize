@@ -541,5 +541,12 @@ describe 'Sanitize::Transformers::CleanElement' do
       )).must_equal "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\"></head><body>Howdy!</body></html>"
     end
 
+    it 'always removes `<noscript>` elements even if `noscript` is in the allowlist' do
+      assert_equal(
+        '',
+        Sanitize.fragment('<noscript>foo</noscript>', elements: ['noscript'])
+      )
+    end
+
   end
 end
