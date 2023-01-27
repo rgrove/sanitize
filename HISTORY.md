@@ -1,6 +1,6 @@
 # Sanitize History
 
-## 6.0.1 (git)
+## 6.0.1 (2023-01-27)
 
 ### Bug Fixes
 
