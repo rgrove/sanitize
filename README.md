@@ -11,7 +11,7 @@ protocols within attributes that contain URLs. You can also allow specific CSS
 properties, @ rules, and URL protocols in elements or attributes containing CSS.
 Any HTML or CSS that you don't explicitly allow will be removed.
 
-Sanitize is based on the [Nokogumbo HTML5 parser][nokogumbo], which parses HTML
+Sanitize is based on the [Nokogiri HTML5 parser][nokogiri], which parses HTML
 the same way modern browsers do, and [Crass][crass], which parses CSS the same
 way modern browsers do. As long as your allowlist config only allows safe markup
 and CSS, even the most malformed or malicious input will be transformed into
@@ -21,15 +21,15 @@ safe output.
 [![Tests](https://github.com/rgrove/sanitize/workflows/Tests/badge.svg)](https://github.com/rgrove/sanitize/actions?query=workflow%3ATests)
 
 [crass]:https://github.com/rgrove/crass
-[nokogumbo]:https://github.com/rubys/nokogumbo
+[nokogiri]:https://github.com/sparklemotion/nokogiri
 
 Links
 -----
 
 * [Home](https://github.com/rgrove/sanitize/)
-* [API Docs](http://rubydoc.info/github/rgrove/sanitize/master)
+* [API Docs](https://rubydoc.info/github/rgrove/sanitize/Sanitize)
 * [Issues](https://github.com/rgrove/sanitize/issues)
-* [Release History](https://github.com/rgrove/sanitize/blob/master/HISTORY.md#sanitize-history)
+* [Release History](https://github.com/rgrove/sanitize/releases)
 * [Online Demo](https://sanitize-web.fly.dev/)
 
 Installation
