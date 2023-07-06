@@ -1,5 +1,22 @@
 # Sanitize History
 
+## 6.0.2 (2023-07-06)
+
+### Bug Fixes
+
+* CVE-2023-36823: Fixed an HTML+CSS sanitization bypass that could allow XSS
+  (cross-site scripting). This issue affects Sanitize versions 3.0.0 through
+  6.0.1.
+
+  When using Sanitize's relaxed config or a custom config that allows `<style>`
+  elements and one or more CSS at-rules, carefully crafted input could be used
+  to sneak arbitrary HTML through Sanitize.
+
+  See the following security advisory for additional details:
+  [GHSA-f5ww-cq3m-q3g7](https://github.com/rgrove/sanitize/security/advisories/GHSA-f5ww-cq3m-q3g7)
+
+  Thanks to @cure53 for finding this issue.
+
 ## 6.0.1 (2023-01-27)
 
 ### Bug Fixes

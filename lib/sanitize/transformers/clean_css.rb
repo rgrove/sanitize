@@ -48,6 +48,7 @@ class CleanElement
     if css.strip.empty?
       node.unlink
     else
+      css.gsub!('</', '<\/')
       node.children.unlink
       node << Nokogiri::XML::Text.new(css, node.document)
     end

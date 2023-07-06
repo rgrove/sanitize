@@ -39,4 +39,17 @@ describe 'Malicious CSS' do
   it 'should not allow behaviors' do
     _(@s.properties(%[behavior: url(xss.htc);])).must_equal ''
   end
+
+  describe 'sanitization bypass via CSS at-rule in HTML <style> element' do
+    before do
+      @s = Sanitize.new(Sanitize::Config::RELAXED)
+    end
+
+    it 'is not possible to prematurely end a <style> element' do
+      assert_equal(
+        %[<style>@media<\\/style><iframe srcdoc='<script>alert(document.domain)<\\/script>'>{}</style>],
+        @s.fragment(%[<style>@media</sty/**/le><iframe srcdoc='<script>alert(document.domain)</script>'></style>])
+      )
+    end
+  end
 end
