@@ -1,5 +1,13 @@
 # Sanitize History
 
+## 6.1.0 (2023-09-14)
+
+### Features
+
+* Added the `text-decoration-skip-ink` and `text-decoration-thickness` CSS properties to the relaxed config. [@martineriksson - #228][228]
+
+[228]:https://github.com/rgrove/sanitize/pull/228
+
 ## 6.0.2 (2023-07-06)
 
 ### Bug Fixes
