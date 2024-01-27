@@ -15,6 +15,10 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.required_ruby_version = Gem::Requirement.new('>= 2.5.0')
   s.required_rubygems_version = Gem::Requirement.new('>= 1.2.0')
+  s.metadata = {
+    "changelog_uri"     => "https://github.com/rgrove/sanitize/blob/main/HISTORY.md",
+    "documentation_uri" => "https://rubydoc.info/github/rgrove/sanitize/Sanitize"
+  }
 
   # Runtime dependencies.
   s.add_dependency('crass', '~> 1.0.2')
