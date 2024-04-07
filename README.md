@@ -118,11 +118,10 @@ Sanitize.document(html,
   :elements      => ['html']
 )
 # => %[
-#   <!DOCTYPE html>
-#   <html>foo
+#      <!DOCTYPE html><html>foo
 #
-#   </html>
-# ]
+#      </html>
+#    ]
 ```
 
 ### CSS in HTML
