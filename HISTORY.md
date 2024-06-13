@@ -1,5 +1,13 @@
 # Sanitize History
 
+## 6.1.1 (2024-06-12)
+
+### Bug Fixes
+
+* Proactively fixed a compatibility issue with libxml >= 2.13.0 (which will be used in an upcoming version of Nokogiri) that caused HTML doctype sanitization to fail. [@flavorjones - #238][238]
+
+[238]:https://github.com/rgrove/sanitize/pull/238
+
 ## 6.1.0 (2023-09-14)
 
 ### Features
