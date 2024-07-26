@@ -29,6 +29,12 @@ describe 'Sanitize::CSS' do
           "background: url('ht\\tp://example.com/http.jpg')",
           "background: url(https://example.com/https.jpg)",
           "background: url('https://example.com/https.jpg')",
+          "background: image-set('relative.jpg' 1x, 'relative-2x.jpg' 2x)",
+          "background: image-set('https://example.com/https.jpg' 1x, 'https://example.com/https-2x.jpg' 2x)",
+          "background: image-set('https://example.com/https.jpg' type('image/jpeg'), 'https://example.com/https.avif' type('image/avif'))",
+          "background: image('relative.jpg');",
+          "background: image('https://example.com/https.jpg');",
+          "background: image(rtl 'https://example.com/https.jpg');"
         ].each do |css|
           _(@default.properties(css)).must_equal ''
           _(@relaxed.properties(css)).must_equal css

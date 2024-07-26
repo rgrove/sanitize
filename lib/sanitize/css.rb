@@ -272,6 +272,10 @@ class Sanitize; class CSS
             return nil unless valid_url?(child)
           end
 
+          if name == 'image-set' || name == 'image'
+            return nil unless valid_image?(child)
+          end
+
           combined_value << name
           return nil if name == 'expression' || combined_value == 'expression'
         end
@@ -343,6 +347,29 @@ class Sanitize; class CSS
     end
 
     false
+  end
+
+  # Returns `true` if the given node (which is an `image` or `image-set` function) contains only strings
+  # using an allowlisted protocol.
+  def valid_image?(node)
+    return false unless node[:node] == :function
+    return false unless node.key?(:name) && ['image', 'image-set'].include?(node[:name].downcase)
+    return false unless Array === node[:value]
+
+    node[:value].each do |token|
+        return false unless Hash === token
+
+        case token[:node]
+          when :string
+            if token[:value] =~ Sanitize::REGEX_PROTOCOL
+              return false unless @config[:protocols].include?($1.downcase)
+            else
+              return false unless @config[:protocols].include?(:relative)
+            end
+          else
+            next
+        end
+      end
   end
 
 end; end
