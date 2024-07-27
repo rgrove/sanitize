@@ -1,5 +1,13 @@
 # Sanitize History
 
+## 6.1.2 (2024-07-27)
+
+### Bug Fixes
+
+* The CSS URL protocol allowlist is now properly enforced in [CSS Images Module Level 4](https://drafts.csswg.org/css-images-4/) `image` and `image-set` functions. [@ltk - #240][240]
+
+[240]:https://github.com/rgrove/sanitize/pull/240
+
 ## 6.1.1 (2024-06-12)
 
 ### Bug Fixes
