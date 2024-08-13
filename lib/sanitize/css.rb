@@ -272,7 +272,7 @@ class Sanitize; class CSS
             return nil unless valid_url?(child)
           end
 
-          if name == 'image-set' || name == 'image'
+          if ['image-set', 'image', '-webkit-image-set'].include?(name)
             return nil unless valid_image?(child)
           end
 
@@ -353,7 +353,7 @@ class Sanitize; class CSS
   # using an allowlisted protocol.
   def valid_image?(node)
     return false unless node[:node] == :function
-    return false unless node.key?(:name) && ['image', 'image-set'].include?(node[:name].downcase)
+    return false unless node.key?(:name) && ['image', 'image-set', '-webkit-image-set'].include?(node[:name].downcase)
     return false unless Array === node[:value]
 
     node[:value].each do |token|
