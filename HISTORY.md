@@ -1,5 +1,13 @@
 # Sanitize History
 
+## 6.1.3 (2024-08-14)
+
+### Bug Fixes
+
+* The CSS URL protocol allowlist is now enforced on the nonstandard `-webkit-image-set` CSS function. [@ltk - #242][242]
+
+[242]:https://github.com/rgrove/sanitize/pull/242
+
 ## 6.1.2 (2024-07-27)
 
 ### Bug Fixes
