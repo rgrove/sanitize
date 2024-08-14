@@ -229,6 +229,12 @@ class Sanitize; class CSS
     rule
   end
 
+  # Returns `true` if the given CSS function name is an image-related function
+  # that may contain image URLs that need to be validated.
+  def image_function?(name)
+    ['image', 'image-set', '-webkit-image-set'].include?(name)
+  end
+
   # Passes the URL value of an @import rule to a block to ensure
   # it's an allowed URL
   def import_url_allowed?(rule)
@@ -272,7 +278,7 @@ class Sanitize; class CSS
             return nil unless valid_url?(child)
           end
 
-          if ['image-set', 'image', '-webkit-image-set'].include?(name)
+          if image_function?(name)
             return nil unless valid_image?(child)
           end
 
@@ -349,11 +355,11 @@ class Sanitize; class CSS
     false
   end
 
-  # Returns `true` if the given node (which is an `image` or `image-set` function) contains only strings
-  # using an allowlisted protocol.
+  # Returns `true` if the given node is an image-related function and contains
+  # only strings that use an allowlisted protocol.
   def valid_image?(node)
     return false unless node[:node] == :function
-    return false unless node.key?(:name) && ['image', 'image-set', '-webkit-image-set'].include?(node[:name].downcase)
+    return false unless node.key?(:name) && image_function?(node[:name].downcase)
     return false unless Array === node[:value]
 
     node[:value].each do |token|
