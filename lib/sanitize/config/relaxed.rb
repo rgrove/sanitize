@@ -333,6 +333,7 @@ class Sanitize
           -webkit-text-decoration-color
           -webkit-text-decoration-line
           -webkit-text-decoration-style
+          -webkit-text-fill-color
           -webkit-text-size-adjust
           -webkit-touch-callout
           -webkit-transform
