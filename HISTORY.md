@@ -1,5 +1,13 @@
 # Sanitize History
 
+## Unreleased
+
+### Features
+
+* Added the `-webkit-text-fill-color` CSS property to the relaxed config. [@radar - #244][244]
+
+[244]:https://github.com/rgrove/sanitize/pull/244
+
 ## 6.1.3 (2024-08-14)
 
 ### Bug Fixes
