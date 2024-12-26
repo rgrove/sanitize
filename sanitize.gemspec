@@ -30,8 +30,8 @@ Gem::Specification.new do |s|
   s.add_dependency('nokogiri', '>= 1.16.8')
 
   # Development dependencies.
-  s.add_development_dependency('minitest', '~> 5.15') # needs to float to support ruby 2.5 and 3.4
-  s.add_development_dependency('rake', '~> 13.0.6')
+  s.add_development_dependency('minitest', '~> 5.25.4')
+  s.add_development_dependency('rake', '~> 13.2.1')
 
   s.require_paths = ['lib']
 
