@@ -198,28 +198,6 @@ class Sanitize; module Transformers; class CleanElement
       @add_attributes[name].each {|key, val| node[key] = val }
     end
 
-    # Make a best effort to ensure that text nodes in invalid "unescaped text"
-    # elements that are inside a math or svg namespace are properly escaped so
-    # that they don't get parsed as HTML.
-    #
-    # Sanitize is explicitly documented as not supporting MathML or SVG, but
-    # people sometimes allow `<math>` and `<svg>` elements in their custom
-    # configs without realizing that it's not safe. This workaround makes it
-    # slightly less unsafe, but you still shouldn't allow `<math>` or `<svg>`
-    # because Nokogiri doesn't parse them the same way browsers do and Sanitize
-    # can't guarantee that their contents are safe.
-    unless node.namespace.nil?
-      prefix = node.namespace.prefix
-
-      if (prefix == 'math' || prefix == 'svg') && UNESCAPED_TEXT_ELEMENTS.include?(name)
-        node.children.each do |child|
-          if child.type == Nokogiri::XML::Node::TEXT_NODE
-            child.content = CGI.escapeHTML(child.content)
-          end
-        end
-      end
-    end
-
     # Element-specific special cases.
     case name
 

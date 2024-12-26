@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Potentially Breaking Changes
+
+* Sanitize now requires Nokogiri 1.16.8 or higher.
+
 ### Features
 
 * Added the `-webkit-text-fill-color` CSS property to the relaxed config. [@radar - #244][244]

@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
 
   # Runtime dependencies.
   s.add_dependency('crass', '~> 1.0.2')
-  s.add_dependency('nokogiri', '>= 1.12.0')
+  s.add_dependency('nokogiri', '>= 1.16.8')
 
   # Development dependencies.
   s.add_development_dependency('minitest', '~> 5.15') # needs to float to support ruby 2.5 and 3.4
