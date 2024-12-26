@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Sanitize; module Transformers; module CSS
 
 # Enforces a CSS allowlist on the contents of `style` attributes.

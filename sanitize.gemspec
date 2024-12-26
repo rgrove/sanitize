@@ -1,5 +1,5 @@
-# encoding: utf-8
-require './lib/sanitize/version'
+# frozen_string_literal: true
+
 require_relative 'lib/sanitize/version'
 
 Gem::Specification.new do |s|
@@ -11,14 +11,18 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/rgrove/sanitize/'
   s.licenses = ['MIT']
 
-  s.description = 'Sanitize is an allowlist-based HTML and CSS sanitizer. It removes all HTML and/or CSS from a string except the elements, attributes, and properties you choose to allow.'
+  s.description = <<~DESCRIPTION
+    Sanitize is an allowlist-based HTML and CSS sanitizer. It removes all HTML
+    and/or CSS from a string except the elements, attributes, and properties you
+    choose to allow.'
+  DESCRIPTION
 
   s.platform = Gem::Platform::RUBY
   s.required_ruby_version = Gem::Requirement.new('>= 3.1.0')
 
   s.metadata = {
-    "changelog_uri"     => "https://github.com/rgrove/sanitize/blob/main/HISTORY.md",
-    "documentation_uri" => "https://rubydoc.info/github/rgrove/sanitize"
+    'changelog_uri' => 'https://github.com/rgrove/sanitize/blob/main/HISTORY.md',
+    'documentation_uri' => 'https://rubydoc.info/github/rgrove/sanitize'
   }
 
   # Runtime dependencies.
