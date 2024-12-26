@@ -4,6 +4,8 @@
 
 ### Potentially Breaking Changes
 
+* Ruby 3.1.0 is now the oldest supported Ruby version.
+
 * Sanitize now requires Nokogiri 1.16.8 or higher.
 
 ### Features
