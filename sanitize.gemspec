@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = Gem::Requirement.new('>= 3.1.0')
 
   s.metadata = {
-    'changelog_uri' => 'https://github.com/rgrove/sanitize/blob/main/HISTORY.md',
+    'changelog_uri' => 'https://github.com/rgrove/sanitize/blob/main/CHANGELOG.md',
     'documentation_uri' => 'https://rubydoc.info/github/rgrove/sanitize'
   }
 
@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.files = [
-    'HISTORY.md',
+    'CHANGELOG.md',
     'LICENSE',
     'README.md'
   ] + Dir.glob('lib/**/*.rb') + Dir.glob('test/**/*.rb')

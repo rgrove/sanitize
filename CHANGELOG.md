@@ -1,18 +1,20 @@
-# Sanitize History
+# Sanitize Changelog
 
-## Unreleased
+All notable changes to Sanitize are documented in this file. The format (since version 7.0.0) is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### Potentially Breaking Changes
+## 7.0.0 (not yet released)
 
-* Ruby 3.1.0 is now the oldest supported Ruby version.
+Sanitize itself has no breaking API changes in this release, but the major version number has been incremented because we've dropped support for end-of-life versions of Ruby. As long as you're using Ruby 3.1.0 or later, this should be a painless upgrade!
 
-* Sanitize now requires Nokogiri 1.16.8 or higher.
+### Added
 
-### Features
+- Added the `-webkit-text-fill-color` CSS property to the relaxed config. [@radar - #244](https://github.com/rgrove/sanitize/pull/244)
 
-* Added the `-webkit-text-fill-color` CSS property to the relaxed config. [@radar - #244][244]
+### Changed
 
-[244]:https://github.com/rgrove/sanitize/pull/244
+- Ruby 3.1.0 is now the oldest supported Ruby version.
+
+- Sanitize now requires Nokogiri 1.16.8 or higher.
 
 ## 6.1.3 (2024-08-14)
 
