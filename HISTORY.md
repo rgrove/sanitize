@@ -293,8 +293,6 @@ review the changes below carefully.
   Many thanks to the Shopify Application Security Team for responsibly reporting
   this issue.
 
-[176]:https://github.com/rgrove/sanitize/issues/176
-
 ## 4.6.2 (2018-03-19)
 
 * Reduced string allocations to optimize memory usage. [@janklimo - #175][175]
@@ -632,7 +630,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 ## 2.0.4 (2013-06-12)
 
 * Added `Sanitize.clean_document`, which sanitizes a full HTML document rather
-  than just a fragment. [Ben Anderson]
+  than just a fragment. \[Ben Anderson]
 
 * Nokogiri dependency bumped to 1.6.x.
 
@@ -655,7 +653,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 ## 2.0.1 (2011-03-16)
 
 * Updated the protocol regex to anchor at the beginning of the string rather
-  than the beginning of a line. [Eaden McKee]
+  than the beginning of a line. \[Eaden McKee]
 
 
 ## 2.0.0 (2011-01-15)
@@ -701,7 +699,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
   remove the contents of all non-allowlisted elements in addition to the
   elements themselves. If set to an array of element names, Sanitize will
   remove the contents of only those elements (when filtered), and leave the
-  contents of other filtered elements. [Thanks to Rafael Souza for the array
+  contents of other filtered elements. \[Thanks to Rafael Souza for the array
   option]
 
 * Added an `:output_encoding` config setting to allow the character encoding
@@ -726,27 +724,27 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 * Added `Sanitize.clean_node!`, which sanitizes a `Nokogiri::XML::Node` and
   all its children.
 
-* Added elements `<h1>` through `<h6>` to the Relaxed allowlist. [Suggested by
+* Added elements `<h1>` through `<h6>` to the Relaxed allowlist. \[Suggested by
   David Reese]
 
 
 ## 1.1.0 (2009-10-11)
 
-* Migrated from Hpricot to Nokogiri. Requires libxml2 >= 2.7.2 [Adam Hooper]
+* Migrated from Hpricot to Nokogiri. Requires libxml2 >= 2.7.2 \[Adam Hooper]
 
 * Added an `:output` config setting to allow the output format to be
   specified. Supported formats are `:xhtml` (the default) and `:html` (which
   outputs HTML4).
 
 * Changed protocol regex to ensure Sanitize doesn't kill URLs with colons in
-  path segments. [Peter Cooper]
+  path segments. \[Peter Cooper]
 
 
 ## 1.0.8 (2009-04-23)
 
 * Added a workaround for an Hpricot bug that prevents attribute names from
   being downcased in recent versions of Hpricot. This was exploitable to
-  prevent non-allowlisted protocols from being cleaned. [Reported by Ben
+  prevent non-allowlisted protocols from being cleaned. \[Reported by Ben
   Wanicur]
 
 
@@ -755,7 +753,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 * Requires Hpricot 0.8.1+, which is finally compatible with Ruby 1.9.1.
 
 * Fixed a bug that caused named character entities containing digits (like
-  `&sup2;`) to be escaped when they shouldn't have been. [Reported by
+  `&sup2;`) to be escaped when they shouldn't have been. \[Reported by
   Sebastian Steinmetz]
 
 
@@ -770,14 +768,14 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
   problems in IE6.
 
 * You can now specify the symbol `:all` in place of an element name in the
-  attributes config hash to allow certain attributes on all elements. [Thanks
+  attributes config hash to allow certain attributes on all elements. \[Thanks
   to Mutwin Kraus]
 
 
 ## 1.0.5 (2009-02-05)
 
 * Fixed a bug introduced in version 1.0.3 that prevented non-allowlisted
-  protocols from being cleaned when relative URLs were allowed. [Reported by
+  protocols from being cleaned when relative URLs were allowed. \[Reported by
   Dev Purkayastha]
 
 * Fixed "undefined method `parent='" exceptions caused by parser changes in
@@ -788,7 +786,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 
 * Fixed a bug that made it possible to sneak a non-allowlisted element through
   by repeating it several times in a row. All versions of Sanitize prior to
-  1.0.4 are vulnerable. [Reported by Cristobal]
+  1.0.4 are vulnerable. \[Reported by Cristobal]
 
 
 ## 1.0.3 (2009-01-15)
