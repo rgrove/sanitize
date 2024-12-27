@@ -25,13 +25,8 @@ Gem::Specification.new do |s|
     'documentation_uri' => 'https://rubydoc.info/github/rgrove/sanitize'
   }
 
-  # Runtime dependencies.
   s.add_dependency('crass', '~> 1.0.2')
   s.add_dependency('nokogiri', '>= 1.16.8')
-
-  # Development dependencies.
-  s.add_development_dependency('minitest', '~> 5.25.4')
-  s.add_development_dependency('rake', '~> 13.2.1')
 
   s.require_paths = ['lib']
 
