@@ -1,15 +1,29 @@
+inherit_mode:
+  merge:
+    - Exclude
+
+require:
+  - standard
+  - standard-custom
+  - standard-performance
+  - rubocop-performance
+  - rubocop-minitest
+  - rubocop-packaging
+  - rubocop-rake
+
+inherit_gem:
+  standard: config/base.yml
+  standard-custom: config/base.yml
+  standard-performance: config/base.yml
+
 inherit_from: .rubocop_todo.yml
 
 AllCops:
   Exclude:
-    - '.*/**/*'
-    - 'benchmark/**/*'
-    - 'test/**/*'
-    - 'tmp/**/*'
-  TargetRubyVersion: 3.1.0
-
-Metrics:
-  Enabled: false
+    - ".*/**/*"
+    - "tmp/**/*"
+  SuggestExtensions: false
+  TargetRubyVersion: 3.1
 
 Style/Documentation:
   Enabled: false

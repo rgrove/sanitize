@@ -71,14 +71,14 @@ If you don't specify any configuration options, Sanitize will use its strictest 
 ```ruby
 html = '<b><a href="http://foo.com/">foo</a></b><img src="bar.jpg">'
 Sanitize.fragment(html)
-# => 'foo'
+# => "foo"
 ```
 
 To keep certain elements, add them to the element allowlist.
 
 ```ruby
-Sanitize.fragment(html, :elements => ['b'])
-# => '<b>foo</b>'
+Sanitize.fragment(html, elements: ['b'])
+# => "<b>foo</b>"
 ```
 
 ### HTML Documents
@@ -94,14 +94,10 @@ html = %[
 ]
 
 Sanitize.document(html,
-  :allow_doctype => true,
-  :elements      => ['html']
+  allow_doctype: true,
+  elements: ['html']
 )
-# => %[
-#      <!DOCTYPE html><html>foo
-#
-#      </html>
-#    ]
+# => "<!DOCTYPE html><html>foo\n  \n</html>"
 ```
 
 ### CSS in HTML
@@ -119,11 +115,11 @@ html = %[
 ]
 
 Sanitize.fragment(html,
-  :elements   => ['div', 'style'],
-  :attributes => {'div' => ['style']},
+  elements: ['div', 'style'],
+  attributes: {'div' => ['style']},
 
-  :css => {
-    :properties => ['width']
+  css: {
+    properties: ['width']
   }
 )
 #=> %[
@@ -156,7 +152,6 @@ Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
 # => %[
 #
 #
-#
 #   a { text-decoration: none; }
 #
 #   a:hover {
@@ -173,7 +168,6 @@ Sanitize::CSS.properties(%[
 #
 #   text-decoration: underline;
 # ]
-
 ```
 
 ## Configuration
@@ -186,7 +180,7 @@ Allows only very simple inline markup. No links, images, or block elements.
 
 ```ruby
 Sanitize.fragment(html, Sanitize::Config::RESTRICTED)
-# => '<b>foo</b>'
+# => "<b>foo</b>"
 ```
 
 ### Sanitize::Config::BASIC
@@ -215,14 +209,14 @@ If the built-in modes don't meet your needs, you can easily specify a custom con
 
 ```ruby
 Sanitize.fragment(html,
-  :elements => ['a', 'span'],
+  elements: ['a', 'span'],
 
-  :attributes => {
-    'a'    => ['href', 'title'],
+  attributes: {
+    'a' => ['href', 'title'],
     'span' => ['class']
   },
 
-  :protocols => {
+  protocols: {
     'a' => {'href' => ['http', 'https', 'mailto']}
   }
 )
@@ -236,8 +230,8 @@ The built-in configs are deeply frozen to prevent people from modifying them (ei
 # Create a customized copy of the Basic config, adding <div> and <table> to the
 # existing allowlisted elements.
 Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
-  :elements        => Sanitize::Config::BASIC[:elements] + ['div', 'table'],
-  :remove_contents => true
+  elements: Sanitize::Config::BASIC[:elements] + ['div', 'table'],
+  remove_contents: true
 ))
 ```
 
@@ -246,8 +240,8 @@ The example above adds the `<div>` and `<table>` elements to a copy of the exist
 ```ruby
 # Overwrite :elements instead of creating a copy with new entries.
 Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
-  :elements        => ['div', 'table'],
-  :remove_contents => true
+  elements: ['div', 'table'],
+  remove_contents: true
 ))
 ```
 
@@ -258,7 +252,7 @@ Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::BASIC,
 Attributes to add to specific elements. If the attribute already exists, it will be replaced with the value specified here. Specify all element names and attributes in lowercase.
 
 ```ruby
-:add_attributes => {
+add_attributes: {
   'a' => {'rel' => 'nofollow'}
 }
 ```
@@ -276,10 +270,10 @@ Whether or not to allow well-formed HTML doctype declarations such as "<!DOCTYPE
 Attributes to allow on specific elements. Specify all element names and attributes in lowercase.
 
 ```ruby
-:attributes => {
-  'a'          => ['href', 'title'],
+attributes: {
+  'a' => ['href', 'title'],
   'blockquote' => ['cite'],
-  'img'        => ['alt', 'src', 'title']
+  'img' => ['alt', 'src', 'title']
 }
 ```
 
@@ -287,9 +281,9 @@ If you'd like to allow certain attributes on all elements, use the symbol `:all`
 
 ```ruby
 # Allow the class attribute on all elements.
-:attributes => {
+attributes: {
   :all => ['class'],
-  'a'  => ['href', 'title']
+  'a' => ['href', 'title']
 }
 ```
 
@@ -297,7 +291,7 @@ To allow arbitrary HTML5 `data-*` attributes, use the symbol `:data` in place of
 
 ```ruby
 # Allow arbitrary HTML5 data-* attributes on <div> elements.
-:attributes => {
+attributes: {
   'div' => [:data]
 }
 ```
@@ -353,7 +347,7 @@ If you'd like to allow the use of relative URLs which don't have a protocol, inc
 Array of HTML element names to allow. Specify all names in lowercase. Any elements not in this array will be removed.
 
 ```ruby
-:elements => %w[
+elements: %w[
   a abbr b blockquote br cite code dd dfn dl dt em i kbd li mark ol p pre
   q s samp small strike strong sub sup time u ul var
 ]
@@ -373,10 +367,10 @@ Array of HTML element names to allow. Specify all names in lowercase. Any elemen
 
 #### :parser_options (Hash)
 
-[Parsing options](https://github.com/rubys/nokogumbo/tree/master#parsing-options) to be supplied to `nokogumbo`.
+[Parsing options](https://nokogiri.org/tutorials/parsing_an_html5_document.html?h=parsing+options#parsing-options) to be supplied to Nokogiri.
 
 ```ruby
-:parser_options => {
+parser_options: {
   max_errors: -1,
   max_tree_depth: -1
 }
@@ -387,16 +381,16 @@ Array of HTML element names to allow. Specify all names in lowercase. Any elemen
 URL protocols to allow in specific attributes. If an attribute is listed here and contains a protocol other than those specified (or if it contains no protocol at all), it will be removed.
 
 ```ruby
-:protocols => {
-  'a'   => {'href' => ['ftp', 'http', 'https', 'mailto']},
-  'img' => {'src'  => ['http', 'https']}
+protocols: {
+  'a' => {'href' => ['ftp', 'http', 'https', 'mailto']},
+  'img' => {'src' => ['http', 'https']}
 }
 ```
 
 If you'd like to allow the use of relative URLs which don't have a protocol, include the symbol `:relative` in the protocol array:
 
 ```ruby
-:protocols => {
+protocols: {
   'a' => {'href' => ['http', 'https', :relative]}
 }
 ```
@@ -407,7 +401,7 @@ If this is `true`, Sanitize will remove the contents of any non-allowlisted elem
 
 If this is an Array or Set of element names, then only the contents of the specified elements (when filtered) will be removed, and the contents of all other filtered elements will be left behind.
 
-The default value is `%w[iframe math noembed noframes noscript plaintext script style svg xmp]`.
+The default value can be seen in the [default config](lib/sanitize/config/default.rb).
 
 #### :transformers (Array or callable)
 
@@ -420,20 +414,14 @@ Hash of element names which, when removed, should have their contents surrounded
 Each element name is a key pointing to another Hash, which provides the specific whitespace that should be inserted `:before` and `:after` the removed element's position. The `:after` value will only be inserted if the removed element has children, in which case it will be inserted after those children.
 
 ```ruby
-:whitespace_elements => {
-  'br'  => { :before => "\n", :after => "" },
-  'div' => { :before => "\n", :after => "\n" },
-  'p'   => { :before => "\n", :after => "\n" }
+whitespace_elements: {
+  'br' => { before: "\n", after: "" },
+  'div' => { before: "\n", after: "\n" },
+  'p' => { before: "\n", after: "\n" }
 }
 ```
 
-The default elements with whitespace added before and after are:
-
-```
-address article aside blockquote br dd div dl dt
-footer h1 h2 h3 h4 h5 h6 header hgroup hr li nav
-ol p pre section ul
-```
+The default elements with whitespace added before and after can be seen in [the default config](lib/sanitize/config/default.rb).
 
 ## Transformers
 
@@ -442,7 +430,7 @@ Transformers allow you to filter and modify HTML nodes using your own custom log
 To use one or more transformers, pass them to the `:transformers` config setting. You may pass a single transformer or an array of transformers.
 
 ```ruby
-Sanitize.fragment(html, :transformers => [
+Sanitize.fragment(html, transformers: [
   transformer_one,
   transformer_two
 ])
@@ -493,7 +481,7 @@ transformer = lambda do |env|
 end
 
 # Prints "header", "span", "strong", "p", "footer".
-Sanitize.fragment(html, :transformers => transformer)
+Sanitize.fragment(html, transformers: transformer)
 ```
 
 Transformers have a tremendous amount of power, including the power to completely bypass Sanitize's built-in filtering. Be careful! Your safety is in your own hands.
@@ -503,20 +491,22 @@ Transformers have a tremendous amount of power, including the power to completel
 The following example demonstrates how to remove image elements unless they use a relative URL or are hosted on a specific domain. It assumes that the `<img>` element and its `src` attribute are already allowlisted.
 
 ```ruby
-require 'uri'
+require "uri"
 
 image_allowlist_transformer = lambda do |env|
   # Ignore everything except <img> elements.
-  return unless env[:node_name] == 'img'
+  return unless env[:node_name] == "img"
 
-  node      = env[:node]
-  image_uri = URI.parse(node['src'])
+  node = env[:node]
+  image_uri = URI.parse(node["src"])
 
   # Only allow relative URLs or URLs with the example.com domain. The
   # image_uri.host.nil? check ensures that protocol-relative URLs like
-  # "//evil.com/foo.jpg".
-  unless image_uri.host == 'example.com' || (image_uri.host.nil? && image_uri.relative?)
-    node.unlink # `Nokogiri::XML::Node#unlink` removes a node from the document
+  # "//evil.com/foo.jpg" are not allowed.
+  unless image_uri.host == "example.com"
+    unless image_uri.host.nil? && image_uri.relative?
+      node.unlink # `Nokogiri::XML::Node#unlink` removes a node from the document
+    end
   end
 end
 ```
@@ -527,40 +517,40 @@ The following example demonstrates how to create a transformer that will safely 
 
 ```ruby
 youtube_transformer = lambda do |env|
-  node      = env[:node]
+  node = env[:node]
   node_name = env[:node_name]
 
   # Don't continue if this node is already allowlisted or is not an element.
   return if env[:is_allowlisted] || !node.element?
 
   # Don't continue unless the node is an iframe.
-  return unless node_name == 'iframe'
+  return unless node_name == "iframe"
 
   # Verify that the video URL is actually a valid YouTube video URL.
-  return unless node['src'] =~ %r|\A(?:https?:)?//(?:www\.)?youtube(?:-nocookie)?\.com/|
+  return unless %r{\A(?:https?:)?//(?:www\.)?youtube(?:-nocookie)?\.com/}.match?(node["src"])
 
   # We're now certain that this is a YouTube embed, but we still need to run
   # it through a special Sanitize step to ensure that no unwanted elements or
   # attributes that don't belong in a YouTube embed can sneak in.
   Sanitize.node!(node, {
-    :elements => %w[iframe],
+    elements: %w[iframe],
 
-    :attributes => {
-      'iframe'  => %w[allowfullscreen frameborder height src width]
+    attributes: {
+      "iframe" => %w[allowfullscreen frameborder height src width]
     }
   })
 
   # Now that we're sure that this is a valid YouTube embed and that there are
   # no unwanted elements or attributes hidden inside it, we can tell Sanitize
   # to allowlist the current node.
-  {:node_allowlist => [node]}
+  {node_allowlist: [node]}
 end
 
 html = %[
 <iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ"
     frameborder="0" allowfullscreen></iframe>
-]
+].strip
 
-Sanitize.fragment(html, :transformers => youtube_transformer)
+Sanitize.fragment(html, transformers: youtube_transformer)
 # => '<iframe width="420" height="315" src="//www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen=""></iframe>'
 ```

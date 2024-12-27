@@ -1,331 +1,333 @@
 # frozen_string_literal: true
 
-require 'crass'
-require 'set'
+require "crass"
+require "set"
 
-class Sanitize; class CSS
-  attr_reader :config
+class Sanitize
+  class CSS
+    attr_reader :config
 
-  # -- Class Methods -----------------------------------------------------------
+    # -- Class Methods ---------------------------------------------------------
 
-  # Sanitizes inline CSS style properties.
-  #
-  # This is most useful for sanitizing non-stylesheet fragments of CSS like you
-  # would find in the `style` attribute of an HTML element. To sanitize a full
-  # CSS stylesheet, use {.stylesheet}.
-  #
-  # @example
-  #   Sanitize::CSS.properties("background: url(foo.png); color: #fff;")
-  #
-  # @return [String] Sanitized CSS properties.
-  def self.properties(css, config = {})
-    self.new(config).properties(css)
-  end
+    # Sanitizes inline CSS style properties.
+    #
+    # This is most useful for sanitizing non-stylesheet fragments of CSS like
+    # you would find in the `style` attribute of an HTML element. To sanitize a
+    # full CSS stylesheet, use {.stylesheet}.
+    #
+    # @example
+    #   Sanitize::CSS.properties("background: url(foo.png); color: #fff;")
+    #
+    # @return [String] Sanitized CSS properties.
+    def self.properties(css, config = {})
+      new(config).properties(css)
+    end
 
-  # Sanitizes a full CSS stylesheet.
-  #
-  # A stylesheet may include selectors, at-rules, and comments. To sanitize only
-  # inline style properties such as the contents of an HTML `style` attribute,
-  # use {.properties}.
-  #
-  # @example
-  #   css = %[
-  #     .foo {
-  #       background: url(foo.png);
-  #       color: #fff;
-  #     }
-  #
-  #     #bar {
-  #       font: 42pt 'Comic Sans MS';
-  #     }
-  #   ]
-  #
-  #   Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
-  #
-  # @return [String] Sanitized CSS stylesheet.
-  def self.stylesheet(css, config = {})
-    self.new(config).stylesheet(css)
-  end
+    # Sanitizes a full CSS stylesheet.
+    #
+    # A stylesheet may include selectors, at-rules, and comments. To sanitize
+    # only inline style properties such as the contents of an HTML `style`
+    # attribute, use {.properties}.
+    #
+    # @example
+    #   css = %[
+    #     .foo {
+    #       background: url(foo.png);
+    #       color: #fff;
+    #     }
+    #
+    #     #bar {
+    #       font: 42pt 'Comic Sans MS';
+    #     }
+    #   ]
+    #
+    #   Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
+    #
+    # @return [String] Sanitized CSS stylesheet.
+    def self.stylesheet(css, config = {})
+      new(config).stylesheet(css)
+    end
 
-  # Sanitizes the given Crass CSS parse tree and all its children, modifying it
-  # in place.
-  #
-  # @example
-  #   css = %[
-  #     .foo {
-  #       background: url(foo.png);
-  #       color: #fff;
-  #     }
-  #
-  #     #bar {
-  #       font: 42pt 'Comic Sans MS';
-  #     }
-  #   ]
-  #
-  #   tree = Crass.parse(css)
-  #   Sanitize::CSS.tree!(tree, Sanitize::Config::RELAXED)
-  #
-  # @return [Array] Sanitized Crass CSS parse tree.
-  def self.tree!(tree, config = {})
-    self.new(config).tree!(tree)
-  end
+    # Sanitizes the given Crass CSS parse tree and all its children, modifying
+    # it in place.
+    #
+    # @example
+    #   css = %[
+    #     .foo {
+    #       background: url(foo.png);
+    #       color: #fff;
+    #     }
+    #
+    #     #bar {
+    #       font: 42pt 'Comic Sans MS';
+    #     }
+    #   ]
+    #
+    #   tree = Crass.parse(css)
+    #   Sanitize::CSS.tree!(tree, Sanitize::Config::RELAXED)
+    #
+    # @return [Array] Sanitized Crass CSS parse tree.
+    def self.tree!(tree, config = {})
+      new(config).tree!(tree)
+    end
 
-  # -- Instance Methods --------------------------------------------------------
+    # -- Instance Methods ------------------------------------------------------
 
-  # Returns a new Sanitize::CSS object initialized with the settings in
-  # _config_.
-  def initialize(config = {})
-    @config = Config.merge(Config::DEFAULT[:css], config[:css] || config)
+    # Returns a new Sanitize::CSS object initialized with the settings in
+    # _config_.
+    def initialize(config = {})
+      @config = Config.merge(Config::DEFAULT[:css], config[:css] || config)
 
-    @at_rules                 = Set.new(@config[:at_rules])
-    @at_rules_with_properties = Set.new(@config[:at_rules_with_properties])
-    @at_rules_with_styles     = Set.new(@config[:at_rules_with_styles])
-    @import_url_validator     = @config[:import_url_validator]
-  end
+      @at_rules = Set.new(@config[:at_rules])
+      @at_rules_with_properties = Set.new(@config[:at_rules_with_properties])
+      @at_rules_with_styles = Set.new(@config[:at_rules_with_styles])
+      @import_url_validator = @config[:import_url_validator]
+    end
 
-  # Sanitizes inline CSS style properties.
-  #
-  # This is most useful for sanitizing non-stylesheet fragments of CSS like you
-  # would find in the `style` attribute of an HTML element. To sanitize a full
-  # CSS stylesheet, use {#stylesheet}.
-  #
-  # @example
-  #   scss = Sanitize::CSS.new(Sanitize::Config::RELAXED)
-  #   scss.properties("background: url(foo.png); color: #fff;")
-  #
-  # @return [String] Sanitized CSS properties.
-  def properties(css)
-    tree = Crass.parse_properties(css,
-      :preserve_comments => @config[:allow_comments],
-      :preserve_hacks    => @config[:allow_hacks])
+    # Sanitizes inline CSS style properties.
+    #
+    # This is most useful for sanitizing non-stylesheet fragments of CSS like
+    # you would find in the `style` attribute of an HTML element. To sanitize a
+    # full CSS stylesheet, use {#stylesheet}.
+    #
+    # @example
+    #   scss = Sanitize::CSS.new(Sanitize::Config::RELAXED)
+    #   scss.properties("background: url(foo.png); color: #fff;")
+    #
+    # @return [String] Sanitized CSS properties.
+    def properties(css)
+      tree = Crass.parse_properties(css,
+        preserve_comments: @config[:allow_comments],
+        preserve_hacks: @config[:allow_hacks])
 
-    tree!(tree)
-    Crass::Parser.stringify(tree)
-  end
+      tree!(tree)
+      Crass::Parser.stringify(tree)
+    end
 
-  # Sanitizes a full CSS stylesheet.
-  #
-  # A stylesheet may include selectors, at-rules, and comments. To sanitize only
-  # inline style properties such as the contents of an HTML `style` attribute,
-  # use {#properties}.
-  #
-  # @example
-  #   css = %[
-  #     .foo {
-  #       background: url(foo.png);
-  #       color: #fff;
-  #     }
-  #
-  #     #bar {
-  #       font: 42pt 'Comic Sans MS';
-  #     }
-  #   ]
-  #
-  #   scss = Sanitize::CSS.new(Sanitize::Config::RELAXED)
-  #   scss.stylesheet(css)
-  #
-  # @return [String] Sanitized CSS stylesheet.
-  def stylesheet(css)
-    tree = Crass.parse(css,
-      :preserve_comments => @config[:allow_comments],
-      :preserve_hacks    => @config[:allow_hacks])
+    # Sanitizes a full CSS stylesheet.
+    #
+    # A stylesheet may include selectors, at-rules, and comments. To sanitize
+    # only inline style properties such as the contents of an HTML `style`
+    # attribute, use {#properties}.
+    #
+    # @example
+    #   css = %[
+    #     .foo {
+    #       background: url(foo.png);
+    #       color: #fff;
+    #     }
+    #
+    #     #bar {
+    #       font: 42pt 'Comic Sans MS';
+    #     }
+    #   ]
+    #
+    #   scss = Sanitize::CSS.new(Sanitize::Config::RELAXED)
+    #   scss.stylesheet(css)
+    #
+    # @return [String] Sanitized CSS stylesheet.
+    def stylesheet(css)
+      tree = Crass.parse(css,
+        preserve_comments: @config[:allow_comments],
+        preserve_hacks: @config[:allow_hacks])
 
-    tree!(tree)
-    Crass::Parser.stringify(tree)
-  end
+      tree!(tree)
+      Crass::Parser.stringify(tree)
+    end
 
-  # Sanitizes the given Crass CSS parse tree and all its children, modifying it
-  # in place.
-  #
-  # @example
-  #   css = %[
-  #     .foo {
-  #       background: url(foo.png);
-  #       color: #fff;
-  #     }
-  #
-  #     #bar {
-  #       font: 42pt 'Comic Sans MS';
-  #     }
-  #   ]
-  #
-  #   scss = Sanitize::CSS.new(Sanitize::Config::RELAXED)
-  #   tree = Crass.parse(css)
-  #
-  #   scss.tree!(tree)
-  #
-  # @return [Array] Sanitized Crass CSS parse tree.
-  def tree!(tree)
-    preceded_by_property = false
+    # Sanitizes the given Crass CSS parse tree and all its children, modifying
+    # it in place.
+    #
+    # @example
+    #   css = %[
+    #     .foo {
+    #       background: url(foo.png);
+    #       color: #fff;
+    #     }
+    #
+    #     #bar {
+    #       font: 42pt 'Comic Sans MS';
+    #     }
+    #   ]
+    #
+    #   scss = Sanitize::CSS.new(Sanitize::Config::RELAXED)
+    #   tree = Crass.parse(css)
+    #
+    #   scss.tree!(tree)
+    #
+    # @return [Array] Sanitized Crass CSS parse tree.
+    def tree!(tree)
+      preceded_by_property = false
 
-    tree.map! do |node|
-      next nil if node.nil?
+      tree.map! do |node|
+        next nil if node.nil?
 
-      case node[:node]
-      when :at_rule
-        preceded_by_property = false
-        next at_rule!(node)
-
-      when :comment
-        next node if @config[:allow_comments]
-
-      when :property
-        prop = property!(node)
-        preceded_by_property = !prop.nil?
-        next prop
-
-      when :semicolon
-        # Only preserve the semicolon if it was preceded by an allowlisted
-        # property. Otherwise, omit it in order to prevent redundant semicolons.
-        if preceded_by_property
+        case node[:node]
+        when :at_rule
           preceded_by_property = false
+          next at_rule!(node)
+
+        when :comment
+          next node if @config[:allow_comments]
+
+        when :property
+          prop = property!(node)
+          preceded_by_property = !prop.nil?
+          next prop
+
+        when :semicolon
+          # Only preserve the semicolon if it was preceded by an allowlisted
+          # property. Otherwise, omit it in order to prevent redundant
+          # semicolons.
+          if preceded_by_property
+            preceded_by_property = false
+            next node
+          end
+
+        when :style_rule
+          preceded_by_property = false
+          tree!(node[:children])
+          next node
+
+        when :whitespace
           next node
         end
 
-      when :style_rule
-        preceded_by_property = false
-        tree!(node[:children])
-        next node
-
-      when :whitespace
-        next node
+        nil
       end
 
-      nil
+      tree
     end
 
-    tree
-  end
+    # -- Protected Instance Methods --------------------------------------------
+    protected
 
-  # -- Protected Instance Methods ----------------------------------------------
-  protected
+    # Sanitizes a CSS at-rule node. Returns the sanitized node, or `nil` if the
+    # current config doesn't allow this at-rule.
+    def at_rule!(rule)
+      name = rule[:name].downcase
 
-  # Sanitizes a CSS at-rule node. Returns the sanitized node, or `nil` if the
-  # current config doesn't allow this at-rule.
-  def at_rule!(rule)
-    name = rule[:name].downcase
+      if @at_rules_with_styles.include?(name)
+        styles = Crass::Parser.parse_rules(rule[:block],
+          preserve_comments: @config[:allow_comments],
+          preserve_hacks: @config[:allow_hacks])
 
-    if @at_rules_with_styles.include?(name)
-      styles = Crass::Parser.parse_rules(rule[:block],
-        :preserve_comments => @config[:allow_comments],
-        :preserve_hacks    => @config[:allow_hacks])
+        rule[:block] = tree!(styles)
 
-      rule[:block] = tree!(styles)
+      elsif @at_rules_with_properties.include?(name)
+        props = Crass::Parser.parse_properties(rule[:block],
+          preserve_comments: @config[:allow_comments],
+          preserve_hacks: @config[:allow_hacks])
 
-    elsif @at_rules_with_properties.include?(name)
-      props = Crass::Parser.parse_properties(rule[:block],
-        :preserve_comments => @config[:allow_comments],
-        :preserve_hacks    => @config[:allow_hacks])
+        rule[:block] = tree!(props)
 
-      rule[:block] = tree!(props)
-
-    elsif @at_rules.include?(name)
-      return nil if name == "import" && !import_url_allowed?(rule)
-      return nil if rule.has_key?(:block)
-    else
-      return nil
-    end
-
-    rule
-  end
-
-  # Returns `true` if the given CSS function name is an image-related function
-  # that may contain image URLs that need to be validated.
-  def image_function?(name)
-    ['image', 'image-set', '-webkit-image-set'].include?(name)
-  end
-
-  # Passes the URL value of an @import rule to a block to ensure
-  # it's an allowed URL
-  def import_url_allowed?(rule)
-    return true unless @import_url_validator
-
-    url_token = rule[:tokens].detect { |t| t[:node] == :url || t[:node] == :string }
-
-    # don't allow @imports with no URL value
-    return false unless url_token && (import_url = url_token[:value])
-
-    @import_url_validator.call(import_url)
-  end
-
-  # Sanitizes a CSS property node. Returns the sanitized node, or `nil` if the
-  # current config doesn't allow this property.
-  def property!(prop)
-    name = prop[:name].downcase
-
-    # Preserve IE * and _ hacks if desired.
-    if @config[:allow_hacks]
-      name.slice!(0) if name =~ /\A[*_]/
-    end
-
-    return nil unless @config[:properties].include?(name)
-
-    nodes          = prop[:children].dup
-    combined_value = String.new
-
-    nodes.each do |child|
-      value = child[:value]
-
-      case child[:node]
-      when :ident
-        combined_value << value.downcase if String === value
-
-      when :function
-        if child.key?(:name)
-          name = child[:name].downcase
-
-          if name == 'url'
-            return nil unless valid_url?(child)
-          end
-
-          if image_function?(name)
-            return nil unless valid_image?(child)
-          end
-
-          combined_value << name
-          return nil if name == 'expression' || combined_value == 'expression'
-        end
-
-        if Array === value
-          nodes.concat(value)
-        elsif String === value
-          lowercase_value = value.downcase
-          combined_value << lowercase_value
-          return nil if lowercase_value == 'expression' || combined_value == 'expression'
-        end
-
-      when :url
-        return nil unless valid_url?(child)
-
-      when :bad_url
+      elsif @at_rules.include?(name)
+        return nil if name == "import" && !import_url_allowed?(rule)
+        return nil if rule.has_key?(:block)
+      else
         return nil
       end
+
+      rule
     end
 
-    prop
-  end
+    # Returns `true` if the given CSS function name is an image-related function
+    # that may contain image URLs that need to be validated.
+    def image_function?(name)
+      ["image", "image-set", "-webkit-image-set"].include?(name)
+    end
 
-  # Returns `true` if the given node (which may be of type `:url` or
-  # `:function`, since the CSS syntax can produce both) uses an allowlisted
-  # protocol.
-  def valid_url?(node)
-    type = node[:node]
+    # Passes the URL value of an @import rule to a block to ensure
+    # it's an allowed URL
+    def import_url_allowed?(rule)
+      return true unless @import_url_validator
 
-    if type == :function
-      return false unless node.key?(:name) && node[:name].downcase == 'url'
-      return false unless Array === node[:value]
+      url_token = rule[:tokens].detect { |t| t[:node] == :url || t[:node] == :string }
 
-      # A URL function's `:value` should be an array containing no more than one
-      # `:string` node and any number of `:whitespace` nodes.
-      #
-      # If it contains more than one `:string` node, or if it contains any other
-      # nodes except `:whitespace` nodes, it's not valid.
-      url_string_node = nil
+      # don't allow @imports with no URL value
+      return false unless url_token && (import_url = url_token[:value])
 
-      node[:value].each do |token|
-        return false unless Hash === token
+      @import_url_validator.call(import_url)
+    end
 
-        case token[:node]
+    # Sanitizes a CSS property node. Returns the sanitized node, or `nil` if the
+    # current config doesn't allow this property.
+    def property!(prop)
+      name = prop[:name].downcase
+
+      # Preserve IE * and _ hacks if desired.
+      if @config[:allow_hacks]
+        name.slice!(0) if /\A[*_]/.match?(name)
+      end
+
+      return nil unless @config[:properties].include?(name)
+
+      nodes = prop[:children].dup
+      combined_value = +""
+
+      nodes.each do |child|
+        value = child[:value]
+
+        case child[:node]
+        when :ident
+          combined_value << value.downcase if String === value
+
+        when :function
+          if child.key?(:name)
+            name = child[:name].downcase
+
+            if name == "url"
+              return nil unless valid_url?(child)
+            end
+
+            if image_function?(name)
+              return nil unless valid_image?(child)
+            end
+
+            combined_value << name
+            return nil if name == "expression" || combined_value == "expression"
+          end
+
+          if Array === value
+            nodes.concat(value)
+          elsif String === value
+            lowercase_value = value.downcase
+            combined_value << lowercase_value
+            return nil if lowercase_value == "expression" || combined_value == "expression"
+          end
+
+        when :url
+          return nil unless valid_url?(child)
+
+        when :bad_url
+          return nil
+        end
+      end
+
+      prop
+    end
+
+    # Returns `true` if the given node (which may be of type `:url` or
+    # `:function`, since the CSS syntax can produce both) uses an allowlisted
+    # protocol.
+    def valid_url?(node)
+      type = node[:node]
+
+      if type == :function
+        return false unless node.key?(:name) && node[:name].downcase == "url"
+        return false unless Array === node[:value]
+
+        # A URL function's `:value` should be an array containing no more than
+        # one `:string` node and any number of `:whitespace` nodes.
+        #
+        # If it contains more than one `:string` node, or if it contains any
+        # other nodes except `:whitespace` nodes, it's not valid.
+        url_string_node = nil
+
+        node[:value].each do |token|
+          return false unless Hash === token
+
+          case token[:node]
           when :string
             return false unless url_string_node.nil?
             url_string_node = token
@@ -335,47 +337,45 @@ class Sanitize; class CSS
 
           else
             return false
+          end
         end
+
+        return false if url_string_node.nil?
+        url = url_string_node[:value]
+      elsif type == :url
+        url = node[:value]
+      else
+        return false
       end
 
-      return false if url_string_node.nil?
-      url = url_string_node[:value]
-    elsif type == :url
-      url = node[:value]
-    else
-      return false
+      if url =~ Sanitize::REGEX_PROTOCOL
+        @config[:protocols].include?($1.downcase)
+      else
+        @config[:protocols].include?(:relative)
+      end
     end
 
-    if url =~ Sanitize::REGEX_PROTOCOL
-      return @config[:protocols].include?($1.downcase)
-    else
-      return @config[:protocols].include?(:relative)
-    end
+    # Returns `true` if the given node is an image-related function and contains
+    # only strings that use an allowlisted protocol.
+    def valid_image?(node)
+      return false unless node[:node] == :function
+      return false unless node.key?(:name) && image_function?(node[:name].downcase)
+      return false unless Array === node[:value]
 
-    false
-  end
-
-  # Returns `true` if the given node is an image-related function and contains
-  # only strings that use an allowlisted protocol.
-  def valid_image?(node)
-    return false unless node[:node] == :function
-    return false unless node.key?(:name) && image_function?(node[:name].downcase)
-    return false unless Array === node[:value]
-
-    node[:value].each do |token|
+      node[:value].each do |token|
         return false unless Hash === token
 
         case token[:node]
-          when :string
-            if token[:value] =~ Sanitize::REGEX_PROTOCOL
-              return false unless @config[:protocols].include?($1.downcase)
-            else
-              return false unless @config[:protocols].include?(:relative)
-            end
+        when :string
+          if token[:value] =~ Sanitize::REGEX_PROTOCOL
+            return false unless @config[:protocols].include?($1.downcase)
           else
-            next
+            return false unless @config[:protocols].include?(:relative)
+          end
+        else
+          next
         end
       end
+    end
   end
-
-end; end
+end

@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
-require_relative '../lib/sanitize'
+require "minitest/autorun"
+require "sanitize"

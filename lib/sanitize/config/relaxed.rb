@@ -3,44 +3,42 @@
 class Sanitize
   module Config
     RELAXED = freeze_config(
-      :elements => BASIC[:elements] + %w[
+      elements: BASIC[:elements] + %w[
         address article aside bdi bdo body caption col colgroup data del div
         figcaption figure footer h1 h2 h3 h4 h5 h6 head header hgroup hr html
         img ins main nav rp rt ruby section span style summary table tbody
         td tfoot th thead title tr wbr
       ],
 
-      :allow_doctype => true,
+      allow_doctype: true,
 
-      :attributes => merge(BASIC[:attributes],
-        :all       => %w[class dir hidden id lang style tabindex title translate],
-        'a'        => %w[href hreflang name rel],
-        'col'      => %w[span width],
-        'colgroup' => %w[span width],
-        'data'     => %w[value],
-        'del'      => %w[cite datetime],
-        'img'      => %w[align alt border height src srcset width],
-        'ins'      => %w[cite datetime],
-        'li'       => %w[value],
-        'ol'       => %w[reversed start type],
-        'style'    => %w[media scoped type],
-        'table'    => %w[align bgcolor border cellpadding cellspacing frame rules sortable summary width],
-        'td'       => %w[abbr align axis colspan headers rowspan valign width],
-        'th'       => %w[abbr align axis colspan headers rowspan scope sorted valign width],
-        'ul'       => %w[type]
-      ),
+      attributes: merge(BASIC[:attributes],
+        :all => %w[class dir hidden id lang style tabindex title translate],
+        "a" => %w[href hreflang name rel],
+        "col" => %w[span width],
+        "colgroup" => %w[span width],
+        "data" => %w[value],
+        "del" => %w[cite datetime],
+        "img" => %w[align alt border height src srcset width],
+        "ins" => %w[cite datetime],
+        "li" => %w[value],
+        "ol" => %w[reversed start type],
+        "style" => %w[media scoped type],
+        "table" => %w[align bgcolor border cellpadding cellspacing frame rules sortable summary width],
+        "td" => %w[abbr align axis colspan headers rowspan valign width],
+        "th" => %w[abbr align axis colspan headers rowspan scope sorted valign width],
+        "ul" => %w[type]),
 
-      :protocols => merge(BASIC[:protocols],
-        'del' => {'cite' => ['http', 'https', :relative]},
-        'img' => {'src'  => ['http', 'https', :relative]},
-        'ins' => {'cite' => ['http', 'https', :relative]}
-      ),
+      protocols: merge(BASIC[:protocols],
+        "del" => {"cite" => ["http", "https", :relative]},
+        "img" => {"src" => ["http", "https", :relative]},
+        "ins" => {"cite" => ["http", "https", :relative]}),
 
-      :css => {
-        :allow_comments => true,
-        :allow_hacks    => true,
+      css: {
+        allow_comments: true,
+        allow_hacks: true,
 
-        :at_rules_with_properties => %w[
+        at_rules_with_properties: %w[
           bottom-center
           bottom-left
           bottom-left-corner
@@ -61,7 +59,7 @@ class Sanitize
           top-right-corner
         ],
 
-        :at_rules_with_styles => %w[
+        at_rules_with_styles: %w[
           -moz-keyframes
           -o-keyframes
           -webkit-keyframes
@@ -71,9 +69,9 @@ class Sanitize
           supports
         ],
 
-        :protocols => ['http', 'https', :relative],
+        protocols: ["http", "https", :relative],
 
-        :properties => %w[
+        properties: %w[
           -moz-appearance
           -moz-background-inline-policy
           -moz-box-sizing

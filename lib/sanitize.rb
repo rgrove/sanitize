@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require 'nokogiri'
-require 'set'
+require "nokogiri"
+require "set"
 
-require_relative 'sanitize/version'
-require_relative 'sanitize/config'
-require_relative 'sanitize/config/default'
-require_relative 'sanitize/config/restricted'
-require_relative 'sanitize/config/basic'
-require_relative 'sanitize/config/relaxed'
-require_relative 'sanitize/css'
-require_relative 'sanitize/transformers/clean_cdata'
-require_relative 'sanitize/transformers/clean_comment'
-require_relative 'sanitize/transformers/clean_css'
-require_relative 'sanitize/transformers/clean_doctype'
-require_relative 'sanitize/transformers/clean_element'
+require_relative "sanitize/version"
+require_relative "sanitize/config"
+require_relative "sanitize/config/default"
+require_relative "sanitize/config/restricted"
+require_relative "sanitize/config/basic"
+require_relative "sanitize/config/relaxed"
+require_relative "sanitize/css"
+require_relative "sanitize/transformers/clean_cdata"
+require_relative "sanitize/transformers/clean_comment"
+require_relative "sanitize/transformers/clean_css"
+require_relative "sanitize/transformers/clean_doctype"
+require_relative "sanitize/transformers/clean_element"
 
 class Sanitize
   attr_reader :config
@@ -33,12 +33,12 @@ class Sanitize
   # -   https://infra.spec.whatwg.org/#noncharacter
   REGEX_HTML_NON_CHARACTERS = /[\ufdd0-\ufdef\ufffe\uffff\u{1fffe}\u{1ffff}\u{2fffe}\u{2ffff}\u{3fffe}\u{3ffff}\u{4fffe}\u{4ffff}\u{5fffe}\u{5ffff}\u{6fffe}\u{6ffff}\u{7fffe}\u{7ffff}\u{8fffe}\u{8ffff}\u{9fffe}\u{9ffff}\u{afffe}\u{affff}\u{bfffe}\u{bffff}\u{cfffe}\u{cffff}\u{dfffe}\u{dffff}\u{efffe}\u{effff}\u{ffffe}\u{fffff}\u{10fffe}\u{10ffff}]+/u
 
-  # Matches an attribute value that could be treated by a browser as a URL
-  # with a protocol prefix, such as "http:" or "javascript:". Any string of zero
-  # or more characters followed by a colon is considered a match, even if the
-  # colon is encoded as an entity and even if it's an incomplete entity (which
-  # IE6 and Opera will still parse).
-  REGEX_PROTOCOL = /\A\s*([^\/#]*?)(?:\:|&#0*58|&#x0*3a)/i
+  # Matches an attribute value that could be treated by a browser as a URL with
+  # a protocol prefix, such as "http:" or "javascript:". Any string of zero or
+  # more characters followed by a colon is considered a match, even if the colon
+  # is encoded as an entity and even if it's an incomplete entity (which IE6 and
+  # Opera will still parse).
+  REGEX_PROTOCOL = /\A\s*([^\/#]*?)(?::|&#0*58|&#x0*3a)/i
 
   # Matches one or more characters that should be stripped from HTML before
   # parsing. This is a combination of `REGEX_HTML_CONTROL_CHARACTERS` and
@@ -99,12 +99,12 @@ class Sanitize
     @transformers << Transformers::CleanElement.new(@config)
     @transformers << Transformers::CleanComment unless @config[:allow_comments]
 
-    if @config[:elements].include?('style')
+    if @config[:elements].include?("style")
       scss = Sanitize::CSS.new(config)
       @transformers << Transformers::CSS::CleanElement.new(scss)
     end
 
-    if @config[:attributes].values.any? {|attr| attr.include?('style') }
+    if @config[:attributes].values.any? { |attr| attr.include?("style") }
       scss ||= Sanitize::CSS.new(config)
       @transformers << Transformers::CSS::CleanAttribute.new(scss)
     end
@@ -112,7 +112,7 @@ class Sanitize
     @transformers << Transformers::CleanDoctype
     @transformers << Transformers::CleanCDATA
 
-    @transformer_config = { config: @config }
+    @transformer_config = {config: @config}
   end
 
   # Returns a sanitized copy of the given _html_ document.
@@ -121,7 +121,7 @@ class Sanitize
   # error will be raised. If this is undesirable, you should probably use
   # {#fragment} instead.
   def document(html)
-    return '' unless html
+    return "" unless html
 
     doc = Nokogiri::HTML5.parse(preprocess(html), **@config[:parser_options])
     node!(doc)
@@ -133,7 +133,7 @@ class Sanitize
 
   # Returns a sanitized copy of the given _html_ fragment.
   def fragment(html)
-    return '' unless html
+    return "" unless html
 
     frag = Nokogiri::HTML5.fragment(preprocess(html), **@config[:parser_options])
     node!(frag)
@@ -152,7 +152,7 @@ class Sanitize
     raise ArgumentError unless node.is_a?(Nokogiri::XML::Node)
 
     if node.is_a?(Nokogiri::XML::Document)
-      unless @config[:elements].include?('html')
+      unless @config[:elements].include?("html")
         raise Error, 'When sanitizing a document, "<html>" must be allowlisted.'
       end
     end
@@ -175,13 +175,13 @@ class Sanitize
   def preprocess(html)
     html = html.to_s.dup
 
-    unless html.encoding.name == 'UTF-8'
-      html.encode!('UTF-8',
-        :invalid => :replace,
-        :undef   => :replace)
+    unless html.encoding.name == "UTF-8"
+      html.encode!("UTF-8",
+        invalid: :replace,
+        undef: :replace)
     end
 
-    html.gsub!(REGEX_UNSUITABLE_CHARS, '')
+    html.gsub!(REGEX_UNSUITABLE_CHARS, "")
     html
   end
 
@@ -225,17 +225,17 @@ class Sanitize
 
     child = node.child
 
-    while child do
+    while child
       prev = child.previous_sibling
       traverse(child, &block)
 
-      if child.parent == node
-        child = child.next_sibling
+      child = if child.parent == node
+        child.next_sibling
       else
         # The child was unlinked or reparented, so traverse the previous node's
         # next sibling, or the parent's first child if there is no previous
         # node.
-        child = prev ? prev.next_sibling : node.child
+        prev ? prev.next_sibling : node.child
       end
     end
   end

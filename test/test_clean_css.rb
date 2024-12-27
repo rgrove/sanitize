@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'common'
+require_relative "common"
 
-describe 'Sanitize::Transformers::CSS::CleanAttribute' do
+describe "Sanitize::Transformers::CSS::CleanAttribute" do
   make_my_diffs_pretty!
   parallelize_me!
 
@@ -10,21 +10,21 @@ describe 'Sanitize::Transformers::CSS::CleanAttribute' do
     @s = Sanitize.new(Sanitize::Config::RELAXED)
   end
 
-  it 'should sanitize CSS properties in style attributes' do
+  it "should sanitize CSS properties in style attributes" do
     _(@s.fragment(%[
       <div style="color: #fff; width: expression(alert(1)); /* <-- evil! */"></div>
-    ].strip)).must_equal %[
+    ].strip)).must_equal %(
       <div style="color: #fff;  /* <-- evil! */"></div>
-    ].strip
+    ).strip
   end
 
-  it 'should remove the style attribute if the sanitized CSS is empty' do
-    _(@s.fragment('<div style="width: expression(alert(1))"></div>')).
-      must_equal '<div></div>'
+  it "should remove the style attribute if the sanitized CSS is empty" do
+    _(@s.fragment('<div style="width: expression(alert(1))"></div>'))
+      .must_equal "<div></div>"
   end
 end
 
-describe 'Sanitize::Transformers::CSS::CleanElement' do
+describe "Sanitize::Transformers::CSS::CleanElement" do
   make_my_diffs_pretty!
   parallelize_me!
 
@@ -32,7 +32,7 @@ describe 'Sanitize::Transformers::CSS::CleanElement' do
     @s = Sanitize.new(Sanitize::Config::RELAXED)
   end
 
-  it 'should sanitize CSS stylesheets in <style> elements' do
+  it "should sanitize CSS stylesheets in <style> elements" do
     html = %[
       <style>@import url(evil.css);
       /* Yay CSS! */
@@ -62,7 +62,7 @@ describe 'Sanitize::Transformers::CSS::CleanElement' do
     ].strip
   end
 
-  it 'should remove the <style> element if the sanitized CSS is empty' do
-    _(@s.fragment('<style></style>')).must_equal ''
+  it "should remove the <style> element if the sanitized CSS is empty" do
+    _(@s.fragment("<style></style>")).must_equal ""
   end
 end

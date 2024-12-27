@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
-require_relative 'common'
+require_relative "common"
 
-describe 'Sanitize::Transformers::CleanDoctype' do
+describe "Sanitize::Transformers::CleanDoctype" do
   make_my_diffs_pretty!
   parallelize_me!
 
-  describe 'when :allow_doctype is false' do
+  describe "when :allow_doctype is false" do
     before do
-      @s = Sanitize.new(:allow_doctype => false, :elements => ['html'])
+      @s = Sanitize.new(allow_doctype: false, elements: ["html"])
     end
 
-    it 'should remove doctype declarations' do
-      _(@s.document('<!DOCTYPE html><html>foo</html>')).must_equal "<html>foo</html>"
-      _(@s.fragment('<!DOCTYPE html>foo')).must_equal 'foo'
+    it "should remove doctype declarations" do
+      _(@s.document("<!DOCTYPE html><html>foo</html>")).must_equal "<html>foo</html>"
+      _(@s.fragment("<!DOCTYPE html>foo")).must_equal "foo"
     end
 
-    it 'should not allow doctype definitions in fragments' do
-      _(@s.fragment('<!DOCTYPE html><html>foo</html>'))
+    it "should not allow doctype definitions in fragments" do
+      _(@s.fragment("<!DOCTYPE html><html>foo</html>"))
         .must_equal "foo"
 
       _(@s.fragment('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>foo</html>'))
@@ -28,13 +28,13 @@ describe 'Sanitize::Transformers::CleanDoctype' do
     end
   end
 
-  describe 'when :allow_doctype is true' do
+  describe "when :allow_doctype is true" do
     before do
-      @s = Sanitize.new(:allow_doctype => true, :elements => ['html'])
+      @s = Sanitize.new(allow_doctype: true, elements: ["html"])
     end
 
-    it 'should allow doctype declarations in documents' do
-      _(@s.document('<!DOCTYPE html><html>foo</html>'))
+    it "should allow doctype declarations in documents" do
+      _(@s.document("<!DOCTYPE html><html>foo</html>"))
         .must_equal "<!DOCTYPE html><html>foo</html>"
 
       _(@s.document('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>foo</html>'))
@@ -44,22 +44,22 @@ describe 'Sanitize::Transformers::CleanDoctype' do
         .must_equal "<!DOCTYPE html><html>foo</html>"
     end
 
-    it 'should not allow obviously invalid doctype declarations in documents' do
-      _(@s.document('<!DOCTYPE blah blah blah><html>foo</html>'))
+    it "should not allow obviously invalid doctype declarations in documents" do
+      _(@s.document("<!DOCTYPE blah blah blah><html>foo</html>"))
         .must_equal "<!DOCTYPE html><html>foo</html>"
 
-      _(@s.document('<!DOCTYPE blah><html>foo</html>'))
+      _(@s.document("<!DOCTYPE blah><html>foo</html>"))
         .must_equal "<!DOCTYPE html><html>foo</html>"
 
       _(@s.document('<!DOCTYPE html BLAH "-//W3C//DTD HTML 4.01//EN"><html>foo</html>'))
         .must_equal "<!DOCTYPE html><html>foo</html>"
 
-      _(@s.document('<!whatever><html>foo</html>'))
+      _(@s.document("<!whatever><html>foo</html>"))
         .must_equal "<html>foo</html>"
     end
 
-    it 'should not allow doctype definitions in fragments' do
-      _(@s.fragment('<!DOCTYPE html><html>foo</html>'))
+    it "should not allow doctype definitions in fragments" do
+      _(@s.fragment("<!DOCTYPE html><html>foo</html>"))
         .must_equal "foo"
 
       _(@s.fragment('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>foo</html>'))
