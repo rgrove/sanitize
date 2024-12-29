@@ -22,7 +22,8 @@ Gem::Specification.new do |s|
 
   s.metadata = {
     "changelog_uri" => "https://github.com/rgrove/sanitize/blob/main/CHANGELOG.md",
-    "documentation_uri" => "https://rubydoc.info/github/rgrove/sanitize"
+    "documentation_uri" => "https://rubydoc.info/github/rgrove/sanitize",
+    "rubygems_mfa_required" => "true"
   }
 
   s.add_dependency("crass", "~> 1.0.2")
