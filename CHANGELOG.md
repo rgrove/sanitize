@@ -8,6 +8,8 @@ Sanitize itself has no breaking API changes in this release, but the major versi
 
 ### Added
 
+- Added over 100 new CSS properties to the relaxed config, representing all properties that are listed with a status of "Working Draft" or better in the latest [W3C "All Properties" list](https://www.w3.org/Style/CSS/all-properties.en.html).
+
 - Added the `-webkit-text-fill-color` CSS property to the relaxed config. [@radar - #244](https://github.com/rgrove/sanitize/pull/244)
 
 ### Changed

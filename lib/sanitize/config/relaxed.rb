@@ -348,6 +348,7 @@ class Sanitize
           -webkit-user-drag
           -webkit-wrap-flow
           -webkit-wrap-through
+          accent-color
           align-content
           align-items
           align-self
@@ -355,7 +356,10 @@ class Sanitize
           alignment-baseline
           all
           anchor-point
+          anchor-name
+          anchor-scope
           animation
+          animation-composition
           animation-delay
           animation-direction
           animation-duration
@@ -363,11 +367,18 @@ class Sanitize
           animation-iteration-count
           animation-name
           animation-play-state
+          animation-range
+          animation-range-end
+          animation-range-start
+          animation-timeline
           animation-timing-function
+          appearance
+          aspect-ratio
           azimuth
           backface-visibility
           background
           background-attachment
+          background-blend-mode
           background-clip
           background-color
           background-image
@@ -378,24 +389,54 @@ class Sanitize
           baseline-shift
           binding
           bleed
+          baseline-source
+          block-ellipsis
+          block-size
           bookmark-label
           bookmark-level
           bookmark-state
           border
+          border-block
+          border-block-color
+          border-block-end
+          border-block-end-color
+          border-block-end-style
+          border-block-end-width
+          border-block-start
+          border-block-start-color
+          border-block-start-style
+          border-block-start-width
+          border-block-style
+          border-block-width
           border-bottom
           border-bottom-color
           border-bottom-left-radius
           border-bottom-right-radius
           border-bottom-style
           border-bottom-width
+          border-boundary
           border-collapse
           border-color
+          border-end-end-radius
+          border-end-start-radius
           border-image
           border-image-outset
           border-image-repeat
           border-image-slice
           border-image-source
           border-image-width
+          border-inline
+          border-inline-color
+          border-inline-end
+          border-inline-end-color
+          border-inline-end-style
+          border-inline-end-width
+          border-inline-start
+          border-inline-start-color
+          border-inline-start-style
+          border-inline-start-width
+          border-inline-style
+          border-inline-width
           border-left
           border-left-color
           border-left-style
@@ -406,6 +447,8 @@ class Sanitize
           border-right-style
           border-right-width
           border-spacing
+          border-start-end-radius
+          border-start-start-radius
           border-style
           border-top
           border-top-color
@@ -425,15 +468,20 @@ class Sanitize
           break-inside
           caption-side
           chains
+          caret
+          caret-color
+          caret-shape
           clear
           clip
           clip-path
           clip-rule
           color
           color-interpolation
+          color-adjust
           color-interpolation-filters
           color-profile
           color-rendering
+          color-scheme
           column-count
           column-fill
           column-gap
@@ -445,7 +493,17 @@ class Sanitize
           column-width
           columns
           contain
+          contain-intrinsic-block-size
+          contain-intrinsic-height
+          contain-intrinsic-inline-size
+          contain-intrinsic-size
+          contain-intrinsic-width
+          container
+          container-name
+          container-type
           content
+          content-visibility
+          continue
           counter-increment
           counter-reset
           counter-set
@@ -485,20 +543,33 @@ class Sanitize
           font-feature-settings
           font-kerning
           font-language-override
+          font-optical-sizing
+          font-palette
           font-size
           font-size-adjust
           font-stretch
           font-style
           font-synthesis
+          font-synthesis-position
+          font-synthesis-small-caps
+          font-synthesis-style
+          font-synthesis-weight
           font-variant
           font-variant-alternates
           font-variant-caps
           font-variant-east-asian
+          font-variant-emoji
           font-variant-ligatures
           font-variant-numeric
           font-variant-position
+          font-variation-settings
           font-weight
           glyph-orientation-horizontal
+          font-width
+          footnote-display
+          footnote-policy
+          forced-color-adjust
+          gap
           glyph-orientation-vertical
           grid
           grid-area
@@ -657,22 +728,33 @@ class Sanitize
           tab-size
           table-layout
           text-align
+          text-align-all
           text-align-last
           text-anchor
           text-combine-horizontal
+          text-autospace
+          text-box
+          text-box-edge
+          text-box-trim
           text-combine-upright
           text-decoration
           text-decoration-color
           text-decoration-line
           text-decoration-skip
+          text-decoration-skip-box
           text-decoration-skip-ink
+          text-decoration-skip-inset
+          text-decoration-skip-self
+          text-decoration-skip-spaces
           text-decoration-style
           text-decoration-thickness
           text-emphasis
           text-emphasis-color
           text-emphasis-position
+          text-emphasis-skip
           text-emphasis-style
           text-height
+          text-group-align
           text-indent
           text-justify
           text-orientation
@@ -681,12 +763,19 @@ class Sanitize
           text-shadow
           text-size-adjust
           text-space-collapse
+          text-spacing
+          text-spacing-trim
           text-transform
+          text-underline-offset
           text-underline-position
           text-wrap
+          text-wrap-mode
+          text-wrap-style
+          timeline-scope
           top
           touch-action
           transform
+          transform-box
           transform-origin
           transform-style
           transition
@@ -694,9 +783,18 @@ class Sanitize
           transition-duration
           transition-property
           transition-timing-function
+          translate
           unicode-bidi
           unicode-range
+          user-select
           vertical-align
+          view-timeline
+          view-timeline-axis
+          view-timeline-inset
+          view-timeline-name
+          view-transition-class
+          view-transition-group
+          view-transition-name
           visibility
           voice-balance
           voice-duration
@@ -708,13 +806,19 @@ class Sanitize
           voice-volume
           volume
           white-space
+          white-space-collapse
+          white-space-trim
           widows
           width
           will-change
           word-break
+          word-space-transform
           word-spacing
           word-wrap
+          wrap-after
+          wrap-before
           wrap-flow
+          wrap-inside
           wrap-through
           writing-mode
           z-index
