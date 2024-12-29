@@ -329,6 +329,41 @@ describe "Sanitize::CSS" do
         ).strip
       end
 
+      it "preserves allowlisted @container at-rules" do
+        # Sample code courtesy of MDN:
+        # https://developer.mozilla.org/en-US/docs/Web/CSS/@container
+        css = %(
+          @container (width > 400px) {
+            h2 {
+              font-size: 1.5em;
+            }
+          }
+
+          /* with an optional <container-name> */
+          @container tall (height > 30rem) {
+            h2 {
+              line-height: 1.6;
+            }
+          }
+
+          /* multiple queries in a single condition */
+          @container (width > 400px) and style(--responsive: true) {
+            h2 {
+              font-size: 1.5em;
+            }
+          }
+
+          /* condition list */
+          @container card (width > 400px), style(--responsive: true) {
+            h2 {
+              font-size: 1.5em;
+            }
+          }
+        ).strip
+
+        _(@relaxed.stylesheet(css).strip).must_equal css
+      end
+
       describe "when blockless at-rules are allowlisted" do
         before do
           @scss = Sanitize::CSS.new(Sanitize::Config.merge(Sanitize::Config::RELAXED[:css], {

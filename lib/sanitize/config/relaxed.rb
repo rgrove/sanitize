@@ -63,6 +63,7 @@ class Sanitize
           -moz-keyframes
           -o-keyframes
           -webkit-keyframes
+          container
           document
           keyframes
           media
