@@ -2,9 +2,9 @@
 
 All notable changes to Sanitize are documented in this file. The format (since version 7.0.0) is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 7.0.0 (not yet released)
+## 7.0.0 (2024-12-29)
 
-Sanitize itself has no breaking API changes in this release, but the major version number has been incremented because we've dropped support for end-of-life versions of Ruby. As long as you're using Ruby 3.1.0 or later, this should be a painless upgrade!
+Sanitize has no breaking API changes in this release, but the major version number has been incremented because we've dropped support for end-of-life versions of Ruby. As long as you're using Ruby 3.1.0 or later, this should be a painless upgrade!
 
 ### Added
 
