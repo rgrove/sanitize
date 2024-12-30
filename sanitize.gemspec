@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = <<~DESCRIPTION
     Sanitize is an allowlist-based HTML and CSS sanitizer. It removes all HTML
     and/or CSS from a string except the elements, attributes, and properties you
-    choose to allow.'
+    choose to allow.
   DESCRIPTION
 
   s.platform = Gem::Platform::RUBY
