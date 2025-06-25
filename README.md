@@ -15,7 +15,7 @@ Sanitize is based on the [Nokogiri HTML5 parser][nokogiri], which parses HTML th
 ## Links
 
 * [Home](https://github.com/rgrove/sanitize/)
-* [API Docs](https://rubydoc.info/github/rgrove/sanitize/Sanitize)
+* [API Docs](https://rubydoc.info/gems/sanitize/Sanitize)
 * [Issues](https://github.com/rgrove/sanitize/issues)
 * [Release History](https://github.com/rgrove/sanitize/releases)
 * [Online Demo](https://sanitize-web.fly.dev/)
