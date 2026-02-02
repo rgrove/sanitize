@@ -4,7 +4,7 @@ source "https://rubygems.org"
 gemspec
 
 group :development do
-  gem "minitest", "5.25.4"
+  gem "minitest", "5.27.0"
   gem "rake", "13.2.1"
   gem "rubocop-minitest", "0.36.0"
   gem "rubocop-packaging", "0.5.2"
