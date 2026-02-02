@@ -4,7 +4,6 @@ source "https://rubygems.org"
 gemspec
 
 group :development do
-  gem "bundler", "~> 2.3"
   gem "minitest", "5.25.4"
   gem "rake", "13.2.1"
   gem "rubocop-minitest", "0.36.0"
