@@ -35,5 +35,5 @@ Gem::Specification.new do |s|
     "CHANGELOG.md",
     "LICENSE",
     "README.md"
-  ] + Dir.glob("lib/**/*.rb") + Dir.glob("test/**/*.rb")
+  ] + Dir.glob("lib/**/*.rb")
 end
