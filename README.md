@@ -136,6 +136,9 @@ Sanitize.fragment(html,
 
 Sanitize will happily clean up a standalone CSS stylesheet or property string without needing to invoke the HTML parser.
 
+> [!WARNING]
+> This should only be used to sanitize CSS for use in a standalone CSS file. To safely sanitize CSS for use in an HTML context, such as in a `<style>` element or a `style` attribute, you must use `Sanitize.document()` or `Sanitize.fragment()` with an appropriate allowlist as described in the previous sections. Failure to do so may enable HTML injection attacks.
+
 ```ruby
 css = %[
   @import url(evil.css);
