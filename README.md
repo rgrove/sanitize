@@ -12,6 +12,12 @@ Sanitize is based on the [Nokogiri HTML5 parser][nokogiri], which parses HTML th
 [crass]:https://github.com/rgrove/crass
 [nokogiri]:https://github.com/sparklemotion/nokogiri
 
+> [!WARNING]
+>
+> Sanitize cannot fully sanitize the contents of `<math>` or `<svg>` elements. MathML and SVG elements are [foreign elements](https://html.spec.whatwg.org/multipage/syntax.html#foreign-elements) that don't follow normal HTML parsing rules.
+>
+> By default, Sanitize will remove all MathML and SVG elements. If you add MathML or SVG elements to a custom element allowlist, you may create a security vulnerability in your application.
+
 ## Links
 
 * [Home](https://github.com/rgrove/sanitize/)
