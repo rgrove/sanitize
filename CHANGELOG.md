@@ -2,6 +2,12 @@
 
 All notable changes to Sanitize are documented in this file. The format (since version 7.0.0) is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Security
+
+- Hardened CSS sanitization against tokenizer differentials involving bad URLs. CSS properties that contain a bad URL anywhere inside a simple block (such as `[...]` or `(...)`) are now removed, as are style rules whose selectors contain a bad URL and at-rules whose preludes contain a bad URL. URLs inside simple blocks are now also validated against the configured protocol allowlist. Previously, a bug in Crass (fixed in Crass 1.0.8) could be exploited to smuggle CSS declarations, rules, or at-rules past Sanitize by hiding them in a bad URL in one of these locations.
+
 ## 7.0.0 (2024-12-29)
 
 Sanitize has no breaking API changes in this release, but the major version number has been incremented because we've dropped support for end-of-life versions of Ruby. As long as you're using Ruby 3.1.0 or later, this should be a painless upgrade!

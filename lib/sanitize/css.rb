@@ -186,6 +186,8 @@ class Sanitize
 
         when :style_rule
           preceded_by_property = false
+          next nil if contains_bad_url?(node.dig(:selector, :tokens))
+
           tree!(node[:children])
           next node
 
@@ -206,6 +208,8 @@ class Sanitize
     # current config doesn't allow this at-rule.
     def at_rule!(rule)
       name = rule[:name].downcase
+
+      return nil if contains_bad_url?(rule[:prelude])
 
       if @at_rules_with_styles.include?(name)
         styles = Crass::Parser.parse_rules(rule[:block],
@@ -229,6 +233,30 @@ class Sanitize
       end
 
       rule
+    end
+
+    # Returns `true` if the given array of Crass nodes contains a `:bad_url`
+    # node at any depth.
+    #
+    # A bad URL is invalid CSS that a browser will discard, but a parser that
+    # disagrees with the browser about where a bad URL ends could be tricked
+    # into hiding CSS inside it, so it's safest to reject any construct that
+    # contains one.
+    def contains_bad_url?(nodes)
+      return false unless Array === nodes
+
+      stack = nodes.dup
+
+      until stack.empty?
+        node = stack.pop
+        next unless Hash === node
+        return true if node[:node] == :bad_url
+
+        value = node[:value]
+        stack.concat(value) if Array === value
+      end
+
+      false
     end
 
     # Returns `true` if the given CSS function name is an image-related function
@@ -298,6 +326,9 @@ class Sanitize
 
         when :url
           return nil unless valid_url?(child)
+
+        when :simple_block
+          nodes.concat(value) if Array === value
 
         when :bad_url
           return nil

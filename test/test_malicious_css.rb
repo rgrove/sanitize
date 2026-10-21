@@ -41,6 +41,87 @@ describe "Malicious CSS" do
     _(@s.properties(%[behavior: url(xss.htc);])).must_equal ""
   end
 
+  describe "sanitization bypass via bad URL tokenization differential" do
+    # Older versions of Crass didn't terminate a bad URL at a `)` that followed
+    # an escaped backslash, but browsers do. These tests ensure that CSS hidden
+    # inside a bad URL can't be smuggled past Sanitize regardless of how the
+    # installed version of Crass tokenizes it.
+    #
+    # `bs` is a single literal backslash, used to avoid escaping ambiguity.
+    bs = "\\"
+
+    before do
+      @config = {css: {properties: %w[color], protocols: []}}
+    end
+
+    it "should not allow declarations to be smuggled out of a [] block" do
+      css = %[color:[url(x"#{bs * 2})]; position:fixed; x:)]
+      result = Sanitize::CSS.properties(css, @config)
+
+      refute_includes(result, "position")
+      refute_includes(result, "url(")
+    end
+
+    it "should not allow declarations to be smuggled out of a () block" do
+      css = %[color:(url(x"#{bs * 2})); position:fixed; x:)]
+      result = Sanitize::CSS.properties(css, @config)
+
+      refute_includes(result, "position")
+      refute_includes(result, "url(")
+    end
+
+    it "should not allow declarations to be smuggled out of a style attribute" do
+      html = %[<p style='color:[url(x"#{bs * 2})]; position:fixed; x:)'>hi</p>]
+      result = Sanitize.fragment(html, Sanitize::Config.merge(Sanitize::Config::RELAXED, @config))
+
+      refute_includes(result, "position")
+      refute_includes(result, "url(")
+    end
+
+    it "should not allow rules to be smuggled out of a selector" do
+      css = %[a url(x"#{bs * 2}){} *{position:fixed;background:url(https://example.com/x)} b){color:red}]
+      result = Sanitize::CSS.stylesheet(css, @config)
+
+      refute_includes(result, "position")
+      refute_includes(result, "url(")
+    end
+
+    it "should not allow rules to be smuggled out of a nested selector function" do
+      css = %[a:not(url(x"#{bs * 2})){} *{position:fixed} x)){color:red}]
+      result = Sanitize::CSS.stylesheet(css, @config)
+
+      refute_includes(result, "position")
+      refute_includes(result, "url(")
+    end
+
+    it "should not allow an @import to be smuggled out of a selector" do
+      css = %[a url(x"#{bs * 2}){} @import url(https://example.com/x.css); b){color:red}]
+      result = Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
+
+      refute_includes(result, "@import")
+      refute_includes(result, "url(")
+    end
+
+    it "should not allow rules to be smuggled out of an at-rule prelude" do
+      css = %[@media url(x"#{bs * 2}){} *{position:fixed} x){} a{color:red}]
+      config = {css: {properties: %w[color], at_rules_with_styles: %w[media]}}
+      result = Sanitize::CSS.stylesheet(css, config)
+
+      refute_includes(result, "position")
+      refute_includes(result, "url(")
+    end
+
+    it "should validate URLs inside simple blocks" do
+      _(Sanitize::CSS.properties("color:[url(javascript:alert(1))]", Sanitize::Config::RELAXED))
+        .must_equal ""
+    end
+
+    it "should allow simple blocks that don't contain bad URLs" do
+      css = "grid-template-columns:[full-start] 1fr [full-end]"
+      _(Sanitize::CSS.properties(css, Sanitize::Config::RELAXED)).must_equal css
+    end
+  end
+
   describe "sanitization bypass via CSS at-rule in HTML <style> element" do
     before do
       @s = Sanitize.new(Sanitize::Config::RELAXED)
