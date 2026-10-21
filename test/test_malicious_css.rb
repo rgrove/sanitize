@@ -166,6 +166,50 @@ describe "Malicious CSS" do
     end
   end
 
+  describe "sanitization bypass via at-rule nested in style rule" do
+    # Browsers that support CSS nesting parse the block of an at-rule like
+    # `@media` that's nested inside a style rule as declarations rather than
+    # rules, so a declaration disguised as a style rule's selector could be
+    # used to smuggle in disallowed properties.
+
+    before do
+      @config = {css: {properties: %w[color], protocols: [], at_rules_with_styles: %w[container media supports]}}
+    end
+
+    it "should not allow properties to be smuggled in a nested @media rule" do
+      css = "p{@media all{position:fixed;top:0;background:url(https://example.com/x);a{}}}"
+      result = Sanitize::CSS.stylesheet(css, @config)
+
+      refute_includes(result, "position")
+      refute_includes(result, "url(")
+    end
+
+    it "should not allow properties to be smuggled in a nested @supports rule in a <style> element" do
+      html = "<style>p{@supports (color:red){position:fixed;a{}}}</style>"
+      config = Sanitize::Config.merge(Sanitize::Config::RELAXED, @config)
+      result = Sanitize.fragment(html, config)
+
+      refute_includes(result, "position")
+    end
+
+    it "should not allow properties to be smuggled in multiple levels of nested at-rules" do
+      css = "p{@media all{@supports (x:y){@container (width>1px){position:fixed;a{}}}}}"
+      result = Sanitize::CSS.stylesheet(css, @config)
+
+      refute_includes(result, "position")
+    end
+
+    it "should sanitize declarations in nested at-rules" do
+      css = "p{color:blue;@media all{color:red;position:fixed}}"
+      _(Sanitize::CSS.stylesheet(css, @config)).must_equal "p{color:blue;@media all{color:red;}}"
+    end
+
+    it "should still sanitize the blocks of top-level at-rules as rules" do
+      css = "@media all{a{color:red}}"
+      _(Sanitize::CSS.stylesheet(css, @config)).must_equal css
+    end
+  end
+
   describe "sanitization bypass via Crass maximum nesting depth" do
     # Crass replaces blocks and functions nested more deeply than its maximum
     # nesting depth with `:error` nodes whose contents aren't parsed, but which

@@ -157,48 +157,7 @@ class Sanitize
     #
     # @return [Array] Sanitized Crass CSS parse tree.
     def tree!(tree)
-      preceded_by_property = false
-
-      tree.map! do |node|
-        next nil if node.nil?
-
-        case node[:node]
-        when :at_rule
-          preceded_by_property = false
-          next at_rule!(node)
-
-        when :comment
-          next node if @config[:allow_comments]
-
-        when :property
-          prop = property!(node)
-          preceded_by_property = !prop.nil?
-          next prop
-
-        when :semicolon
-          # Only preserve the semicolon if it was preceded by an allowlisted
-          # property. Otherwise, omit it in order to prevent redundant
-          # semicolons.
-          if preceded_by_property
-            preceded_by_property = false
-            next node
-          end
-
-        when :style_rule
-          preceded_by_property = false
-          next nil if contains_invalid_node?(node.dig(:selector, :tokens))
-
-          tree!(node[:children])
-          next node
-
-        when :whitespace
-          next node
-        end
-
-        nil
-      end
-
-      tree
+      sanitize_tree!(tree, nested: false)
     end
 
     # -- Protected Instance Methods --------------------------------------------
@@ -206,24 +165,34 @@ class Sanitize
 
     # Sanitizes a CSS at-rule node. Returns the sanitized node, or `nil` if the
     # current config doesn't allow this at-rule.
-    def at_rule!(rule)
+    #
+    # If _nested_ is `true`, the at-rule is nested inside a style rule.
+    def at_rule!(rule, nested:)
       name = rule[:name].downcase
 
       return nil if contains_invalid_node?(rule[:prelude])
 
       if @at_rules_with_styles.include?(name)
-        styles = Crass::Parser.parse_rules(rule[:block],
+        # Browsers that support CSS nesting parse the block of an at-rule like
+        # `@media` that's nested inside a style rule as declarations rather than
+        # rules, so it must be sanitized as declarations. Otherwise a
+        # declaration like `position:fixed;a{}` would be parsed as a style rule
+        # with the selector `position:fixed;a` and would bypass the property
+        # allowlist.
+        parse_method = nested ? :parse_properties : :parse_rules
+
+        styles = Crass::Parser.public_send(parse_method, rule[:block],
           preserve_comments: @config[:allow_comments],
           preserve_hacks: @config[:allow_hacks])
 
-        rule[:block] = tree!(styles)
+        rule[:block] = sanitize_tree!(styles, nested: nested)
 
       elsif @at_rules_with_properties.include?(name)
         props = Crass::Parser.parse_properties(rule[:block],
           preserve_comments: @config[:allow_comments],
           preserve_hacks: @config[:allow_hacks])
 
-        rule[:block] = tree!(props)
+        rule[:block] = sanitize_tree!(props, nested: nested)
 
       elsif @at_rules.include?(name)
         return nil if name == "import" && !import_url_allowed?(rule)
@@ -362,6 +331,56 @@ class Sanitize
       end
 
       prop
+    end
+
+    # Sanitizes the given Crass CSS parse tree and all its children, modifying
+    # it in place. See {#tree!}.
+    #
+    # If _nested_ is `true`, the tree is the contents of a style rule, or of an
+    # at-rule nested inside a style rule.
+    def sanitize_tree!(tree, nested:)
+      preceded_by_property = false
+
+      tree.map! do |node|
+        next nil if node.nil?
+
+        case node[:node]
+        when :at_rule
+          preceded_by_property = false
+          next at_rule!(node, nested: nested)
+
+        when :comment
+          next node if @config[:allow_comments]
+
+        when :property
+          prop = property!(node)
+          preceded_by_property = !prop.nil?
+          next prop
+
+        when :semicolon
+          # Only preserve the semicolon if it was preceded by an allowlisted
+          # property. Otherwise, omit it in order to prevent redundant
+          # semicolons.
+          if preceded_by_property
+            preceded_by_property = false
+            next node
+          end
+
+        when :style_rule
+          preceded_by_property = false
+          next nil if contains_invalid_node?(node.dig(:selector, :tokens))
+
+          sanitize_tree!(node[:children], nested: true)
+          next node
+
+        when :whitespace
+          next node
+        end
+
+        nil
+      end
+
+      tree
     end
 
     # Returns `true` if the given node (which may be of type `:url` or
