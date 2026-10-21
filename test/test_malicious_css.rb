@@ -166,11 +166,12 @@ describe "Malicious CSS" do
     end
   end
 
-  describe "sanitization bypass via at-rule nested in style rule" do
+  describe "sanitization bypass via at-rule in a list of declarations" do
     # Browsers that support CSS nesting parse the block of an at-rule like
-    # `@media` that's nested inside a style rule as declarations rather than
-    # rules, so a declaration disguised as a style rule's selector could be
-    # used to smuggle in disallowed properties.
+    # `@media` that appears in a list of declarations (such as the contents of
+    # a style rule) as more declarations rather than as rules, so a declaration
+    # disguised as a style rule's selector could be used to smuggle in
+    # disallowed properties.
 
     before do
       @config = {css: {properties: %w[color], protocols: [], at_rules_with_styles: %w[container media supports]}}
@@ -202,6 +203,22 @@ describe "Malicious CSS" do
     it "should sanitize declarations in nested at-rules" do
       css = "p{color:blue;@media all{color:red;position:fixed}}"
       _(Sanitize::CSS.stylesheet(css, @config)).must_equal "p{color:blue;@media all{color:red;}}"
+    end
+
+    it "should not allow properties to be smuggled in an at-rule in properties that may be embedded in a style rule" do
+      css = "color:red;@media all{position:fixed;a{}}"
+      result = Sanitize::CSS.properties(css, @config)
+
+      refute_includes(result, "position")
+    end
+
+    it "should not allow properties to be smuggled in an at-rule nested in an at-rule with properties" do
+      config = Sanitize::Config.merge(@config, css: {at_rules_with_properties: %w[font-face page]})
+
+      %w[font-face page].each do |name|
+        result = Sanitize::CSS.stylesheet("@#{name}{@media all{position:fixed;a{}}}", config)
+        refute_includes(result, "position")
+      end
     end
 
     it "should still sanitize the blocks of top-level at-rules as rules" do

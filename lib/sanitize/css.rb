@@ -66,6 +66,10 @@ class Sanitize
     #   tree = Crass.parse(css)
     #   Sanitize::CSS.tree!(tree, Sanitize::Config::RELAXED)
     #
+    # The tree must be a list of rules, such as the tree returned by
+    # `Crass.parse`. To sanitize a list of declarations, such as the contents
+    # of an HTML `style` attribute, use {.properties}.
+    #
     # @return [Array] Sanitized Crass CSS parse tree.
     def self.tree!(tree, config = {})
       new(config).tree!(tree)
@@ -100,7 +104,7 @@ class Sanitize
         preserve_comments: @config[:allow_comments],
         preserve_hacks: @config[:allow_hacks])
 
-      tree!(tree)
+      sanitize_tree!(tree, declarations: true)
       Crass::Parser.stringify(tree)
     end
 
@@ -155,9 +159,13 @@ class Sanitize
     #
     #   scss.tree!(tree)
     #
+    # The tree must be a list of rules, such as the tree returned by
+    # `Crass.parse`. To sanitize a list of declarations, such as the contents
+    # of an HTML `style` attribute, use {#properties}.
+    #
     # @return [Array] Sanitized Crass CSS parse tree.
     def tree!(tree)
-      sanitize_tree!(tree, nested: false)
+      sanitize_tree!(tree, declarations: false)
     end
 
     # -- Protected Instance Methods --------------------------------------------
@@ -166,33 +174,37 @@ class Sanitize
     # Sanitizes a CSS at-rule node. Returns the sanitized node, or `nil` if the
     # current config doesn't allow this at-rule.
     #
-    # If _nested_ is `true`, the at-rule is nested inside a style rule.
-    def at_rule!(rule, nested:)
+    # If _declarations_ is `true`, the at-rule appears in a list of
+    # declarations (such as the contents of a style rule) rather than in a list
+    # of rules.
+    def at_rule!(rule, declarations:)
       name = rule[:name].downcase
 
       return nil if contains_invalid_node?(rule[:prelude])
 
+      parse_options = {
+        preserve_comments: @config[:allow_comments],
+        preserve_hacks: @config[:allow_hacks]
+      }
+
       if @at_rules_with_styles.include?(name)
         # Browsers that support CSS nesting parse the block of an at-rule like
-        # `@media` that's nested inside a style rule as declarations rather than
-        # rules, so it must be sanitized as declarations. Otherwise a
-        # declaration like `position:fixed;a{}` would be parsed as a style rule
-        # with the selector `position:fixed;a` and would bypass the property
-        # allowlist.
-        parse_method = nested ? :parse_properties : :parse_rules
+        # `@media` that appears in a list of declarations as more declarations
+        # rather than as rules, so it must be sanitized as declarations.
+        # Otherwise a declaration like `position:fixed;a{}` would be parsed as
+        # a style rule with the selector `position:fixed;a` and would bypass
+        # the property allowlist.
+        styles = if declarations
+          Crass::Parser.parse_properties(rule[:block], parse_options)
+        else
+          Crass::Parser.parse_rules(rule[:block], parse_options)
+        end
 
-        styles = Crass::Parser.public_send(parse_method, rule[:block],
-          preserve_comments: @config[:allow_comments],
-          preserve_hacks: @config[:allow_hacks])
-
-        rule[:block] = sanitize_tree!(styles, nested: nested)
+        rule[:block] = sanitize_tree!(styles, declarations: declarations)
 
       elsif @at_rules_with_properties.include?(name)
-        props = Crass::Parser.parse_properties(rule[:block],
-          preserve_comments: @config[:allow_comments],
-          preserve_hacks: @config[:allow_hacks])
-
-        rule[:block] = sanitize_tree!(props, nested: nested)
+        props = Crass::Parser.parse_properties(rule[:block], parse_options)
+        rule[:block] = sanitize_tree!(props, declarations: true)
 
       elsif @at_rules.include?(name)
         return nil if name == "import" && !import_url_allowed?(rule)
@@ -336,9 +348,9 @@ class Sanitize
     # Sanitizes the given Crass CSS parse tree and all its children, modifying
     # it in place. See {#tree!}.
     #
-    # If _nested_ is `true`, the tree is the contents of a style rule, or of an
-    # at-rule nested inside a style rule.
-    def sanitize_tree!(tree, nested:)
+    # If _declarations_ is `true`, the tree is a list of declarations (such as
+    # the contents of a style rule) rather than a list of rules.
+    def sanitize_tree!(tree, declarations:)
       preceded_by_property = false
 
       tree.map! do |node|
@@ -347,7 +359,7 @@ class Sanitize
         case node[:node]
         when :at_rule
           preceded_by_property = false
-          next at_rule!(node, nested: nested)
+          next at_rule!(node, declarations: declarations)
 
         when :comment
           next node if @config[:allow_comments]
@@ -370,7 +382,7 @@ class Sanitize
           preceded_by_property = false
           next nil if contains_invalid_node?(node.dig(:selector, :tokens))
 
-          sanitize_tree!(node[:children], nested: true)
+          sanitize_tree!(node[:children], declarations: true)
           next node
 
         when :whitespace
