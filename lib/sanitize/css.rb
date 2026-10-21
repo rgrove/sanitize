@@ -186,7 +186,7 @@ class Sanitize
 
         when :style_rule
           preceded_by_property = false
-          next nil if contains_bad_url?(node.dig(:selector, :tokens))
+          next nil if contains_invalid_node?(node.dig(:selector, :tokens))
 
           tree!(node[:children])
           next node
@@ -209,7 +209,7 @@ class Sanitize
     def at_rule!(rule)
       name = rule[:name].downcase
 
-      return nil if contains_bad_url?(rule[:prelude])
+      return nil if contains_invalid_node?(rule[:prelude])
 
       if @at_rules_with_styles.include?(name)
         styles = Crass::Parser.parse_rules(rule[:block],
@@ -235,15 +235,10 @@ class Sanitize
       rule
     end
 
-    # Returns `true` if the given array of Crass nodes contains a `:bad_url`
-    # node at any depth.
-    #
-    # A bad URL is invalid CSS that a browser will discard, but a parser that
-    # disagrees with the browser about where a bad URL ends could be tricked
-    # into hiding CSS inside it, so it's safest to reject any construct that
-    # contains one.
-    def contains_bad_url?(nodes)
-      contains_node?(nodes) { |node| node[:node] == :bad_url }
+    # Returns `true` if the given array of Crass nodes contains an invalid node
+    # (see {#invalid_node?}) at any depth.
+    def contains_invalid_node?(nodes)
+      contains_node?(nodes) { |node| invalid_node?(node) }
     end
 
     # Returns `true` if the given array of Crass nodes contains a node at any
@@ -284,6 +279,22 @@ class Sanitize
       @import_url_validator.call(import_url)
     end
 
+    # Returns `true` if the given Crass node is a `:bad_url` or `:error` node.
+    #
+    # A bad URL is invalid CSS that a browser will discard, but a parser that
+    # disagrees with the browser about where a bad URL ends could be tricked
+    # into hiding CSS inside it.
+    #
+    # An `:error` node is CSS that Crass couldn't or wouldn't parse, such as a
+    # block nested more deeply than Crass's maximum nesting depth. Its contents
+    # are never inspected, but they're preserved verbatim when the tree is
+    # stringified, so a browser would still see them.
+    #
+    # It's safest to reject any construct that contains either one.
+    def invalid_node?(node)
+      node[:node] == :bad_url || node[:node] == :error
+    end
+
     # Sanitizes a CSS property node. Returns the sanitized node, or `nil` if the
     # current config doesn't allow this property.
     def property!(prop)
@@ -296,7 +307,8 @@ class Sanitize
 
       return nil unless @config[:properties].include?(name)
 
-      # Reject properties that contain a bad URL or a `{}` block at any depth.
+      # Reject properties that contain an invalid node (see {#invalid_node?}) or
+      # a `{}` block at any depth.
       #
       # A `{}` block isn't valid in a standard property value, and browsers
       # that support CSS nesting will reparse an invalid declaration that
@@ -304,7 +316,7 @@ class Sanitize
       # becomes the rule `color:hover { position: fixed }`), which would allow
       # disallowed properties to be smuggled past the sanitizer.
       return nil if contains_node?(prop[:children]) { |node|
-        node[:node] == :bad_url || (node[:node] == :simple_block && node[:start] == "{")
+        invalid_node?(node) || (node[:node] == :simple_block && node[:start] == "{")
       }
 
       nodes = prop[:children].dup

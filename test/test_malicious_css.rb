@@ -166,6 +166,58 @@ describe "Malicious CSS" do
     end
   end
 
+  describe "sanitization bypass via Crass maximum nesting depth" do
+    # Crass replaces blocks and functions nested more deeply than its maximum
+    # nesting depth with `:error` nodes whose contents aren't parsed, but which
+    # are preserved verbatim when the tree is stringified.
+
+    before do
+      @depth = Crass::Parser::DEFAULT_MAXIMUM_DEPTH
+    end
+
+    it "should not allow a nested rule to be smuggled in a property value beyond the maximum depth" do
+      css = ("@media all{" * (@depth - 1)) + "p{color:not(z){position:fixed}}" + ("}" * (@depth - 1))
+      config = {css: {properties: %w[color], at_rules_with_styles: %w[media]}}
+      result = Sanitize::CSS.stylesheet(css, config)
+
+      refute_includes(result, "position")
+    end
+
+    it "should not allow a style rule beyond the maximum depth" do
+      css = ("@media all{" * @depth) + "p{position:fixed}" + ("}" * @depth)
+      config = {css: {properties: %w[color], at_rules_with_styles: %w[media]}}
+      result = Sanitize::CSS.stylesheet(css, config)
+
+      refute_includes(result, "position")
+    end
+
+    it "should not allow a URL beyond the maximum depth to skip protocol validation" do
+      css = "background:" + ("[" * (@depth + 1)) + "url(javascript:alert(1))" + ("]" * (@depth + 1))
+      _(Sanitize::CSS.properties(css, Sanitize::Config::RELAXED)).must_equal ""
+    end
+
+    it "should not allow a bad URL beyond the maximum depth in a selector" do
+      css = "a" + ("(" * (@depth + 1)) + %[url(x"\\\\)] + (")" * (@depth + 1)) + "{color:red}"
+      result = Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
+
+      refute_includes(result, "url(")
+    end
+
+    it "should not allow a bad URL beyond the maximum depth in an at-rule prelude" do
+      css = "@media " + ("(" * (@depth + 1)) + %[url(x"\\\\)] + (")" * (@depth + 1)) + "{a{color:red}}"
+      result = Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
+
+      refute_includes(result, "url(")
+    end
+
+    it "should allow properties nested up to the maximum depth" do
+      css = "color:" + ("(" * (@depth - 1)) + "red" + (")" * (@depth - 1))
+      config = {css: {properties: %w[color]}}
+
+      _(Sanitize::CSS.properties(css, config)).must_equal css
+    end
+  end
+
   describe "sanitization bypass via CSS at-rule in HTML <style> element" do
     before do
       @s = Sanitize.new(Sanitize::Config::RELAXED)

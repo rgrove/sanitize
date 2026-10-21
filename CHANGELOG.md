@@ -10,6 +10,8 @@ All notable changes to Sanitize are documented in this file. The format (since v
 
 - CSS properties that contain a `{}` block anywhere in their value are now removed. Browsers that support [CSS nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting) reparse an invalid declaration containing a `{}` block as a nested style rule, so a value like `color:hover{position:fixed}` could previously be used to smuggle disallowed properties and URLs past Sanitize in a stylesheet or `<style>` element.
 
+- CSS properties, style rules, and at-rules that contain blocks or functions nested more deeply than Crass's maximum nesting depth (25 levels by default) are now removed. Crass 1.0.8 skips parsing anything beyond that depth but preserves it verbatim, so Sanitize couldn't inspect it.
+
 ## 7.0.0 (2024-12-29)
 
 Sanitize has no breaking API changes in this release, but the major version number has been incremented because we've dropped support for end-of-life versions of Ruby. As long as you're using Ruby 3.1.0 or later, this should be a painless upgrade!
