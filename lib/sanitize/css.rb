@@ -86,6 +86,11 @@ class Sanitize
       @at_rules_with_properties = Set.new(@config[:at_rules_with_properties])
       @at_rules_with_styles = Set.new(@config[:at_rules_with_styles])
       @import_url_validator = @config[:import_url_validator]
+
+      @parse_options = {
+        preserve_comments: @config[:allow_comments],
+        preserve_hacks: @config[:allow_hacks]
+      }.freeze
     end
 
     # Sanitizes inline CSS style properties.
@@ -100,10 +105,7 @@ class Sanitize
     #
     # @return [String] Sanitized CSS properties.
     def properties(css)
-      tree = Crass.parse_properties(css,
-        preserve_comments: @config[:allow_comments],
-        preserve_hacks: @config[:allow_hacks])
-
+      tree = Crass.parse_properties(css, @parse_options)
       sanitize_tree!(tree, declarations: true)
       Crass::Parser.stringify(tree)
     end
@@ -131,10 +133,7 @@ class Sanitize
     #
     # @return [String] Sanitized CSS stylesheet.
     def stylesheet(css)
-      tree = Crass.parse(css,
-        preserve_comments: @config[:allow_comments],
-        preserve_hacks: @config[:allow_hacks])
-
+      tree = Crass.parse(css, @parse_options)
       tree!(tree)
       Crass::Parser.stringify(tree)
     end
@@ -182,11 +181,6 @@ class Sanitize
 
       return nil if contains_invalid_node?(rule[:prelude])
 
-      parse_options = {
-        preserve_comments: @config[:allow_comments],
-        preserve_hacks: @config[:allow_hacks]
-      }
-
       if @at_rules_with_styles.include?(name)
         # Browsers that support CSS nesting parse the block of an at-rule like
         # `@media` that appears in a list of declarations as more declarations
@@ -195,15 +189,15 @@ class Sanitize
         # a style rule with the selector `position:fixed;a` and would bypass
         # the property allowlist.
         styles = if declarations
-          Crass::Parser.parse_properties(rule[:block], parse_options)
+          Crass::Parser.parse_properties(rule[:block], @parse_options)
         else
-          Crass::Parser.parse_rules(rule[:block], parse_options)
+          Crass::Parser.parse_rules(rule[:block], @parse_options)
         end
 
         rule[:block] = sanitize_tree!(styles, declarations: declarations)
 
       elsif @at_rules_with_properties.include?(name)
-        props = Crass::Parser.parse_properties(rule[:block], parse_options)
+        props = Crass::Parser.parse_properties(rule[:block], @parse_options)
         rule[:block] = sanitize_tree!(props, declarations: true)
 
       elsif @at_rules.include?(name)
@@ -288,22 +282,13 @@ class Sanitize
 
       return nil unless @config[:properties].include?(name)
 
-      # Reject properties that contain an invalid node (see {#invalid_node?}) or
-      # a `{}` block at any depth.
-      #
-      # A `{}` block isn't valid in a standard property value, and browsers
-      # that support CSS nesting will reparse an invalid declaration that
-      # contains one as a nested style rule (e.g. `color:hover{position:fixed}`
-      # becomes the rule `color:hover { position: fixed }`), which would allow
-      # disallowed properties to be smuggled past the sanitizer.
-      return nil if contains_node?(prop[:children]) { |node|
-        invalid_node?(node) || (node[:node] == :simple_block && node[:start] == "{")
-      }
-
       nodes = prop[:children].dup
       combined_value = +""
 
       nodes.each do |child|
+        # Reject properties that contain an invalid node at any depth.
+        return nil if invalid_node?(child)
+
         value = child[:value]
 
         case child[:node]
@@ -338,6 +323,16 @@ class Sanitize
           return nil unless valid_url?(child)
 
         when :simple_block
+          # Reject properties that contain a `{}` block at any depth.
+          #
+          # A `{}` block isn't valid in a standard property value, and browsers
+          # that support CSS nesting will reparse an invalid declaration that
+          # contains one as a nested style rule (e.g.
+          # `color:hover{position:fixed}` becomes the rule
+          # `color:hover { position: fixed }`), which would allow disallowed
+          # properties to be smuggled past the sanitizer.
+          return nil if child[:start] == "{"
+
           nodes.concat(value) if Array === value
         end
       end
