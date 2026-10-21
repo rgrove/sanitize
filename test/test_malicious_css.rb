@@ -221,6 +221,18 @@ describe "Malicious CSS" do
       end
     end
 
+    it "should not allow properties to be smuggled when a list of declarations is passed to tree!" do
+      tree = Crass.parse_properties("color:red;@media all{position:fixed;a{}}")
+      Sanitize::CSS.tree!(tree, @config)
+
+      refute_includes(Crass::Parser.stringify(tree), "position")
+    end
+
+    it "should not allow style rules whose selectors contain semicolons" do
+      _(Sanitize::CSS.stylesheet("@media all{x;@import url(x.css);a{color:red}}", @config)).must_equal "@media all{}"
+      _(Sanitize::CSS.stylesheet("@media all{a:is(x;y){color:red}}", @config)).must_equal "@media all{}"
+    end
+
     it "should still sanitize the blocks of top-level at-rules as rules" do
       css = "@media all{a{color:red}}"
       _(Sanitize::CSS.stylesheet(css, @config)).must_equal css

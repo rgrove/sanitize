@@ -380,7 +380,19 @@ class Sanitize
 
         when :style_rule
           preceded_by_property = false
-          next nil if contains_invalid_node?(node.dig(:selector, :tokens))
+
+          # Reject style rules whose selectors contain an invalid node (see
+          # {#invalid_node?}) or a semicolon at any depth.
+          #
+          # A semicolon is never valid in a selector, but if a style rule
+          # appears where a browser expects declarations (such as the contents
+          # of an `@media` rule in a list of declarations), the browser will
+          # treat everything before the semicolon as a declaration. For
+          # example, `position:fixed;a{}` would be treated as the declaration
+          # `position:fixed` followed by the style rule `a{}`.
+          next nil if contains_node?(node.dig(:selector, :tokens)) { |token|
+            invalid_node?(token) || token[:node] == :semicolon
+          }
 
           sanitize_tree!(node[:children], declarations: true)
           next node

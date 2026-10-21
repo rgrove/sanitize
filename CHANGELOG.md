@@ -2,17 +2,19 @@
 
 All notable changes to Sanitize are documented in this file. The format (since version 7.0.0) is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 7.0.1 (unreleased)
 
 ### Security
 
+- CSS properties that contain a `{}` block anywhere in their value are now removed. Browsers that support [CSS nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting) reparse an invalid declaration containing a `{}` block as a nested style rule, so a value like `color:hover{position:fixed}` could previously be used to smuggle disallowed properties and URLs past Sanitize in a stylesheet or `<style>` element. (GHSA-wgw9-qhqg-8hv5)
+
+- The contents of at-rules such as `@media` and `@supports` that appear in a list of declarations (inside a style rule, inside an at-rule like `@font-face`, or in CSS sanitized with `Sanitize::CSS.properties`) are now sanitized as declarations rather than as rules, matching how browsers that support CSS nesting parse them. Previously, a stylesheet like `p{@media all{position:fixed;a{}}}` could be used to smuggle disallowed properties and URLs past Sanitize, since Sanitize treated `position:fixed;a` as a style rule's selector. The same was true of CSS sanitized with `Sanitize::CSS.properties` if the result was later embedded in a style rule. Style rules nested inside these at-rules are now removed, just as style rules nested directly inside other style rules already were. (GHSA-wgw9-qhqg-8hv5)
+
+- CSS properties, style rules, and at-rules that contain blocks or functions nested more deeply than Crass's maximum nesting depth (25 levels by default) are now removed. (GHSA-wgw9-qhqg-8hv5)
+
 - Hardened CSS sanitization against tokenizer differentials involving bad URLs. CSS properties that contain a bad URL anywhere inside a simple block (such as `[...]` or `(...)`) are now removed, as are style rules whose selectors contain a bad URL and at-rules whose preludes contain a bad URL. URLs inside simple blocks are now also validated against the configured protocol allowlist. Previously, a bug in Crass (fixed in Crass 1.0.8) could be exploited to smuggle CSS declarations, rules, or at-rules past Sanitize by hiding them in a bad URL in one of these locations.
 
-- CSS properties that contain a `{}` block anywhere in their value are now removed. Browsers that support [CSS nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting) reparse an invalid declaration containing a `{}` block as a nested style rule, so a value like `color:hover{position:fixed}` could previously be used to smuggle disallowed properties and URLs past Sanitize in a stylesheet or `<style>` element.
-
-- The contents of at-rules such as `@media` and `@supports` that appear in a list of declarations (inside a style rule, inside an at-rule like `@font-face`, or in CSS sanitized with `Sanitize::CSS.properties`) are now sanitized as declarations rather than as rules, matching how browsers that support CSS nesting parse them. Previously, a stylesheet like `p{@media all{position:fixed;a{}}}` could be used to smuggle disallowed properties and URLs past Sanitize, since Sanitize treated `position:fixed;a` as a style rule's selector. The same was true of CSS sanitized with `Sanitize::CSS.properties` if the result was later embedded in a style rule. Style rules nested inside these at-rules are now removed, just as style rules nested directly inside other style rules already were.
-
-- CSS properties, style rules, and at-rules that contain blocks or functions nested more deeply than Crass's maximum nesting depth (25 levels by default) are now removed. Crass 1.0.8 skips parsing anything beyond that depth but preserves it verbatim, so Sanitize couldn't inspect it.
+- CSS style rules whose selectors contain a semicolon are now removed, as a defense in depth measure. A semicolon is never valid in a selector, but when a style rule appears where a browser that supports CSS nesting expects declarations, the browser treats everything before the semicolon as a declaration. This could be used to smuggle disallowed properties past `Sanitize::CSS.tree!` when it was given a list of declarations rather than a list of rules (though this isn't something Sanitize itself does).
 
 ## 7.0.0 (2024-12-29)
 
