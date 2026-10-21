@@ -16,6 +16,10 @@ All notable changes to Sanitize are documented in this file. The format (since v
 
 - CSS style rules whose selectors contain a semicolon are now removed, as a defense in depth measure. A semicolon is never valid in a selector, but when a style rule appears where a browser that supports CSS nesting expects declarations, the browser treats everything before the semicolon as a declaration. This could be used to smuggle disallowed properties past `Sanitize::CSS.tree!` when it was given a list of declarations rather than a list of rules (though this isn't something Sanitize itself does).
 
+### Fixed
+
+- Removed an unused `require "cgi"` that caused a warning on Ruby 4.0, since the CGI library is no longer part of Ruby's standard library.
+
 ## 7.0.0 (2024-12-29)
 
 Sanitize has no breaking API changes in this release, but the major version number has been incremented because we've dropped support for end-of-life versions of Ruby. As long as you're using Ruby 3.1.0 or later, this should be a painless upgrade!
