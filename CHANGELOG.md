@@ -8,6 +8,8 @@ All notable changes to Sanitize are documented in this file. The format (since v
 
 - Hardened CSS sanitization against tokenizer differentials involving bad URLs. CSS properties that contain a bad URL anywhere inside a simple block (such as `[...]` or `(...)`) are now removed, as are style rules whose selectors contain a bad URL and at-rules whose preludes contain a bad URL. URLs inside simple blocks are now also validated against the configured protocol allowlist. Previously, a bug in Crass (fixed in Crass 1.0.8) could be exploited to smuggle CSS declarations, rules, or at-rules past Sanitize by hiding them in a bad URL in one of these locations.
 
+- CSS properties that contain a `{}` block anywhere in their value are now removed. Browsers that support [CSS nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting) reparse an invalid declaration containing a `{}` block as a nested style rule, so a value like `color:hover{position:fixed}` could previously be used to smuggle disallowed properties and URLs past Sanitize in a stylesheet or `<style>` element.
+
 ## 7.0.0 (2024-12-29)
 
 Sanitize has no breaking API changes in this release, but the major version number has been incremented because we've dropped support for end-of-life versions of Ruby. As long as you're using Ruby 3.1.0 or later, this should be a painless upgrade!

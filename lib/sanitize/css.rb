@@ -243,6 +243,12 @@ class Sanitize
     # into hiding CSS inside it, so it's safest to reject any construct that
     # contains one.
     def contains_bad_url?(nodes)
+      contains_node?(nodes) { |node| node[:node] == :bad_url }
+    end
+
+    # Returns `true` if the given array of Crass nodes contains a node at any
+    # depth for which the given block returns a truthy value.
+    def contains_node?(nodes)
       return false unless Array === nodes
 
       stack = nodes.dup
@@ -250,7 +256,7 @@ class Sanitize
       until stack.empty?
         node = stack.pop
         next unless Hash === node
-        return true if node[:node] == :bad_url
+        return true if yield(node)
 
         value = node[:value]
         stack.concat(value) if Array === value
@@ -289,6 +295,17 @@ class Sanitize
       end
 
       return nil unless @config[:properties].include?(name)
+
+      # Reject properties that contain a bad URL or a `{}` block at any depth.
+      #
+      # A `{}` block isn't valid in a standard property value, and browsers
+      # that support CSS nesting will reparse an invalid declaration that
+      # contains one as a nested style rule (e.g. `color:hover{position:fixed}`
+      # becomes the rule `color:hover { position: fixed }`), which would allow
+      # disallowed properties to be smuggled past the sanitizer.
+      return nil if contains_node?(prop[:children]) { |node|
+        node[:node] == :bad_url || (node[:node] == :simple_block && node[:start] == "{")
+      }
 
       nodes = prop[:children].dup
       combined_value = +""
@@ -329,9 +346,6 @@ class Sanitize
 
         when :simple_block
           nodes.concat(value) if Array === value
-
-        when :bad_url
-          return nil
         end
       end
 

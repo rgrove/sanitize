@@ -122,6 +122,50 @@ describe "Malicious CSS" do
     end
   end
 
+  describe "sanitization bypass via nested rule in property value" do
+    # Browsers that support CSS nesting reparse an invalid declaration that
+    # contains a `{}` block as a nested style rule, so a `{}` block in an
+    # allowlisted property's value could be used to smuggle in disallowed
+    # properties.
+
+    before do
+      @config = {css: {properties: %w[color]}}
+    end
+
+    it "should not allow properties to be smuggled in a nested rule in a stylesheet" do
+      css = "p{color:hover{position:fixed;top:0}}"
+      result = Sanitize::CSS.stylesheet(css, @config)
+
+      refute_includes(result, "position")
+      _(result).must_equal "p{}"
+    end
+
+    it "should not allow properties to be smuggled in a nested rule in a <style> element" do
+      html = "<style>p{color:hover{position:fixed;top:0}}</style>"
+      config = Sanitize::Config.merge(Sanitize::Config::RELAXED, @config)
+      result = Sanitize.fragment(html, config)
+
+      refute_includes(result, "position")
+    end
+
+    it "should not allow properties to be smuggled after a nested rule in a style attribute" do
+      html = "<p style='color:x{a:b} position:fixed'>hi</p>"
+      config = Sanitize::Config.merge(Sanitize::Config::RELAXED, @config)
+      result = Sanitize.fragment(html, config)
+
+      refute_includes(result, "position")
+    end
+
+    it "should not allow {} blocks nested inside other blocks or functions" do
+      _(Sanitize::CSS.properties("color:[{position:fixed}]", @config)).must_equal ""
+      _(Sanitize::CSS.properties("color:rgb({position:fixed})", @config)).must_equal ""
+    end
+
+    it "should not allow a property whose entire value is a {} block" do
+      _(Sanitize::CSS.properties("color:{position:fixed}", @config)).must_equal ""
+    end
+  end
+
   describe "sanitization bypass via CSS at-rule in HTML <style> element" do
     before do
       @s = Sanitize.new(Sanitize::Config::RELAXED)
