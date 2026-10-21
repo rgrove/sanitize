@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
     "rubygems_mfa_required" => "true"
   }
 
-  s.add_dependency("crass", "~> 1.0.2")
+  s.add_dependency("crass", "~> 1.0.8")
   s.add_dependency("nokogiri", ">= 1.16.8")
 
   s.require_paths = ["lib"]
