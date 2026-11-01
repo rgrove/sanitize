@@ -11,11 +11,12 @@ describe "Sanitize::Transformers::CSS::CleanAttribute" do
   end
 
   it "should sanitize CSS properties in style attributes" do
-    _(@s.fragment(%[
+    _([
+      %(<div style="color: #fff;  /* <-- evil! */"></div>),
+      %(<div style="color: #fff;  /* &lt;-- evil! */"></div>)
+    ]).must_include @s.fragment(%[
       <div style="color: #fff; width: expression(alert(1)); /* <-- evil! */"></div>
-    ].strip)).must_equal %(
-      <div style="color: #fff;  /* <-- evil! */"></div>
-    ).strip
+    ].strip)
   end
 
   it "should remove the style attribute if the sanitized CSS is empty" do

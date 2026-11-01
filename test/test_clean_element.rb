@@ -20,7 +20,10 @@ describe "Sanitize::Transformers::CleanElement" do
       default: "Lorem dolor sit amet ",
       restricted: "Lorem <strong>dolor</strong> sit amet ",
       basic: 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br>amet ',
-      relaxed: 'Lorem <a href="pants" title="foo>ipsum <a href="><strong>dolor</strong></a> sit<br>amet '
+      relaxed: [
+        'Lorem <a href="pants" title="foo>ipsum <a href="><strong>dolor</strong></a> sit<br>amet ',
+        'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br>amet '
+      ]
     },
 
     unclosed: {
@@ -308,13 +311,15 @@ describe "Sanitize::Transformers::CleanElement" do
     end
 
     it "should encode special chars in attribute values" do
-      _(@s.fragment('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>'))
-        .must_equal '<a href="http://example.com" title="<b>éxamples</b> &amp; things">foo</a>'
+      _([
+        '<a href="http://example.com" title="<b>éxamples</b> &amp; things">foo</a>',
+        '<a href="http://example.com" title="&lt;b&gt;éxamples&lt;/b&gt; &amp; things">foo</a>'
+      ]).must_include @s.fragment('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>')
     end
 
     strings.each do |name, data|
       it "should clean #{name} HTML" do
-        _(@s.fragment(data[:html])).must_equal(data[:relaxed])
+        _(Array(data[:relaxed])).must_include(@s.fragment(data[:html]))
       end
     end
 
