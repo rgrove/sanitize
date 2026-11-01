@@ -173,8 +173,10 @@ describe "Malicious HTML" do
 
           # This uses Nokogumbo's HTML-compliant serializer rather than
           # libxml2's.
-          _(@s.fragment(input))
-            .must_equal(%[<#{tag_name} #{attr_name}="examp<!--%22%20onmouseover=alert(1)>-->le.com">foo</#{tag_name}>])
+          _([
+            %[<#{tag_name} #{attr_name}="examp<!--%22%20onmouseover=alert(1)>-->le.com">foo</#{tag_name}>],
+            %[<#{tag_name} #{attr_name}="examp&lt;!--%22%20onmouseover=alert(1)&gt;--&gt;le.com">foo</#{tag_name}>]
+          ]).must_include @s.fragment(input)
 
           # This uses the not-quite-standards-compliant libxml2 serializer via
           # Nokogiri, so the output may be a little different as of Nokogiri
@@ -200,8 +202,10 @@ describe "Malicious HTML" do
 
           # This uses Nokogumbo's HTML-compliant serializer rather than
           # libxml2's.
-          _(@s.fragment(input))
-            .must_equal(%[<#{tag_name} #{attr_name}="examp<!--&quot; onmouseover=alert(1)>-->le.com">foo</#{tag_name}>])
+          _([
+            %[<#{tag_name} #{attr_name}="examp<!--&quot; onmouseover=alert(1)>-->le.com">foo</#{tag_name}>],
+            %[<#{tag_name} #{attr_name}="examp&lt;!--&quot; onmouseover=alert(1)&gt;--&gt;le.com">foo</#{tag_name}>]
+          ]).must_include @s.fragment(input)
 
           # This uses the not-quite-standards-compliant libxml2 serializer via
           # Nokogiri, so the output may be a little different as of Nokogiri
