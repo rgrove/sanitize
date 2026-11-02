@@ -20,10 +20,7 @@ describe "Sanitize::Transformers::CleanElement" do
       default: "Lorem dolor sit amet ",
       restricted: "Lorem <strong>dolor</strong> sit amet ",
       basic: 'Lorem <a href="pants" rel="nofollow"><strong>dolor</strong></a> sit<br>amet ',
-      relaxed: [
-        'Lorem <a href="pants" title="foo>ipsum <a href="><strong>dolor</strong></a> sit<br>amet ',
-        'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br>amet '
-      ]
+      relaxed: 'Lorem <a href="pants" title="foo&gt;ipsum &lt;a href="><strong>dolor</strong></a> sit<br>amet '
     },
 
     unclosed: {
@@ -311,15 +308,13 @@ describe "Sanitize::Transformers::CleanElement" do
     end
 
     it "should encode special chars in attribute values" do
-      _([
-        '<a href="http://example.com" title="<b>éxamples</b> &amp; things">foo</a>',
-        '<a href="http://example.com" title="&lt;b&gt;éxamples&lt;/b&gt; &amp; things">foo</a>'
-      ]).must_include @s.fragment('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>')
+      _(@s.fragment('<a href="http://example.com" title="<b>&eacute;xamples</b> & things">foo</a>'))
+        .must_equal '<a href="http://example.com" title="&lt;b&gt;éxamples&lt;/b&gt; &amp; things">foo</a>'
     end
 
     strings.each do |name, data|
       it "should clean #{name} HTML" do
-        _(Array(data[:relaxed])).must_include(@s.fragment(data[:html]))
+        _(@s.fragment(data[:html])).must_equal(data[:relaxed])
       end
     end
 
@@ -536,6 +531,66 @@ describe "Sanitize::Transformers::CleanElement" do
       assert_equal(
         "",
         Sanitize.fragment("<noscript>foo</noscript>", elements: ["noscript"])
+      )
+    end
+
+    it "always removes elements inside text content elements, keeping only text" do
+      s = Sanitize.new(elements: %w[a abbr svg textarea], remove_contents: ["abbr"])
+
+      assert_equal(
+        "<svg><textarea>foo bar</textarea></svg>",
+        s.fragment("<svg><textarea>foo <a>bar</a><abbr>baz</abbr></textarea></svg>")
+      )
+    end
+
+    it "always removes elements inside text content elements even if they're allowlisted by a transformer" do
+      s = Sanitize.new(
+        elements: %w[a svg textarea],
+        remove_contents: false,
+        transformers: ->(env) { {node_allowlist: [env[:node]]} if env[:node_name] == "a" }
+      )
+
+      assert_equal(
+        "<svg><textarea>foo</textarea></svg>",
+        s.fragment(%(<svg><textarea><a title="x">foo</a></textarea></svg>))
+      )
+    end
+
+    it "always removes MathML and SVG elements whose `<math>` or `<svg>` ancestor was removed" do
+      s = Sanitize.new(
+        elements: %w[a abbr mi mo p],
+        attributes: {"a" => ["href"]},
+        remove_contents: false
+      )
+
+      assert_equal(
+        "foo bar<p>baz <abbr>qux</abbr></p>",
+        s.fragment(%(<svg><a href="https://example.com">foo</a> <abbr>bar</abbr><foreignObject><p>baz <abbr>qux</abbr></p></foreignObject></svg>))
+      )
+
+      assert_equal "x+", s.fragment("<math><mi>x</mi><mo>+</mo></math>")
+    end
+
+    it "always removes MathML and SVG elements whose `<math>` or `<svg>` ancestor was removed even if they're allowlisted by a transformer" do
+      s = Sanitize.new(
+        elements: ["a"],
+        attributes: {"a" => ["href"]},
+        remove_contents: false,
+        transformers: ->(env) { {node_allowlist: [env[:node]]} if env[:node_name] == "a" }
+      )
+
+      assert_equal "foo", s.fragment(%(<svg><a href="https://example.com">foo</a></svg>))
+    end
+
+    it "keeps MathML and SVG elements whose `<math>` or `<svg>` ancestor is kept" do
+      assert_equal(
+        %(<svg><a href="https://example.com">foo</a></svg>),
+        Sanitize.fragment(%(<svg><a href="https://example.com">foo</a></svg>), elements: %w[a svg], attributes: {"a" => ["href"]})
+      )
+
+      assert_equal(
+        "<math><mi>x</mi><mo>+</mo></math>",
+        Sanitize.fragment("<math><mi>x</mi><mo>+</mo></math>", elements: %w[math mi mo])
       )
     end
   end

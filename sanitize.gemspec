@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   }
 
   s.add_dependency("crass", "~> 1.0.8")
-  s.add_dependency("nokogiri", ">= 1.16.8")
+  s.add_dependency("nokogiri", ">= 1.19.5")
 
   s.require_paths = ["lib"]
 

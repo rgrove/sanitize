@@ -44,5 +44,23 @@ describe "Sanitize::Transformers::CleanComment" do
       _(Sanitize.fragment("<script><!-- comment --></script>", allow_comments: true, elements: ["script"]))
         .must_equal "<script><!-- comment --></script>"
     end
+
+    it "should remove comments inside text content elements in a foreign namespace" do
+      s = Sanitize.new(allow_comments: true, elements: %w[a math svg textarea], remove_contents: false)
+
+      _(s.fragment("<svg><textarea><!-- comment --></textarea></svg>")).must_equal "<svg><textarea></textarea></svg>"
+      _(s.fragment("<math><textarea><a><!-- comment --></a></textarea></math>")).must_equal "<math><textarea></textarea></math>"
+    end
+
+    it "should remove allowlisted comments inside text content elements in a foreign namespace" do
+      s = Sanitize.new(
+        allow_comments: true,
+        elements: %w[svg textarea],
+        remove_contents: false,
+        transformers: ->(env) { {node_allowlist: [env[:node]]} if env[:node].comment? }
+      )
+
+      _(s.fragment("<svg><textarea><!-- comment --></textarea></svg>")).must_equal "<svg><textarea></textarea></svg>"
+    end
   end
 end

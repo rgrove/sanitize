@@ -2,6 +2,16 @@
 
 All notable changes to Sanitize are documented in this file. The format (since version 7.0.0) is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 7.0.2 (unreleased)
+
+### Security
+
+- MathML and SVG elements whose `<math>` or `<svg>` ancestor has been removed are now also removed (keeping their contents, subject to `:remove_contents`), even if they're allowed by the config or have been allowlisted by a transformer. Previously, if Sanitize removed a `<math>` or `<svg>` element but kept its contents, its descendants were kept even though they'd been parsed as foreign elements, and browsers would reparse them as HTML elements. Since some elements are parsed very differently in foreign content than in HTML, this could allow arbitrary HTML to be injected. For example, the contents of a `<textarea>`, `<title>`, `<xmp>`, `<noembed>`, or `<noframes>` element inside a MathML or SVG element are parsed as markup rather than text, so an attribute value, comment, or raw text element inside it like `<svg><textarea><!--</textarea><img src=x onerror=alert(1)>-->` could close the element early once it was reparsed as HTML. Similarly, browsers that use legacy `<select>` parsing rules would parse the contents of a raw text element inside a `<select>` element like `<math><select><mi><xmp><input><img src=x onerror=alert(1)></xmp>` as markup. This only affected custom configs that don't remove the contents of `<math>` or `<svg>` elements and allow one of the affected elements. Sanitize's default and built-in configs aren't affected. Thanks to Mike Dalessio (@flavorjones) for reporting this issue.
+
+- Elements and comments inside text content elements such as `<textarea>`, `<title>`, `<xmp>`, `<noembed>`, and `<noframes>` are now always removed, even if they're allowed by the config or have been allowlisted by a transformer. Only their text is kept, subject to `:remove_contents`. This provides defense in depth against the issue above.
+
+- Sanitize now requires Nokogiri 1.19.5 or higher, which escapes `<` and `>` in serialized attribute values to match browser behavior. This provides defense in depth against the issue above.
+
 ## 7.0.1 (2026-10-21)
 
 ### Security

@@ -5,6 +5,13 @@ require "set"
 class Sanitize
   module Transformers
     class CleanElement
+      # Maps the namespace URI of each foreign element type supported by HTML to
+      # the name of its root element.
+      FOREIGN_NAMESPACE_ROOTS = {
+        "http://www.w3.org/1998/Math/MathML" => "math",
+        "http://www.w3.org/2000/svg" => "svg"
+      }.freeze
+
       # Matches a valid HTML5 data attribute name. The unicode ranges included
       # here are a conservative subset of the full range of characters that are
       # technically allowed, with the intent of matching the most common
@@ -90,9 +97,17 @@ class Sanitize
 
       def call(env)
         node = env[:node]
-        return if node.type != Nokogiri::XML::Node::ELEMENT_NODE || env[:is_allowlisted]
+        return if node.type != Nokogiri::XML::Node::ELEMENT_NODE
 
         name = env[:node_name]
+        parent = node.parent
+
+        # Some elements are always removed, even if they're allowlisted, since
+        # browsers would parse them differently than Nokogiri did.
+        force_remove = orphaned_foreign_element?(node, name, parent) ||
+          text_content_element?(parent)
+
+        return if env[:is_allowlisted] && !force_remove
 
         # Delete any element that isn't in the config allowlist, unless the node
         # has already been deleted from the document.
@@ -100,7 +115,7 @@ class Sanitize
         # It's important that we not try to reparent the children of a node that
         # has already been deleted, since that seems to trigger a memory leak in
         # Nokogiri.
-        unless @elements.include?(name) || node.parent.nil?
+        if (force_remove || !@elements.include?(name)) && !parent.nil?
           # Elements like br, div, p, etc. need to be replaced with whitespace
           # in order to preserve readability.
           if @whitespace_elements.include?(name)
@@ -244,6 +259,36 @@ class Sanitize
         when "noscript"
           node.unlink
         end
+      end
+
+      private
+
+      # Returns `true` if _node_ is a MathML or SVG element other than a
+      # `<math>` or `<svg>` element and its parent isn't a MathML or SVG element.
+      #
+      # This happens when Sanitize removes a `<math>` or `<svg>` element but
+      # keeps its contents. Nokogiri parsed these descendants as foreign
+      # elements, but browsers would reparse them as HTML elements, which may
+      # be parsed very differently. For example, the contents of a foreign
+      # `<textarea>` element are parsed as markup rather than as text. Since
+      # traversal is top-down, removing these elements ensures that no foreign
+      # element is kept without a foreign root.
+      def orphaned_foreign_element?(node, name, parent)
+        root_name = FOREIGN_NAMESPACE_ROOTS[node.namespace&.href]
+        return false if root_name.nil? || name == root_name
+
+        !(parent&.element? && FOREIGN_NAMESPACE_ROOTS.key?(parent.namespace&.href))
+      end
+
+      # Returns `true` if _parent_ is a text content element, such as
+      # `<textarea>` or `<xmp>`.
+      #
+      # Browsers parse the contents of these elements as text when they're in
+      # the HTML namespace, so any element inside one must have been parsed in
+      # a foreign namespace. Since traversal is top-down, removing these
+      # elements ensures that only text remains inside text content elements.
+      def text_content_element?(parent)
+        !!parent&.element? && TEXT_CONTENT_ELEMENTS.include?(parent.name.downcase)
       end
     end
   end

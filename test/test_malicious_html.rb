@@ -173,10 +173,8 @@ describe "Malicious HTML" do
 
           # This uses Nokogumbo's HTML-compliant serializer rather than
           # libxml2's.
-          _([
-            %[<#{tag_name} #{attr_name}="examp<!--%22%20onmouseover=alert(1)>-->le.com">foo</#{tag_name}>],
-            %[<#{tag_name} #{attr_name}="examp&lt;!--%22%20onmouseover=alert(1)&gt;--&gt;le.com">foo</#{tag_name}>]
-          ]).must_include @s.fragment(input)
+          _(@s.fragment(input))
+            .must_equal(%[<#{tag_name} #{attr_name}="examp&lt;!--%22%20onmouseover=alert(1)&gt;--&gt;le.com">foo</#{tag_name}>])
 
           # This uses the not-quite-standards-compliant libxml2 serializer via
           # Nokogiri, so the output may be a little different as of Nokogiri
@@ -202,10 +200,8 @@ describe "Malicious HTML" do
 
           # This uses Nokogumbo's HTML-compliant serializer rather than
           # libxml2's.
-          _([
-            %[<#{tag_name} #{attr_name}="examp<!--&quot; onmouseover=alert(1)>-->le.com">foo</#{tag_name}>],
-            %[<#{tag_name} #{attr_name}="examp&lt;!--&quot; onmouseover=alert(1)&gt;--&gt;le.com">foo</#{tag_name}>]
-          ]).must_include @s.fragment(input)
+          _(@s.fragment(input))
+            .must_equal(%[<#{tag_name} #{attr_name}="examp&lt;!--&quot; onmouseover=alert(1)&gt;--&gt;le.com">foo</#{tag_name}>])
 
           # This uses the not-quite-standards-compliant libxml2 serializer via
           # Nokogiri, so the output may be a little different as of Nokogiri
@@ -339,6 +335,101 @@ describe "Malicious HTML" do
         "",
         @s.fragment(%[<noscript><div id='</noscript>&lt;img src=x onerror=alert(1)&gt; '>])
       )
+    end
+  end
+
+  # When a text content element like `<textarea>` is inside a MathML or SVG
+  # element, it's parsed as a foreign element whose content is markup rather
+  # than text. If Sanitize removes the foreign ancestor but keeps the text
+  # content element, a browser will reparse it as an HTML element whose content
+  # is text, so any closing tag in that content could break out of it.
+  describe "foreign content namespace confusion" do
+    text_content_elements = %w[
+      noembed
+      noframes
+      textarea
+      title
+      xmp
+    ]
+
+    text_content_elements.each do |name|
+      describe "with `<#{name}>`" do
+        before do
+          @s = Sanitize.new(
+            Sanitize::Config.merge(
+              Sanitize::Config::RELAXED,
+              allow_comments: true,
+              elements: Sanitize::Config::RELAXED[:elements] + [name],
+              remove_contents: false
+            )
+          )
+        end
+
+        {"math" => "mi", "svg" => "foreignObject"}.each do |namespace, integration_point|
+          # An SVG `<title>` element is an HTML integration point, so its
+          # children are HTML elements rather than foreign elements.
+          html_children = namespace == "svg" && name == "title"
+
+          it "prevents attribute values inside `<#{name}>` in a `<#{namespace}>` element from breaking out" do
+            assert_equal(
+              html_children ? %(<a title="&lt;/#{name}&gt;&lt;img src=x onerror=alert(1)&gt;"></a>) : "",
+              @s.fragment(%(<#{namespace}><#{name}><a title="</#{name}><img src=x onerror=alert(1)>">))
+            )
+          end
+
+          it "prevents comments inside `<#{name}>` in a `<#{namespace}>` element from breaking out" do
+            assert_equal(
+              "<!--</#{name}><img src=x onerror=alert(1)>-->",
+              @s.fragment(%(<#{namespace}><#{name}><!--</#{name}><img src=x onerror=alert(1)>-->))
+            )
+
+            assert_equal(
+              html_children ? "<a><!--</#{name}><img src=x onerror=alert(1)>--></a>" : "<!--</#{name}><img src=x onerror=alert(1)>-->",
+              @s.fragment(%(<#{namespace}><#{name}><a><!--</#{name}><img src=x onerror=alert(1)>-->))
+            )
+          end
+
+          (%w[noembed noframes plaintext xmp] - [name]).each do |raw_text_name|
+            it "prevents the contents of `<#{raw_text_name}>` inside `<#{name}>` in a `<#{namespace}>` element from breaking out" do
+              s = Sanitize.new(
+                Sanitize::Config.merge(
+                  Sanitize::Config::RELAXED,
+                  elements: Sanitize::Config::RELAXED[:elements] + [integration_point, name, raw_text_name],
+                  remove_contents: false
+                )
+              )
+
+              assert_equal(
+                "<#{raw_text_name}></#{name}><img src=x onerror=alert(1)></#{raw_text_name}>",
+                s.fragment(%(<#{namespace}><#{name}><#{integration_point}><#{raw_text_name}></#{name}><img src=x onerror=alert(1)>))
+              )
+            end
+          end
+        end
+      end
+    end
+
+    describe "with `<select>`" do
+      {"math" => "mi", "svg" => "foreignObject"}.each do |namespace, integration_point|
+        %w[noembed noframes plaintext xmp].each do |raw_text_name|
+          it "prevents the contents of `<#{raw_text_name}>` inside `<select>` in a `<#{namespace}>` element from breaking out" do
+            s = Sanitize.new(
+              elements: %w[input option select] + [raw_text_name],
+              remove_contents: false
+            )
+
+            assert_equal(
+              "<#{raw_text_name}><input><img src=x onerror=alert(1)></#{raw_text_name}>",
+              s.fragment(%(<#{namespace}><select><#{integration_point}><#{raw_text_name}><input><img src=x onerror=alert(1)>))
+            )
+
+            assert_equal(
+              "<#{raw_text_name}><input><img src=x onerror=alert(1)></#{raw_text_name}>",
+              s.fragment(%(<#{namespace}><select><option><#{integration_point}><#{raw_text_name}><input><img src=x onerror=alert(1)>))
+            )
+          end
+        end
+      end
     end
   end
 end
