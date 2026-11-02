@@ -27,6 +27,14 @@ class Sanitize
       # https://html.spec.whatwg.org/multipage/dom.html#embedding-custom-non-visible-data-with-the-data-*-attributes
       REGEX_DATA_ATTR = /\Adata-(?!xml)[a-z_][\w.\u00E0-\u00F6\u00F8-\u017F\u01DD-\u02AF-]*\z/u
 
+      # Maps `<select>` and related elements to the names of the elements that
+      # browsers using legacy `<select>` parsing rules allow as their children.
+      SELECT_CONTENT_MODEL = {
+        "optgroup" => Set["option"].freeze,
+        "option" => Set.new.freeze,
+        "select" => Set["hr", "optgroup", "option"].freeze
+      }.freeze
+
       # Elements whose content is treated as unescaped text by HTML parsers.
       UNESCAPED_TEXT_ELEMENTS = Set.new(%w[
         iframe
@@ -105,6 +113,7 @@ class Sanitize
         # Some elements are always removed, even if they're allowlisted, since
         # browsers would parse them differently than Nokogiri did.
         force_remove = orphaned_foreign_element?(node, name, parent) ||
+          invalid_select_descendant?(name, parent) ||
           text_content_element?(parent)
 
         return if env[:is_allowlisted] && !force_remove
@@ -262,6 +271,25 @@ class Sanitize
       end
 
       private
+
+      # Returns `true` if _parent_ is an HTML `<select>`, `<option>`, or
+      # `<optgroup>` element and _name_ isn't an element that browsers allow
+      # inside it.
+      #
+      # Browsers that use legacy `<select>` parsing rules ignore the start tags
+      # of most elements inside a `<select>` element, including raw text
+      # elements like `<style>` and `<xmp>`, so these elements' contents would
+      # be parsed as markup. Nokogiri parses these elements the same way, but
+      # they can still end up inside a `<select>` element via a `<template>`
+      # element or foreign content that Sanitize removes. Since traversal is
+      # top-down, removing these elements ensures that only allowed elements
+      # and text remain inside `<select>` elements.
+      def invalid_select_descendant?(name, parent)
+        return false unless parent&.element? && SELECT_CONTENT_MODEL.key?(parent.name.downcase)
+        return false if FOREIGN_NAMESPACE_ROOTS.key?(parent.namespace&.href)
+
+        !SELECT_CONTENT_MODEL[parent.name.downcase].include?(name)
+      end
 
       # Returns `true` if _node_ is a MathML or SVG element other than a
       # `<math>` or `<svg>` element and its parent isn't a MathML or SVG element.

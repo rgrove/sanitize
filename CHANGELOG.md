@@ -12,6 +12,8 @@ All notable changes to Sanitize are documented in this file. The format (since v
 
 - Sanitize now requires Nokogiri 1.19.5 or higher, which escapes `<` and `>` in serialized attribute values to match browser behavior. This provides defense in depth against the issue above.
 
+- Elements inside `<select>`, `<option>`, and `<optgroup>` elements that browsers using legacy `<select>` parsing rules wouldn't allow there are now always removed (keeping their contents, subject to `:remove_contents`), even if they're allowed by the config or have been allowlisted by a transformer. Previously, if Sanitize removed a `<template>` element inside a `<select>` element but kept its contents, any raw text element inside the `<template>` element would end up inside the `<select>` element. Browsers that use legacy `<select>` parsing rules ignore the start tags of raw text elements inside a `<select>` element and parse their contents as markup, so input like `<select><template><xmp><input><img src=x onerror=alert(1)></xmp>` could be used to inject arbitrary HTML. This only affected custom configs that allow `<select>` and at least one raw text element such as `<style>`, `<xmp>`, `<noembed>`, `<noframes>`, or `<plaintext>`. Sanitize's default and built-in configs aren't affected.
+
 ## 7.0.1 (2026-10-21)
 
 ### Security

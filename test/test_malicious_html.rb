@@ -432,4 +432,44 @@ describe "Malicious HTML" do
       end
     end
   end
+
+  # Browsers that use legacy `<select>` parsing rules ignore the start tags of
+  # raw text elements inside a `<select>` element and parse their contents as
+  # markup. A raw text element can't normally be inside a `<select>` element,
+  # but it can be inside a `<template>` element inside a `<select>` element. If
+  # Sanitize removes the `<template>` element but keeps its contents, the raw
+  # text element's contents could break out of the `<select>` element.
+  describe "raw text elements inside `<select>` via `<template>`" do
+    %w[noembed noframes plaintext style xmp].each do |raw_text_name|
+      describe "with `<#{raw_text_name}>`" do
+        before do
+          @s = Sanitize.new(
+            Sanitize::Config.merge(
+              Sanitize::Config::RELAXED,
+              elements: Sanitize::Config::RELAXED[:elements] + ["optgroup", "option", "select", raw_text_name],
+              remove_contents: false
+            )
+          )
+        end
+
+        {
+          "<select>" => ["<select>", "</select>"],
+          "<select><option>" => ["<select><option>", "</option></select>"],
+          "<select><optgroup><option>" => ["<select><optgroup><option>", "</option></optgroup></select>"]
+        }.each do |prefix, (open, close)|
+          it "prevents the contents of `<#{raw_text_name}>` inside `<template>` in `#{prefix}` from breaking out" do
+            assert_equal(
+              "#{open}&lt;input&gt;&lt;img src=x onerror=alert(1)&gt;#{close}",
+              @s.fragment(%(#{prefix}<template><#{raw_text_name}><input><img src=x onerror=alert(1)>))
+            )
+
+            assert_equal(
+              "#{open} &lt;input&gt;&lt;img src=x onerror=alert(1)&gt; #{close}",
+              @s.fragment(%(#{prefix}<template><div><#{raw_text_name}><input><img src=x onerror=alert(1)>))
+            )
+          end
+        end
+      end
+    end
+  end
 end

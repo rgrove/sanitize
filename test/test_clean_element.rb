@@ -556,6 +556,41 @@ describe "Sanitize::Transformers::CleanElement" do
       )
     end
 
+    it "always removes elements that browsers don't allow inside `<select>`, `<option>`, and `<optgroup>`" do
+      s = Sanitize.new(elements: %w[div option optgroup select xmp], remove_contents: false)
+
+      assert_equal(
+        "<select> foo bar <option>baz</option></select>",
+        s.fragment("<select><template><div>foo <xmp>bar</xmp></div></template><option>baz</option></select>")
+      )
+
+      assert_equal(
+        "<select><option> foo </option><optgroup>bar<option>baz</option></optgroup></select>",
+        s.fragment("<select><option><template><div>foo</div></template></option><optgroup><template>bar</template><option>baz</option></optgroup></select>")
+      )
+    end
+
+    it "always removes elements that browsers don't allow inside `<select>` even if they're allowlisted by a transformer" do
+      s = Sanitize.new(
+        elements: %w[select xmp],
+        remove_contents: false,
+        transformers: ->(env) { {node_allowlist: [env[:node]]} if env[:node_name] == "xmp" }
+      )
+
+      assert_equal "<select>foo</select>", s.fragment("<select><template><xmp>foo</xmp></template></select>")
+    end
+
+    it "keeps elements that browsers allow inside `<select>`" do
+      assert_equal(
+        %(<select><option>a</option><optgroup label="x"><option>b</option></optgroup><hr></select>),
+        Sanitize.fragment(
+          %(<select><template><option>a</option></template><optgroup label="x"><option>b</option></optgroup><hr></select>),
+          elements: %w[hr optgroup option select template],
+          attributes: {"optgroup" => ["label"]}
+        )
+      )
+    end
+
     it "always removes MathML and SVG elements whose `<math>` or `<svg>` ancestor was removed" do
       s = Sanitize.new(
         elements: %w[a abbr mi mo p],
