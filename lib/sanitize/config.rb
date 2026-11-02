@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "set"
-
 class Sanitize
   module Config
     # Deeply freezes and returns the given configuration Hash.

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "set"
-
 class Sanitize
   module Transformers
     # Names of elements whose content is parsed as text rather than markup when

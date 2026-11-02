@@ -21,7 +21,7 @@ AllCops:
     - ".*/**/*"
     - "tmp/**/*"
   SuggestExtensions: false
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.2
 
 Style/Documentation:
   Enabled: false

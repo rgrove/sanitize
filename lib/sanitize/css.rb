@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "crass"
-require "set"
 
 class Sanitize
   class CSS

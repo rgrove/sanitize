@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   DESCRIPTION
 
   s.platform = Gem::Platform::RUBY
-  s.required_ruby_version = ">= 3.1.0"
+  s.required_ruby_version = ">= 3.2.0"
 
   s.metadata = {
     "changelog_uri" => "https://github.com/rgrove/sanitize/blob/main/CHANGELOG.md",
@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   }
 
   s.add_dependency("crass", "~> 1.0.8")
-  s.add_dependency("nokogiri", ">= 1.19.5")
+  s.add_dependency("nokogiri", ">= 1.19.7")
 
   s.require_paths = ["lib"]
 
